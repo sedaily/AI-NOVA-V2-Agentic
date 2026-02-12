@@ -12,7 +12,7 @@ export const STORAGE_PREFIX = "tem_";
 
 // Organization 설정
 export const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
-// export const COMPANY_DOMAIN = import.meta.env.VITE_COMPANY_DOMAIN;  // 주석 처리: ai@sedaily.com만 관리자
+export const COMPANY_DOMAIN = import.meta.env.VITE_COMPANY_DOMAIN;
 
 export default {
   API_BASE_URL,
