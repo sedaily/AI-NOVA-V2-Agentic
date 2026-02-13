@@ -1,0 +1,8 @@
+{
+    "bucketName": "bodo-frontend-20251204-230645dc",
+    "region": "ap-northeast-2",
+    "cloudFrontId": "EDF1H6DB796US",
+    "cloudFrontDomain": "d2emwatb21j743.cloudfront.net",
+    "s3WebsiteUrl": "http://bodo-frontend-20251204-230645dc.s3-website-ap-northeast-2.amazonaws.com",
+    "deployedAt": "2025-12-04T13:52:33Z"
+}

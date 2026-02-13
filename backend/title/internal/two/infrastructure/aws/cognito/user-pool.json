@@ -1,0 +1,32 @@
+{
+  "userPool": {
+    "name": "nexus-user-pool",
+    "id": "us-east-1_ohLOswurY",
+    "region": "us-east-1",
+    "policies": {
+      "passwordPolicy": {
+        "minimumLength": 8,
+        "requireUppercase": true,
+        "requireLowercase": true,
+        "requireNumbers": true,
+        "requireSymbols": false
+      }
+    },
+    "mfa": {
+      "enabled": false
+    },
+    "attributes": {
+      "required": ["email"],
+      "autoVerified": ["email"]
+    }
+  },
+  "appClient": {
+    "name": "nexus-web-client",
+    "id": "4m4edj8snokmhqnajhlj41h9n2",
+    "authFlows": [
+      "USER_SRP_AUTH",
+      "CUSTOM_AUTH_FLOW_ONLY"
+    ],
+    "preventUserExistence": true
+  }
+}

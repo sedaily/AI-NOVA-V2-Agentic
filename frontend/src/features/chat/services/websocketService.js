@@ -1,3 +1,5 @@
+import { getServiceEndpoint, SERVICE_ENDPOINTS } from '../../../config/buddyServiceConfig';
+
 // WebSocket 서비스
 class WebSocketService {
   constructor() {
@@ -12,28 +14,43 @@ class WebSocketService {
     this.isReconnecting = false;
     this.conversationHistory = [];
     this.currentConversationId = null;
+    this.currentServiceCode = null;
+    this.currentWsUrl = null;
   }
 
-  // WebSocket 연결
-  async connect() {
-    // 강제로 실제 WebSocket 사용 (개발 모드 체크 제거)
-    if (false) {  // 개발 모드 체크 비활성화
-      console.log("🔧 개발 모드: 모의 WebSocket 연결");
-      this.isConnecting = false;
-      this.ws = { readyState: WebSocket.OPEN }; // 모의 연결 상태
-      this.connectionHandlers.forEach((handler) => handler(true));
+  // WebSocket 연결 (버디 타입에 따라 다른 엔드포인트 사용)
+  async connect(buddyType = null) {
+    // 버디 타입이 없으면 localStorage에서 가져오기
+    const currentBuddyType = buddyType || localStorage.getItem('currentBuddyType');
+
+    // 버디 타입에 해당하는 서비스 엔드포인트 가져오기
+    const endpoint = getServiceEndpoint(currentBuddyType);
+    const targetWsUrl = endpoint.ws;
+
+    // 이미 같은 서비스에 연결되어 있으면 재사용
+    if (
+      this.ws &&
+      this.ws.readyState === WebSocket.OPEN &&
+      this.currentWsUrl === targetWsUrl
+    ) {
+      console.log("✅ 이미 해당 서비스에 연결되어 있습니다:", targetWsUrl.split("?")[0]);
       return Promise.resolve();
     }
 
-    if (
-      this.isConnecting ||
-      (this.ws && this.ws.readyState === WebSocket.OPEN)
-    ) {
-      console.log("이미 연결되어 있거나 연결 중입니다.");
+    // 다른 서비스로 변경되면 기존 연결 종료
+    if (this.ws && this.currentWsUrl !== targetWsUrl) {
+      console.log("🔄 서비스 변경 감지, 기존 연결 종료:", this.currentWsUrl?.split("?")[0]);
+      this.ws.close(1000, "Service change");
+      this.ws = null;
+    }
+
+    if (this.isConnecting) {
+      console.log("연결 중입니다...");
       return Promise.resolve();
     }
 
     this.isConnecting = true;
+    this.currentWsUrl = targetWsUrl;
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -41,16 +58,14 @@ class WebSocketService {
         const authService = (await import("../../auth/services/authService")).default;
         const token = await authService.getAuthToken();
 
-        // config.js에서 WS_URL import
-        const { WS_URL } = await import('../../../config');
-        let wsUrl = WS_URL;
+        let wsUrl = targetWsUrl;
 
         // 토큰이 있으면 쿼리 파라미터로 추가
         if (token) {
           wsUrl += `?token=${encodeURIComponent(token)}`;
         }
 
-        console.log("WebSocket 연결 시도:", wsUrl.split("?")[0]);
+        console.log("🔌 WebSocket 연결 시도:", wsUrl.split("?")[0], "| 버디:", currentBuddyType || "기본");
 
         this.ws = new WebSocket(wsUrl);
 
@@ -300,13 +315,29 @@ class WebSocketService {
     this.messageQueue = [];
     this.conversationHistory = [];
     this.currentConversationId = null;
+    this.currentServiceCode = null;
+    this.currentWsUrl = null;
+  }
+
+  // 버디 변경 시 재연결
+  async reconnectForBuddy(buddyType) {
+    console.log("🔄 버디 변경으로 재연결:", buddyType);
+    if (this.ws) {
+      this.ws.close(1000, "Buddy change");
+      this.ws = null;
+    }
+    this.currentWsUrl = null;
+    this.isConnecting = false;
+    this.reconnectAttempts = 0;
+    return this.connect(buddyType);
   }
 }
 
 const webSocketService = new WebSocketService();
 
-export const connectWebSocket = () => webSocketService.connect();
+export const connectWebSocket = (buddyType = null) => webSocketService.connect(buddyType);
 export const disconnectWebSocket = () => webSocketService.disconnect();
+export const reconnectForBuddy = (buddyType) => webSocketService.reconnectForBuddy(buddyType);
 export const sendChatMessage = (message, engineType, conversationHistory, conversationId, idempotencyKey, selectedModel, webSearchEnabled = false, buddyService = null) =>
   webSocketService.sendMessage(message, engineType, conversationId, conversationHistory, idempotencyKey, selectedModel, webSearchEnabled, buddyService);
 export const isWebSocketConnected = () => webSocketService.isWebSocketConnected();

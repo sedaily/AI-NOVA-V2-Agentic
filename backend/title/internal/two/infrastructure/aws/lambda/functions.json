@@ -1,0 +1,50 @@
+{
+  "functions": [
+    {
+      "name": "nx-tt-dev-ver3-conversation-api",
+      "runtime": "python3.9",
+      "handler": "handlers.api.conversation.handler",
+      "memory": 512,
+      "timeout": 30,
+      "environment": {
+        "CONVERSATIONS_TABLE": "nexus-conversations",
+        "AWS_REGION": "us-east-1"
+      }
+    },
+    {
+      "name": "nx-tt-dev-ver3-prompt-crud",
+      "runtime": "python3.9",
+      "handler": "handlers.api.prompt.handler",
+      "memory": 512,
+      "timeout": 30,
+      "environment": {
+        "PROMPTS_TABLE": "nexus-prompts",
+        "AWS_REGION": "us-east-1"
+      }
+    },
+    {
+      "name": "nx-tt-dev-ver3-usage-handler",
+      "runtime": "python3.9",
+      "handler": "handlers.api.usage.handler",
+      "memory": 256,
+      "timeout": 30,
+      "environment": {
+        "USAGE_TABLE": "nexus-usage",
+        "AWS_REGION": "us-east-1"
+      }
+    },
+    {
+      "name": "nx-tt-dev-ver3-websocket-message",
+      "runtime": "python3.9",
+      "handler": "handlers.websocket.message.handler",
+      "memory": 1024,
+      "timeout": 300,
+      "environment": {
+        "WEBSOCKET_TABLE": "nexus-websocket-connections",
+        "CONVERSATIONS_TABLE": "nexus-conversations",
+        "AWS_REGION": "us-east-1",
+        "BEDROCK_MODEL_ID": "us.anthropic.claude-sonnet-4-20250514-v1:0"
+      }
+    }
+  ]
+}

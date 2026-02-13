@@ -1,0 +1,31 @@
+{
+  "name": "nexus-websocket-api",
+  "description": "Nexus Real-time WebSocket API",
+  "routeSelectionExpression": "$request.body.action",
+  "routes": [
+    {
+      "routeKey": "$connect",
+      "integration": "nx-tt-dev-ver3-websocket-connect"
+    },
+    {
+      "routeKey": "$disconnect",
+      "integration": "nx-tt-dev-ver3-websocket-disconnect"
+    },
+    {
+      "routeKey": "$default",
+      "integration": "nx-tt-dev-ver3-websocket-message"
+    },
+    {
+      "routeKey": "sendMessage",
+      "integration": "nx-tt-dev-ver3-websocket-message"
+    }
+  ],
+  "stage": {
+    "name": "production",
+    "autoDeploy": true,
+    "throttle": {
+      "rateLimit": 10000,
+      "burstLimit": 5000
+    }
+  }
+}

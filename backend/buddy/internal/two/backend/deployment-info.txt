@@ -1,0 +1,165 @@
+
+========================================
+Lambda 코드 배포 완료
+========================================
+배포 시간: 2025년 09월 24일 23시 08분 47초 KST
+
+배포 결과: 6/6 함수 성공
+
+WebSocket Lambda 함수:
+  - f1-websocket-connect-two (Connect 핸들러)
+  - f1-websocket-disconnect-two (Disconnect 핸들러)
+  - f1-websocket-message-two (Message 핸들러)
+
+REST API Lambda 함수:
+  - f1-conversation-api-two (대화 관리)
+  - f1-prompt-crud-two (프롬프트 CRUD)
+  - f1-usage-handler-two (사용량 추적)
+
+환경변수 설정:
+  - 테이블: f1-*-two
+  - API 엔드포인트: 실제 URL 설정
+  - Bedrock: Claude Sonnet 4 모델
+  - 로깅: INFO 레벨, CloudWatch 활성화
+
+========================================
+
+========================================
+Lambda 코드 배포 완료
+========================================
+배포 시간: 2025년 09월 25일 00시 30분 25초 KST
+
+배포 결과: 6/6 함수 성공
+
+WebSocket Lambda 함수:
+  - f1-websocket-connect-two (Connect 핸들러)
+  - f1-websocket-disconnect-two (Disconnect 핸들러)
+  - f1-websocket-message-two (Message 핸들러)
+
+REST API Lambda 함수:
+  - f1-conversation-api-two (대화 관리)
+  - f1-prompt-crud-two (프롬프트 CRUD)
+  - f1-usage-handler-two (사용량 추적)
+
+환경변수 설정:
+  - 테이블: f1-*-two
+  - API 엔드포인트: 실제 URL 설정
+  - Bedrock: Claude Sonnet 4 모델
+  - 로깅: INFO 레벨, CloudWatch 활성화
+
+========================================
+
+========================================
+Lambda 코드 배포 완료
+========================================
+배포 시간: 2025년 09월 25일 09시 05분 26초 KST
+
+배포 결과: 6/6 함수 성공
+
+WebSocket Lambda 함수:
+  - f1-websocket-connect-two (Connect 핸들러)
+  - f1-websocket-disconnect-two (Disconnect 핸들러)
+  - f1-websocket-message-two (Message 핸들러)
+
+REST API Lambda 함수:
+  - f1-conversation-api-two (대화 관리)
+  - f1-prompt-crud-two (프롬프트 CRUD)
+  - f1-usage-handler-two (사용량 추적)
+
+환경변수 설정:
+  - 테이블: f1-*-two
+  - API 엔드포인트: 실제 URL 설정
+  - Bedrock: Claude Sonnet 4 모델
+  - 로깅: INFO 레벨, CloudWatch 활성화
+
+========================================
+
+========================================
+Lambda 코드 배포 완료 (개선된 버전)
+========================================
+배포 시간: 2025년 09월 26일 09시 41분 00초 KST
+
+배포 결과: 6/6 함수 성공
+
+WebSocket Lambda 함수:
+  - f1-websocket-connect-two (Connect 핸들러)
+  - f1-websocket-disconnect-two (Disconnect 핸들러)
+  - f1-websocket-message-two (Message 핸들러)
+
+REST API Lambda 함수:
+  - f1-conversation-api-two (대화 관리)
+  - f1-prompt-crud-two (프롬프트 CRUD)
+  - f1-usage-handler-two (사용량 추적)
+
+적용된 개선사항:
+  - 하드코딩 제거: 모든 테이블명 동적 수정
+  - 백업 생성: ../backend/backup_20250926_093928
+  - 서비스명 변수화: f1
+
+환경변수 설정:
+  - 테이블: f1-*-two
+  - API 엔드포인트: 실제 URL 설정
+  - Bedrock: Claude Sonnet 4 모델
+  - 로깅: INFO 레벨, CloudWatch 활성화
+
+========================================
+
+========================================
+Lambda 코드 배포 완료 (개선된 버전)
+========================================
+배포 시간: 2025년 09월 26일 10시 23분 41초 KST
+
+배포 결과: 6/6 함수 성공
+
+WebSocket Lambda 함수:
+  - f2-websocket-connect-two (Connect 핸들러)
+  - f2-websocket-disconnect-two (Disconnect 핸들러)
+  - f2-websocket-message-two (Message 핸들러)
+
+REST API Lambda 함수:
+  - f2-conversation-api-two (대화 관리)
+  - f2-prompt-crud-two (프롬프트 CRUD)
+  - f2-usage-handler-two (사용량 추적)
+
+적용된 개선사항:
+  - 하드코딩 제거: 모든 테이블명 동적 수정
+  - 백업 생성: ../backend/backup_20250926_102143
+  - 서비스명 변수화: f2
+
+환경변수 설정:
+  - 테이블: f2-*-two
+  - API 엔드포인트: 실제 URL 설정
+  - Bedrock: Claude Sonnet 4 모델
+  - 로깅: INFO 레벨, CloudWatch 활성화
+
+========================================
+
+========================================
+Lambda 코드 배포 완료 (개선된 버전)
+========================================
+배포 시간: 2025년 11월 15일 09시 46분 29초 KST
+
+배포 결과: 6/6 함수 성공
+
+WebSocket Lambda 함수:
+  - p2-two-websocket-connect-two (Connect 핸들러)
+  - p2-two-websocket-disconnect-two (Disconnect 핸들러)
+  - p2-two-websocket-message-two (Message 핸들러)
+
+REST API Lambda 함수:
+  - p2-two-conversation-api-two (대화 관리)
+  - p2-two-prompt-crud-two (프롬프트 CRUD)
+  - p2-two-usage-handler-two (사용량 추적)
+
+적용된 개선사항:
+  - 하드코딩 제거: 모든 테이블명 동적 수정
+  - 백업 생성: ../backend/backup_20251115_094456
+  - 서비스명 변수화: p2-two
+
+환경변수 설정:
+  - 테이블: p2-two-*-two
+  - API 엔드포인트: 실제 URL 설정
+  - Bedrock: Claude Sonnet 4 모델
+  - 로깅: INFO 레벨, CloudWatch 활성화
+
+========================================

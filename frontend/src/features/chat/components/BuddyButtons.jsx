@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getBuddyConfig } from '../../../config/buddyServiceConfig';
+import { reconnectForBuddy } from '../services/websocketService';
 
 const BuddyButtons = ({ currentBuddyService, setCurrentBuddyService }) => {
   const [showAllTools, setShowAllTools] = useState(false);
@@ -14,11 +15,17 @@ const BuddyButtons = ({ currentBuddyService, setCurrentBuddyService }) => {
           return (
             <button
               key={label}
-              onClick={() => {
+              onClick={async () => {
                 if (buddyConfig) {
                   setCurrentBuddyService(buddyConfig);
                   localStorage.setItem('currentBuddyType', label);
                   console.log('🎯 버디 선택:', label, buddyConfig);
+                  // 서비스가 변경되면 WebSocket 재연결
+                  try {
+                    await reconnectForBuddy(label);
+                  } catch (error) {
+                    console.error('WebSocket 재연결 실패:', error);
+                  }
                 }
               }}
               className="px-2.5 py-1 text-sm font-medium transition-all duration-200 whitespace-nowrap"
@@ -83,11 +90,17 @@ const BuddyButtons = ({ currentBuddyService, setCurrentBuddyService }) => {
           return (
             <button
               key={label}
-              onClick={() => {
+              onClick={async () => {
                 if (buddyConfig) {
                   setCurrentBuddyService(buddyConfig);
                   localStorage.setItem('currentBuddyType', label);
                   console.log('🎯 버디 선택:', label, buddyConfig);
+                  // 서비스가 변경되면 WebSocket 재연결
+                  try {
+                    await reconnectForBuddy(label);
+                  } catch (error) {
+                    console.error('WebSocket 재연결 실패:', error);
+                  }
                 }
               }}
               className="px-2.5 py-1 text-sm font-medium transition-all duration-200 whitespace-nowrap"

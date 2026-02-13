@@ -1,0 +1,16 @@
+<svg width="105" height="56" viewBox="0 0 105 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Document icon for dark mode -->
+  <rect x="20" y="8" width="50" height="40" rx="4" fill="none" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="24" y="14" width="42" height="2" rx="1" fill="#64748b"/>
+  <rect x="24" y="20" width="35" height="2" rx="1" fill="#64748b"/>
+  <rect x="24" y="26" width="38" height="2" rx="1" fill="#64748b"/>
+  <rect x="24" y="32" width="28" height="2" rx="1" fill="#64748b"/>
+  
+  <!-- Plus icon -->
+  <circle cx="80" cy="35" r="12" fill="none" stroke="#64748b" stroke-width="1.5"/>
+  <path d="M76 35h8M80 31v8" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Folder icon -->
+  <path d="M30 45h25l3-3h-25l-3 3z" fill="#64748b" opacity="0.6"/>
+  <rect x="30" y="42" width="25" height="8" rx="2" fill="none" stroke="#64748b" stroke-width="1"/>
+</svg>

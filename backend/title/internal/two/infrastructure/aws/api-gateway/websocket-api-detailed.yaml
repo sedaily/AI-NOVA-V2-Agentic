@@ -1,0 +1,320 @@
+# WebSocket API Gateway 상세 설정
+# 파일: websocket-api-detailed.yaml
+# 용도: Nexus WebSocket API 상세 구성
+# 주의: 연결 관리 누락 시 메모리 누수 및 비용 증가
+
+api:
+  name: nexus-websocket-api
+  description: Nexus Real-time AI Communication WebSocket API
+  protocol: WEBSOCKET
+  route_selection_expression: $request.body.action  # 라우트 선택 기준
+  
+  # WebSocket 특수 설정
+  timeout:
+    idle_timeout: 600  # 10분 (최대 2시간)
+    connection_timeout: 30  # 초기 연결 타임아웃
+  
+  # 메시지 크기 제한
+  message:
+    max_size: 128000  # 128KB (기본 32KB)
+    # 주의: Bedrock 응답이 크면 증가 필요
+  
+  # 스테이지 설정
+  stages:
+    - name: prod
+      throttle:
+        rate_limit: 1000  # 초당 메시지 수
+        burst_limit: 2000
+        connection_rate_limit: 100  # 초당 새 연결 수
+      logging:
+        level: ERROR
+        data_trace: false  # 메시지 본문 로깅 (민감 정보 주의!)
+    
+    - name: dev
+      throttle:
+        rate_limit: 100
+        burst_limit: 200
+        connection_rate_limit: 10
+      logging:
+        level: INFO
+        data_trace: true
+
+# ========================================
+# 라우트 설정 (매우 중요!)
+# ========================================
+routes:
+  # 1. 연결 라우트 ($connect)
+  - route_key: $connect
+    description: "WebSocket 연결 시작"
+    # 주의: 인증은 여기서만 가능!
+    authorizer:
+      type: REQUEST  # Lambda 인증
+      lambda_arn: arn:aws:lambda:us-east-1:887078546492:function:nexus-ws-authorizer
+      identity_sources:
+        - route.request.querystring.token  # ?token=xxx
+        - route.request.header.Authorization  # 헤더
+      ttl: 300  # 인증 캐시
+    
+    integration:
+      type: AWS_PROXY
+      lambda_function: nx-tt-dev-ver3-websocket-connect
+      timeout: 10000  # 10초
+      
+    # 연결 시 저장할 컨텍스트
+    connection_context:
+      - userId
+      - engineType
+      - conversationId
+    
+    # 연결 실패 응답
+    error_responses:
+      401:
+        message: "Unauthorized: Invalid token"
+      403:
+        message: "Forbidden: Access denied"
+      500:
+        message: "Connection failed"
+  
+  # 2. 연결 해제 라우트 ($disconnect)
+  - route_key: $disconnect
+    description: "WebSocket 연결 종료"
+    integration:
+      type: AWS_PROXY
+      lambda_function: nx-tt-dev-ver3-websocket-disconnect
+      timeout: 10000
+    # 주의: 반드시 연결 테이블에서 제거!
+    # DynamoDB에서 connectionId 삭제 필수
+  
+  # 3. 기본 라우트 ($default)
+  - route_key: $default
+    description: "기본 메시지 처리"
+    integration:
+      type: AWS_PROXY
+      lambda_function: nx-tt-dev-ver3-websocket-message
+      timeout: 300000  # 5분 (Bedrock 처리)
+    # 모든 action이 여기로 라우팅됨
+  
+  # 4. 커스텀 라우트 (선택적)
+  - route_key: sendMessage
+    description: "사용자 메시지 전송"
+    integration:
+      type: AWS_PROXY
+      lambda_function: nx-tt-dev-ver3-websocket-message
+      timeout: 300000
+    
+    # 요청 템플릿 (메시지 구조 검증)
+    request_template: |
+      {
+        "action": "sendMessage",
+        "conversationId": "$input.json('$.conversationId')",
+        "message": "$input.json('$.message')",
+        "engineType": "$input.json('$.engineType')",
+        "connectionId": "$context.connectionId",
+        "requestId": "$context.requestId",
+        "timestamp": $context.requestTimeEpoch
+      }
+  
+  - route_key: ping
+    description: "연결 유지 핑"
+    integration:
+      type: MOCK  # Lambda 호출 없이
+      request_template: '{"statusCode": 200}'
+    response:
+      template: '{"action": "pong", "timestamp": $context.requestTimeEpoch}'
+
+# ========================================
+# WebSocket 관리 API 설정
+# ========================================
+management_api:
+  # 연결 관리 엔드포인트
+  endpoint: https://execute-api.us-east-1.amazonaws.com/prod/@connections
+  
+  # 사용 가능한 작업
+  operations:
+    - POST /@connections/{connectionId}  # 메시지 전송
+    - DELETE /@connections/{connectionId}  # 연결 강제 종료
+    - GET /@connections/{connectionId}  # 연결 상태 확인
+
+# ========================================
+# 연결 테이블 (DynamoDB)
+# ========================================
+connection_table:
+  name: nexus-websocket-connections
+  # 필수 필드
+  attributes:
+    - connectionId  # 파티션 키
+    - userId
+    - engineType
+    - conversationId
+    - connectedAt  # TTL용 (24시간 후 자동 삭제)
+    - lastActivity
+    - clientIp
+    - userAgent
+  
+  # TTL 설정 (비용 절감)
+  ttl:
+    attribute: ttl
+    value: 86400  # 24시간
+  
+  # GSI (쿼리용)
+  global_secondary_indexes:
+    - name: userId-index
+      partition_key: userId
+      sort_key: connectedAt
+    
+    - name: conversationId-index
+      partition_key: conversationId
+
+# ========================================
+# 에러 처리 전략
+# ========================================
+error_handling:
+  # 연결 실패 시
+  connection_errors:
+    - error: INVALID_TOKEN
+      action: REJECT_CONNECTION
+      log_level: WARNING
+    
+    - error: RATE_LIMIT_EXCEEDED
+      action: REJECT_CONNECTION
+      log_level: ERROR
+    
+    - error: INTERNAL_ERROR
+      action: RETRY_WITH_BACKOFF
+      max_retries: 3
+  
+  # 메시지 처리 실패 시
+  message_errors:
+    - error: INVALID_MESSAGE_FORMAT
+      action: SEND_ERROR_TO_CLIENT
+      message: "Invalid message format"
+    
+    - error: BEDROCK_TIMEOUT
+      action: SEND_PARTIAL_RESPONSE
+      message: "AI processing timeout"
+    
+    - error: GUARDRAIL_BLOCKED
+      action: SEND_ERROR_TO_CLIENT
+      message: "Content blocked by safety filters"
+
+# ========================================
+# 모니터링 및 알림
+# ========================================
+monitoring:
+  # CloudWatch 메트릭
+  custom_metrics:
+    - name: ActiveConnections
+      unit: Count
+      dimensions: [Stage, EngineType]
+    
+    - name: MessageRate
+      unit: Count/Second
+      dimensions: [Stage, RouteKey]
+    
+    - name: ConnectionDuration
+      unit: Seconds
+      dimensions: [Stage, UserId]
+    
+    - name: BedrockLatency
+      unit: Milliseconds
+      dimensions: [EngineType, Model]
+  
+  # 알람 설정
+  alarms:
+    - name: HighConnectionCount
+      metric: ActiveConnections
+      threshold: 1000
+      evaluation_periods: 2
+      action: SNS_NOTIFICATION
+    
+    - name: HighErrorRate
+      metric: 4XXError
+      threshold: 0.1  # 10%
+      evaluation_periods: 3
+      action: SNS_NOTIFICATION
+    
+    - name: BedrockTimeout
+      metric: BedrockLatency
+      threshold: 290000  # 290초
+      evaluation_periods: 1
+      action: SCALE_LAMBDA
+
+# ========================================
+# 보안 설정
+# ========================================
+security:
+  # API 키 (선택적 추가 보안)
+  api_key:
+    required: false
+    header_name: x-api-key
+  
+  # IP 화이트리스트
+  ip_whitelist:
+    enabled: false
+    ips: []
+  
+  # 사용자별 연결 제한
+  per_user_limits:
+    max_connections: 5  # 사용자당 최대 동시 연결
+    max_messages_per_minute: 100
+  
+  # DDoS 방어
+  ddos_protection:
+    enabled: true
+    cloudflare: false
+    aws_shield: standard  # standard | advanced
+
+# ========================================
+# 비용 최적화
+# ========================================
+cost_optimization:
+  # 유휴 연결 자동 종료
+  idle_disconnect:
+    enabled: true
+    timeout: 300  # 5분간 활동 없으면 종료
+  
+  # 메시지 배칭
+  message_batching:
+    enabled: true
+    batch_size: 10
+    batch_timeout: 100  # ms
+  
+  # 연결 재사용
+  connection_pooling:
+    enabled: true
+    pool_size: 100
+    
+# ========================================
+# 트러블슈팅 가이드
+# ========================================
+troubleshooting:
+  common_issues:
+    - issue: "Connection immediately closes"
+      causes:
+        - "인증 실패 (토큰 만료/잘못됨)"
+        - "Lambda cold start timeout"
+        - "DynamoDB 쓰기 실패"
+      solutions:
+        - "토큰 갱신 구현"
+        - "Lambda 프로비저닝 설정"
+        - "DynamoDB 용량 증가"
+    
+    - issue: "Messages not received"
+      causes:
+        - "connectionId 불일치"
+        - "Management API 권한 부족"
+        - "메시지 크기 초과"
+      solutions:
+        - "연결 테이블 동기화 확인"
+        - "IAM 역할 권한 추가"
+        - "메시지 청킹 구현"
+    
+    - issue: "High latency"
+      causes:
+        - "Bedrock 응답 지연"
+        - "Lambda 메모리 부족"
+        - "네트워크 거리"
+      solutions:
+        - "스트리밍 응답 구현"
+        - "Lambda 메모리 증가"
+        - "엣지 로케이션 활용"

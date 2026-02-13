@@ -1,0 +1,274 @@
+import React from "react";
+import { Zap, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import Header from "../../../shared/components/layout/Header";
+
+const LandingPresenter = ({
+  // Data props
+  isVisible,
+  selectedEngine,
+  articleInput,
+  showArticleInput,
+  stats,
+  engines,
+  features,
+  userRole,
+
+  // Action props
+  onEngineSelect,
+  onArticleInputChange,
+  onProceedWithArticle,
+  onCancelArticleInput,
+  onLogout,
+  onLogin,
+}) => {
+  return (
+    <div className="min-h-screen overflow-x-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-900/40 via-purple-800/30 to-rose-900/40" />
+        <div className="absolute inset-0">
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" />
+          <div className="absolute top-0 -right-4 w-72 h-72 bg-rose-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" />
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-fuchsia-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" />
+        </div>
+      </div>
+
+      {/* Header Component */}
+      <Header
+        onLogout={onLogout}
+        onAdminLogin={() => onLogin && onLogin("admin")}
+        onHome={() => window.location.reload()}
+        isLandingPage={true}
+        userRole={userRole}
+      />
+
+      {/* Main Content */}
+      <main className="relative z-10">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Hero Section */}
+          <div
+            className={`text-center mb-16 transition-all duration-1000 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10"
+            }`}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-pink-400/15 border border-pink-400/30 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-pink-400" />
+              <span className="text-sm text-pink-300">
+                기자의 가장 투명한 AI 동료
+              </span>
+            </div>
+
+            <h1 className="text-6xl md:text-7xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-white via-pink-200 to-white bg-clip-text text-transparent animate-gradient">
+                Article Buddy
+              </span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-gray-200 mb-4">
+              서울경제신문 AI 기사 작성 동료 - 기사 버디
+            </p>
+          </div>
+
+          {/* Stats Section - Removed */}
+
+          {/* Product Selection */}
+          <div className="main-content">
+            <div className="product-selection">
+              <h2
+                className={`text-2xl md:text-3xl font-bold text-center mb-12 text-white transition-all duration-1000 delay-300 ${
+                  isVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+                }`}
+              >
+                빠르되 정직하게, 효율적이되 정확하게
+              </h2>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-12">
+                {/* C1 Card */}
+                <div
+                  className={`relative group transition-all duration-500 delay-400 ${
+                    isVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-10"
+                  }`}
+                  onClick={() => onEngineSelect("11")}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                  <div className="relative bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 border border-gray-600 hover:border-orange-400/50 transition-all cursor-pointer hover:transform hover:scale-105 min-h-[500px] flex flex-col">
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl">
+                          <Zap className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-3xl font-bold text-white mb-1">
+                            기사 버디
+                          </h3>
+                          <p className="text-orange-400 text-sm font-medium">
+                            일보로 초안 기사 작성
+                          </p>
+                        </div>
+                      </div>
+                      <div className="px-3 py-1 bg-orange-500/20 border border-orange-500/30 rounded-full">
+                        <span className="text-xs text-orange-300">
+                          투명한 AI 동료
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-200 mb-6">
+                      일보나 키워드만으로{" "}
+                      <span className="text-orange-400 font-semibold">
+                        70-80% 완성도
+                      </span>{" "}
+                      초안 즉시 생성
+                    </p>
+
+                    <div className="space-y-3 mb-6 flex-grow">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          투명성 최우선: 모든 정보 출처 구분
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          70-80% 완성도의 즉시 사용 가능 초안
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          오보 방지 시스템: [대괄호] 표시 의무화
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          서울경제 스타일북 자동 적용
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          30초 내 핵심만 정리하여 제공
+                        </span>
+                      </div>
+                    </div>
+
+                    <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all flex items-center justify-center gap-2 group mt-auto">
+                      기사 버디 시작하기
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* C2 Card */}
+                <div
+                  className={`relative group transition-all duration-500 delay-500 ${
+                    isVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-10"
+                  }`}
+                  onClick={() => onEngineSelect("22")}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                  <div className="relative bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 border border-gray-600 hover:border-blue-400/50 transition-all cursor-pointer hover:transform hover:scale-105 min-h-[500px] flex flex-col">
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
+                          <Sparkles className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-3xl font-bold text-white mb-1">
+                            일보 버디
+                          </h3>
+                          <p className="text-blue-400 text-sm font-medium">
+                            <span className="block">
+                              브레인스토밍 파트너
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full">
+                        <span className="text-xs text-blue-300">기자의 사고 동료</span>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-200 mb-6">
+                      <span className="block md:inline">
+                        다각도 분석과 함께{" "}
+                        <span className="text-blue-400 font-semibold">
+                          2-5가지 작성 방향
+                        </span>{" "}
+                        제시
+                      </span>
+                    </p>
+
+                    <div className="space-y-3 mb-6 flex-grow">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          정책 비판 각도로 작성
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          기업 애로 중심으로 작성
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          국제 비교 분석 포함
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          팩트 중심 단신으로 구성
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          필요시 웹 검색으로 보강
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          커스텀 요청도 가능
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-sm">
+                          진부한 주제도 새로운 각도로
+                        </span>
+                      </div>
+                    </div>
+
+                    <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all flex items-center justify-center gap-2 group mt-auto">
+                      일보 버디 시작하기
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Features Grid - Removed */}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default LandingPresenter;

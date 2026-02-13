@@ -1,0 +1,7 @@
+boto3>=1.34.0
+botocore>=1.34.0
+python-dotenv>=1.0.0
+requests>=2.31.0  # Anthropic API 호출용
+
+# RAG 기능용 (선택사항)
+psycopg2-binary>=2.9.9  # Aurora PostgreSQL 연결

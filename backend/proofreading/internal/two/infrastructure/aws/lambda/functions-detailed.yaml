@@ -1,0 +1,371 @@
+# Lambda Functions 상세 설정
+# 파일: functions-detailed.yaml
+# 용도: Lambda 함수 상세 구성
+# 주의: 메모리/타임아웃 설정 부족 시 성능 저하 및 에러 발생
+
+functions:
+  # ========================================
+  # 1. CONVERSATION API HANDLER
+  # ========================================
+  - name: nx-tt-dev-ver3-conversation-api
+    description: "대화 관리 REST API 핸들러"
+    runtime: python3.9  # 3.10, 3.11 사용 가능
+    architecture: x86_64  # arm64 가능 (Graviton2, 더 저렴)
+    
+    # 핸들러 경로 (매우 중요! 경로 오류 시 "module not found")
+    handler: handlers.api.conversation.handler
+    # handler 형식: {폴더}.{파일명}.{함수명}
+    
+    # 리소스 설정
+    memory: 512  # MB (128-10240)
+    # 메모리 증가 시 CPU도 비례하여 증가
+    # 128 MB = 0.0769 vCPU
+    # 512 MB = 0.3077 vCPU
+    # 1024 MB = 0.6154 vCPU
+    
+    timeout: 30  # 초 (최대 900초/15분)
+    # API Gateway 제한: 29초
+    # 주의: timeout > 29초여도 API Gateway는 29초에 timeout
+    
+    # 예약 동시 실행 (콜드 스타트 방지)
+    reserved_concurrent_executions: 10  # 0은 함수 비활성화
+    provisioned_concurrent_executions: 2  # 워밍된 인스턴스 (비용 발생)
+    
+    # 환경 변수 (민감 정보는 Secrets Manager 사용)
+    environment:
+      # DynamoDB 테이블
+      CONVERSATIONS_TABLE: nexus-conversations
+      PROMPTS_TABLE: nexus-prompts
+      USAGE_TABLE: nexus-usage
+      
+      # AWS 설정
+      AWS_REGION: us-east-1
+      
+      # 로깅 레벨
+      LOG_LEVEL: INFO  # DEBUG, INFO, WARNING, ERROR
+      
+      # 기능 플래그
+      ENABLE_CACHE: "true"
+      CACHE_TTL: "300"  # 초
+    
+    # IAM 역할 (권한)
+    role: arn:aws:iam::887078546492:role/NexusLambdaExecutionRole
+    # 필요 권한:
+    # - DynamoDB: Read/Write
+    # - CloudWatch Logs: Write
+    # - X-Ray: Write (추적)
+    
+    # VPC 설정 (필요 시)
+    vpc_config:
+      enabled: false  # true 시 VPC 내부 실행
+      subnet_ids: []
+      security_group_ids: []
+    
+    # 레이어 (공통 라이브러리)
+    layers:
+      - arn:aws:lambda:us-east-1:887078546492:layer:nexus-common-layer:1
+    # 레이어 포함 내용:
+    # - boto3 (최신 버전)
+    # - requests
+    # - 공통 유틸리티
+    
+    # 데드 레터 큐 (에러 처리)
+    dead_letter_config:
+      target_arn: arn:aws:sqs:us-east-1:887078546492:nexus-dlq
+    
+    # 추적 설정
+    tracing_config:
+      mode: Active  # Active | PassThrough
+    
+    # 파일 시스템 (EFS)
+    file_system_config:
+      enabled: false
+      arn: ""
+      mount_path: "/mnt/efs"
+    
+    # 태그 (비용 추적)
+    tags:
+      Environment: production
+      Service: conversation-api
+      Team: backend
+      CostCenter: engineering
+
+  # ========================================
+  # 2. PROMPT CRUD HANDLER
+  # ========================================
+  - name: nx-tt-dev-ver3-prompt-crud
+    description: "프롬프트 CRUD 작업 처리"
+    runtime: python3.9
+    handler: handlers.api.prompt.handler
+    
+    memory: 512
+    timeout: 30
+    
+    environment:
+      PROMPTS_TABLE: nexus-prompts
+      AWS_REGION: us-east-1
+      LOG_LEVEL: INFO
+      
+      # 프롬프트 관련 설정
+      MAX_PROMPT_SIZE: "10485760"  # 10MB
+      MAX_FILES_PER_PROMPT: "10"
+      ALLOWED_FILE_TYPES: "txt,json,csv,md"
+    
+    # 이벤트 소스 (트리거)
+    event_sources:
+      - type: API_GATEWAY
+        api_id: !Ref RestApi
+        method: "*"
+        path: "/prompts*"
+
+  # ========================================
+  # 3. USAGE HANDLER
+  # ========================================
+  - name: nx-tt-dev-ver3-usage-handler
+    description: "사용량 추적 및 보고"
+    runtime: python3.9
+    handler: handlers.api.usage.handler
+    
+    memory: 256  # 읽기 위주라 메모리 적게
+    timeout: 30
+    
+    environment:
+      USAGE_TABLE: nexus-usage
+      AWS_REGION: us-east-1
+      LOG_LEVEL: WARNING  # 로그 최소화
+      
+      # 비용 계산 설정
+      COST_PER_1K_INPUT_TOKENS_T5: "0.003"
+      COST_PER_1K_OUTPUT_TOKENS_T5: "0.015"
+      COST_PER_1K_INPUT_TOKENS_H8: "0.015"
+      COST_PER_1K_OUTPUT_TOKENS_H8: "0.075"
+    
+    # 예약 실행 (일일 집계)
+    scheduled_events:
+      - name: daily-aggregation
+        schedule: "cron(0 1 * * ? *)"  # 매일 새벽 1시 UTC
+        enabled: true
+
+  # ========================================
+  # 4. WEBSOCKET MESSAGE HANDLER
+  # ========================================
+  - name: nx-tt-dev-ver3-websocket-message
+    description: "WebSocket 메시지 처리 (실시간 AI 응답)"
+    runtime: python3.9
+    handler: handlers.websocket.message.handler
+    
+    # WebSocket은 메모리와 타임아웃 넉넉히
+    memory: 1024  # Bedrock 스트리밍 처리
+    timeout: 300  # 5분 (긴 대화 처리)
+    
+    environment:
+      # 테이블
+      WEBSOCKET_TABLE: nexus-websocket-connections
+      CONVERSATIONS_TABLE: nexus-conversations
+      USAGE_TABLE: nexus-usage
+      
+      # Bedrock 설정
+      BEDROCK_MODEL_ID: us.anthropic.claude-sonnet-4-20250514-v1:0
+      BEDROCK_MAX_TOKENS: "16384"
+      BEDROCK_TEMPERATURE: "0.81"
+      BEDROCK_TOP_P: "0.9"
+      BEDROCK_TOP_K: "50"
+      
+      # 가드레일
+      GUARDRAIL_ID: ycwjnmzxut7k
+      GUARDRAIL_VERSION: "1"
+      GUARDRAIL_ENABLED: "true"
+      
+      # WebSocket 설정
+      WEBSOCKET_ENDPOINT: wss://your-api-id.execute-api.us-east-1.amazonaws.com/production
+      
+      # 스트리밍 설정
+      STREAM_CHUNK_SIZE: "100"  # 글자 단위
+      STREAM_DELAY_MS: "50"  # 청크 간 지연
+      
+      # 로깅
+      LOG_LEVEL: INFO
+      LOG_REQUESTS: "false"  # 요청 본문 로깅 (민감 정보 주의)
+    
+    # 비동기 설정
+    async_config:
+      maximum_event_age: 21600  # 6시간
+      maximum_retry_attempts: 2
+      
+      # 실패 시 대상
+      on_failure:
+        destination: arn:aws:sqs:us-east-1:887078546492:nexus-websocket-dlq
+      
+      # 성공 시 대상 (선택)
+      on_success:
+        destination: arn:aws:sns:us-east-1:887078546492:nexus-websocket-success
+    
+    # 동시 실행 제한
+    reserved_concurrent_executions: 100  # WebSocket 연결 수 제한
+
+  # ========================================
+  # 5. WEBSOCKET CONNECT HANDLER
+  # ========================================
+  - name: nx-tt-dev-ver3-websocket-connect
+    description: "WebSocket 연결 처리"
+    runtime: python3.9
+    handler: handlers.websocket.connect.handler
+    
+    memory: 256
+    timeout: 10  # 연결은 빠르게
+    
+    environment:
+      WEBSOCKET_TABLE: nexus-websocket-connections
+      LOG_LEVEL: INFO
+
+  # ========================================
+  # 6. WEBSOCKET DISCONNECT HANDLER
+  # ========================================
+  - name: nx-tt-dev-ver3-websocket-disconnect
+    description: "WebSocket 연결 해제 처리"
+    runtime: python3.9
+    handler: handlers.websocket.disconnect.handler
+    
+    memory: 256
+    timeout: 10
+    
+    environment:
+      WEBSOCKET_TABLE: nexus-websocket-connections
+      LOG_LEVEL: INFO
+
+# ========================================
+# 공통 설정
+# ========================================
+defaults:
+  # 모든 함수에 적용되는 기본값
+  runtime: python3.9
+  architecture: x86_64
+  ephemeral_storage: 512  # MB (512-10240)
+  
+  # 로깅
+  logging_config:
+    log_group: /aws/lambda/nexus
+    log_format: JSON  # TEXT | JSON
+    retention_days: 30
+    
+  # 성능 최적화
+  environment_variables:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"  # Node.js용
+    PYTHONUNBUFFERED: "1"  # Python 로그 즉시 출력
+    TZ: "Asia/Seoul"  # 시간대
+  
+  # 보안
+  kms_key_arn: arn:aws:kms:us-east-1:887078546492:key/your-key-id
+  
+  # 태그 (비용 추적)
+  tags:
+    Project: nexus
+    ManagedBy: terraform  # or cloudformation
+    Owner: backend-team
+
+# ========================================
+# 오류 처리 전략
+# ========================================
+error_handling:
+  # 재시도 정책
+  retry_policy:
+    max_attempts: 3
+    interval: 1000  # ms
+    multiplier: 2  # 지수 백오프
+    max_interval: 10000  # ms
+  
+  # 서킷 브레이커
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 5  # 연속 실패 횟수
+    recovery_timeout: 60000  # ms
+    
+  # 에러 알림
+  alerting:
+    sns_topic: arn:aws:sns:us-east-1:887078546492:nexus-alerts
+    error_rate_threshold: 0.05  # 5%
+    duration_threshold: 300  # 초
+
+# ========================================
+# 성능 모니터링
+# ========================================
+monitoring:
+  # CloudWatch 메트릭
+  custom_metrics:
+    - name: RequestDuration
+      unit: Milliseconds
+      dimensions:
+        - Function
+        - Environment
+    
+    - name: ErrorRate
+      unit: Percent
+      dimensions:
+        - Function
+        - ErrorType
+    
+    - name: ConcurrentExecutions
+      unit: Count
+      dimensions:
+        - Function
+  
+  # X-Ray 추적
+  xray:
+    enabled: true
+    sampling_rate: 0.1  # 10%
+    
+  # 대시보드
+  dashboard:
+    enabled: true
+    name: nexus-lambda-dashboard
+    refresh_interval: 60  # 초
+
+# ========================================
+# 배포 전략
+# ========================================
+deployment:
+  # 별칭 (버전 관리)
+  aliases:
+    - name: prod
+      version: "$LATEST"
+      weight: 100  # 트래픽 비율
+    
+    - name: staging
+      version: "42"
+      weight: 0
+  
+  # 카나리 배포
+  canary:
+    enabled: false
+    type: Linear10PercentEvery5Minutes
+    alarm_enabled: true
+    
+  # 롤백 설정
+  rollback:
+    enabled: true
+    on_alarm: true
+    on_deployment_failure: true
+
+# ========================================
+# 비용 최적화
+# ========================================
+cost_optimization:
+  # Graviton2 (ARM) 사용 - 20% 비용 절감
+  use_arm: true
+  
+  # 예약 용량 (Savings Plans)
+  reserved_capacity:
+    enabled: false
+    hours_per_day: 8
+    
+  # 자동 스케일링
+  auto_scaling:
+    enabled: true
+    min_concurrent: 0
+    max_concurrent: 1000
+    target_utilization: 0.7
+  
+  # 콜드 스타트 최적화
+  warm_up:
+    enabled: true
+    schedule: "rate(5 minutes)"  # 5분마다 워밍

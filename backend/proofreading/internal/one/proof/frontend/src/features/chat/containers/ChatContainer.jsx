@@ -1,0 +1,65 @@
+import React from 'react';
+import ChatPresenter from '../presenters/ChatPresenter';
+import { useChat } from '../hooks/useChat';
+
+const ChatContainer = ({
+  initialMessage,
+  userRole,
+  selectedEngine = "Basic",
+  onLogout,
+  onBackToLanding,
+  onToggleSidebar,
+  isSidebarOpen = false,
+  onNewConversation,
+  onDashboard,
+}) => {
+  const {
+    messages,
+    input,
+    isLoading,
+    isLoadingConversation,
+    streamingMessage,
+    hasResponded,
+    usage,
+    currentConversationId,
+    selectedModel,
+    setInput,
+    sendMessage,
+    startNewConversation,
+    setSelectedModel,
+    messagesEndRef,
+  } = useChat(initialMessage, selectedEngine);
+
+  return (
+    <ChatPresenter
+      // Data
+      messages={messages}
+      input={input}
+      isLoading={isLoading}
+      isLoadingConversation={isLoadingConversation}
+      streamingMessage={streamingMessage}
+      hasResponded={hasResponded}
+      usage={usage}
+      currentConversationId={currentConversationId}
+      selectedEngine={selectedEngine}
+      selectedModel={selectedModel}
+      userRole={userRole}
+      isSidebarOpen={isSidebarOpen}
+
+      // Actions
+      onInputChange={setInput}
+      onSendMessage={sendMessage}
+      onNewConversation={startNewConversation}
+      onModelChange={setSelectedModel}
+      onLogout={onLogout}
+      onBackToLanding={onBackToLanding}
+      onToggleSidebar={onToggleSidebar}
+      onDashboard={onDashboard}
+
+      // Refs
+      messagesEndRef={messagesEndRef}
+    />
+  );
+};
+
+export default ChatContainer;

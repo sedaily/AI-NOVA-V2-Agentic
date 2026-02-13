@@ -1,0 +1,22 @@
+
+========================================
+✅ API Gateway 배포 완료!
+========================================
+생성 시간: 2025년 09월 26일 11시 08분 12초 KST
+스택: f2-two
+
+REST API:
+  - ID: 690d8chbhb
+  - Endpoint: https://690d8chbhb.execute-api.us-east-1.amazonaws.com/prod
+  - 총 13개 경로, 33개 메서드
+
+WebSocket API:
+  - ID: oxttb0ubhi
+  - Endpoint: wss://oxttb0ubhi.execute-api.us-east-1.amazonaws.com/prod
+  - 3개 라우트 (, , )
+
+다음 단계:
+  1. 설정 업데이트: ./04-update-config.sh
+  2. Lambda 코드 배포: ./05-deploy-lambda-code.sh
+  3. 프론트엔드 배포: ./06-deploy-frontend.sh
+========================================

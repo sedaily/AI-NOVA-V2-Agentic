@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>API 연동 테스트</h1>
+    <button onclick="testAPI()">API 테스트</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '로딩 중...';
+
+            try {
+                const response = await axios.get('https://t75vorhge1.execute-api.us-east-1.amazonaws.com/prod/admin/dashboard');
+                const data = response.data;
+
+                let html = '<h2>✅ API 연동 성공!</h2>';
+                html += `<p><strong>테넌트:</strong> ${data.tenants.length}개</p>`;
+                html += `<p><strong>사용자:</strong> ${data.users.length}명</p>`;
+
+                html += '<h3>테넌트 목록:</h3><ul>';
+                data.tenants.forEach(tenant => {
+                    html += `<li>${tenant.tenant_name} (${tenant.tenantId}) - ${tenant.plan}</li>`;
+                });
+                html += '</ul>';
+
+                html += '<h3>사용자 샘플 (처음 10명):</h3><ul>';
+                data.users.slice(0, 10).forEach(user => {
+                    html += `<li>${user.name} (${user.email}) - ${user.tenant_name} - 사용량: ${user.usage_percentage || 0}%</li>`;
+                });
+                html += '</ul>';
+
+                html += '<h3>전체 통계:</h3>';
+                html += `<pre>${JSON.stringify(data.summary, null, 2)}</pre>`;
+
+                resultDiv.innerHTML = html;
+                console.log('Full data:', data);
+
+            } catch (error) {
+                resultDiv.innerHTML = `<h2>❌ 오류 발생</h2><pre>${error.message}</pre>`;
+                console.error('Error:', error);
+            }
+        }
+
+        // 페이지 로드 시 자동 테스트
+        window.onload = testAPI;
+    </script>
+</body>
+</html>

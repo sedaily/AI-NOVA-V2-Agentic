@@ -1,0 +1,10 @@
+{
+    "bucketName": "nexus-multi-frontend-20251204",
+    "region": "ap-northeast-2",
+    "profile": "default",
+    "distributionId": "E1O9OA8UA34Z49",
+    "distributionDomain": "d1zig3y52jaq1s.cloudfront.net",
+    "cloudfrontUrl": "https://d1zig3y52jaq1s.cloudfront.net",
+    "oac_id": "EG2NY9NKQLT7J",
+    "createdAt": "2025-12-04T13:50:39Z"
+}

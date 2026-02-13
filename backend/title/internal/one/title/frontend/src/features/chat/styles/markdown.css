@@ -1,0 +1,194 @@
+/* 마크다운 스타일 커스터마이징 */
+.chatbot-markdown {
+  color: hsl(var(--text-100)); /* 테마에 따라 자동 변환 */
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 제목 스타일 */
+.chatbot-markdown h1 {
+  color: hsl(var(--text-100));
+  border-bottom: none !important;
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 24px !important;
+  line-height: 2.5rem !important;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem !important;
+}
+
+.chatbot-markdown h2 {
+  color: hsl(var(--text-100));
+  border-bottom: none !important;
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 21px !important;
+  line-height: 2.2rem !important;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8rem !important;
+}
+
+.chatbot-markdown h3 {
+  color: hsl(var(--text-100));
+  border-bottom: none !important;
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 19px !important;
+  line-height: 2rem !important;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem !important;
+}
+
+.chatbot-markdown h4,
+.chatbot-markdown h5,
+.chatbot-markdown h6 {
+  color: hsl(var(--text-100));
+  border-bottom: none !important;
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 18px !important;
+  line-height: 2rem !important;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem !important;
+}
+
+/* h1, h2 밑줄 제거 */
+.chatbot-markdown h1 {
+  border-bottom: none;
+  padding-bottom: 0.3em;
+}
+
+.chatbot-markdown h2 {
+  border-bottom: none;
+  padding-bottom: 0.3em;
+}
+
+/* 링크 */
+.chatbot-markdown a {
+  color: hsl(var(--accent-main-100));
+  text-decoration: none; /* 링크 밑줄도 제거 */
+}
+
+.chatbot-markdown a:hover {
+  text-decoration: underline; /* 호버시에만 밑줄 */
+  text-decoration-color: hsl(var(--accent-main-100) / 0.3);
+}
+
+/* 인용구 */
+.chatbot-markdown blockquote {
+  border-left-color: hsl(var(--text-100) / 0.2);
+  background-color: hsl(var(--bg-200) / 0.5);
+}
+
+/* 코드 블록 */
+.chatbot-markdown code {
+  background-color: hsl(var(--bg-300) / 0.5);
+  border: 1px solid hsl(var(--text-100) / 0.08);
+}
+
+.chatbot-markdown pre {
+  background-color: hsl(var(--bg-300) / 0.3);
+  border: 1px solid hsl(var(--text-100) / 0.1);
+}
+
+/* 테이블 */
+.chatbot-markdown table {
+  border-color: hsl(var(--text-100) / 0.15);
+}
+
+.chatbot-markdown th {
+  background-color: hsl(var(--bg-200) / 0.5);
+  border-color: hsl(var(--text-100) / 0.12);
+}
+
+.chatbot-markdown td {
+  border-color: hsl(var(--text-100) / 0.1);
+}
+
+.chatbot-markdown tr {
+  border-bottom-color: hsl(var(--text-100) / 0.1);
+}
+
+.chatbot-markdown tbody tr:hover {
+  background-color: hsl(var(--bg-200) / 0.3);
+}
+
+/* 수평선 */
+.chatbot-markdown hr {
+  border: none; /* 수평선도 제거 */
+  height: 1px;
+  background-color: hsl(var(--text-100) / 0.08);
+  margin: 2em 0;
+}
+
+/* 리스트 마커 */
+.chatbot-markdown ul li::marker,
+.chatbot-markdown ol li::marker {
+  color: hsl(var(--text-100) / 0.5);
+}
+
+/* 강조 텍스트 */
+.chatbot-markdown strong {
+  color: hsl(var(--text-100));
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+  font-weight: 600;
+}
+
+.chatbot-markdown em {
+  color: hsl(var(--text-100));
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+  opacity: 0.95;
+}
+
+/* 일반 텍스트 및 단락 */
+.chatbot-markdown p {
+  color: hsl(var(--text-100));
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+  margin-bottom: 1em;
+}
+
+.chatbot-markdown li {
+  color: hsl(var(--text-100));
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+}
+
+.chatbot-markdown ul,
+.chatbot-markdown ol {
+  color: hsl(var(--text-100));
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+}
+
+.chatbot-markdown a {
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+}
+
+.chatbot-markdown blockquote {
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+}
+
+.chatbot-markdown th,
+.chatbot-markdown td {
+  font-family: "Tiempos Text", "Source Serif 4", "Noto Serif KR", serif !important;
+  font-size: 17px !important;
+  line-height: 2rem !important;
+  color: hsl(var(--text-100)) !important;
+}

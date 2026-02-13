@@ -1173,9 +1173,12 @@ const ChatPage = ({
     // WebSocket 연결 및 초기 메시지 처리
     const initWebSocket = async () => {
       try {
+        // 현재 버디 타입 가져오기
+        const currentBuddyType = localStorage.getItem('currentBuddyType');
+
         if (!isWebSocketConnected()) {
-          console.log("WebSocket 연결 시도...");
-          await connectWebSocket();
+          console.log("WebSocket 연결 시도... 버디:", currentBuddyType || "기본");
+          await connectWebSocket(currentBuddyType);
           setIsConnected(true);
           console.log("WebSocket 연결 성공!");
 
@@ -1345,9 +1348,13 @@ const ChatPage = ({
                   console.log('🎯 버디 서비스 전송:', { currentBuddyType, buddyService });
                   
                   // 서버에는 파일 내용이 포함된 전체 메시지 전송
+                  // buddyService의 engineType을 우선 사용 (제목생성 등 특수 서비스용)
+                  const actualEngineType = buddyService?.engineType || selectedEngine;
+                  console.log('🔧 실제 engineType:', actualEngineType, '(buddyService:', buddyService?.engineType, ', selectedEngine:', selectedEngine, ')');
+
                   await sendChatMessage(
                     fullMessageForServer,
-                    selectedEngine,
+                    actualEngineType,
                     [],
                     currentConversationId,
                     userMessage?.idempotencyKey || crypto.randomUUID(),
@@ -1602,9 +1609,13 @@ const ChatPage = ({
         
         console.log('🎯 버디 서비스 전송:', { currentBuddyType, buddyService });
 
+        // buddyService의 engineType을 우선 사용 (제목생성 등 특수 서비스용)
+        const actualEngineType = buddyService?.engineType || selectedEngine;
+        console.log('🔧 실제 engineType:', actualEngineType, '(buddyService:', buddyService?.engineType, ', selectedEngine:', selectedEngine, ')');
+
         await sendChatMessage(
           fullMessageForServer, // 파일 내용이 포함된 메시지를 서버로 전송
-          selectedEngine,
+          actualEngineType,
           [], // 대화 히스토리 제거 - 마지막 메시지만 처리
           currentConversationId,
           userMessage.idempotencyKey,
@@ -1617,18 +1628,22 @@ const ChatPage = ({
         // 스크롤은 메시지가 추가될 때 자동으로 처리
       } else {
         // WebSocket 연결이 안된 경우 재연결 시도
-        console.warn("WebSocket이 연결되지 않았습니다. 재연결 시도 중...");
-        await connectWebSocket();
-        setIsConnected(true);
-
         // 버디 서비스 설정 가져오기
         const currentBuddyType = localStorage.getItem('currentBuddyType');
         const buddyService = currentBuddyType ? getBuddyConfig(currentBuddyType) : null;
-        
+
+        console.warn("WebSocket이 연결되지 않았습니다. 재연결 시도 중... 버디:", currentBuddyType || "기본");
+        await connectWebSocket(currentBuddyType);
+        setIsConnected(true);
+
+        // buddyService의 engineType을 우선 사용 (제목생성 등 특수 서비스용)
+        const actualEngineType = buddyService?.engineType || selectedEngine;
+        console.log('🔧 재연결 후 실제 engineType:', actualEngineType);
+
         // 재연결 후 메시지 전송 (대화 히스토리 제거)
         await sendChatMessage(
           userMessage.content,
-          selectedEngine,
+          actualEngineType,
           [], // 대화 히스토리 제거 - 마지막 메시지만 처리
           currentConversationId,
           userMessage.idempotencyKey,

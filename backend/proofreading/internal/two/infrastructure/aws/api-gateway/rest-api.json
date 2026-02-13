@@ -1,0 +1,36 @@
+{
+  "name": "nexus-rest-api",
+  "description": "Nexus Title Generation REST API",
+  "endpoints": [
+    {
+      "path": "/conversations",
+      "methods": ["GET", "POST", "OPTIONS"],
+      "integration": "nx-tt-dev-ver3-conversation-api"
+    },
+    {
+      "path": "/conversations/{id}",
+      "methods": ["GET", "PUT", "DELETE", "OPTIONS"],
+      "integration": "nx-tt-dev-ver3-conversation-api"
+    },
+    {
+      "path": "/prompts",
+      "methods": ["GET", "POST", "OPTIONS"],
+      "integration": "nx-tt-dev-ver3-prompt-crud"
+    },
+    {
+      "path": "/prompts/{id}",
+      "methods": ["GET", "PUT", "DELETE", "OPTIONS"],
+      "integration": "nx-tt-dev-ver3-prompt-crud"
+    },
+    {
+      "path": "/usage",
+      "methods": ["GET", "OPTIONS"],
+      "integration": "nx-tt-dev-ver3-usage-handler"
+    }
+  ],
+  "cors": {
+    "allowOrigins": ["*"],
+    "allowHeaders": ["Content-Type", "Authorization"],
+    "allowMethods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+  }
+}

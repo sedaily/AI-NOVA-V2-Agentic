@@ -1,0 +1,8 @@
+{
+  "httpMethod": "GET",
+  "queryStringParameters": {
+    "userId": "test-user-direct"
+  },
+  "pathParameters": null,
+  "body": null
+}

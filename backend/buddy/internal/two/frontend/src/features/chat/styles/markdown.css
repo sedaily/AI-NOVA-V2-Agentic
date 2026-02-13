@@ -1,0 +1,120 @@
+/* 마크다운 스타일 커스터마이징 */
+.chatbot-markdown {
+  color: #FAF9F5; /* 밝은 크림색 텍스트 */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 제목 스타일 */
+.chatbot-markdown h1,
+.chatbot-markdown h2,
+.chatbot-markdown h3,
+.chatbot-markdown h4,
+.chatbot-markdown h5,
+.chatbot-markdown h6 {
+  color: #FAF9F5;
+  border-bottom: none !important; /* 밑줄 완전 제거 */
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* h1, h2 밑줄 제거 */
+.chatbot-markdown h1 {
+  border-bottom: none;
+  padding-bottom: 0.3em;
+}
+
+.chatbot-markdown h2 {
+  border-bottom: none;
+  padding-bottom: 0.3em;
+}
+
+/* 링크 */
+.chatbot-markdown a {
+  color: hsl(var(--accent-main-100));
+  text-decoration: none; /* 링크 밑줄도 제거 */
+}
+
+.chatbot-markdown a:hover {
+  text-decoration: underline; /* 호버시에만 밑줄 */
+  text-decoration-color: hsl(var(--accent-main-100) / 0.3);
+}
+
+/* 인용구 */
+.chatbot-markdown blockquote {
+  border-left-color: hsl(var(--text-100) / 0.2);
+  background-color: hsl(var(--bg-200) / 0.5);
+}
+
+/* 코드 블록 */
+.chatbot-markdown code {
+  background-color: hsl(var(--bg-300) / 0.5);
+  border: 1px solid hsl(var(--text-100) / 0.08);
+}
+
+.chatbot-markdown pre {
+  background-color: hsl(var(--bg-300) / 0.3);
+  border: 1px solid hsl(var(--text-100) / 0.1);
+}
+
+/* 테이블 */
+.chatbot-markdown table {
+  border-color: hsl(var(--text-100) / 0.15);
+}
+
+.chatbot-markdown th {
+  background-color: hsl(var(--bg-200) / 0.5);
+  border-color: hsl(var(--text-100) / 0.12);
+}
+
+.chatbot-markdown td {
+  border-color: hsl(var(--text-100) / 0.1);
+}
+
+.chatbot-markdown tr {
+  border-bottom-color: hsl(var(--text-100) / 0.1);
+}
+
+.chatbot-markdown tbody tr:hover {
+  background-color: hsl(var(--bg-200) / 0.3);
+}
+
+/* 수평선 */
+.chatbot-markdown hr {
+  border: none; /* 수평선도 제거 */
+  height: 1px;
+  background-color: hsl(var(--text-100) / 0.08);
+  margin: 2em 0;
+}
+
+/* 리스트 마커 */
+.chatbot-markdown ul li::marker,
+.chatbot-markdown ol li::marker {
+  color: hsl(var(--text-100) / 0.5);
+}
+
+/* 강조 텍스트 */
+.chatbot-markdown strong {
+  color: #FAF9F5;
+  font-weight: 600;
+}
+
+.chatbot-markdown em {
+  color: #FAF9F5;
+  opacity: 0.95;
+}
+
+/* 일반 텍스트 및 단락 */
+.chatbot-markdown p {
+  color: #FAF9F5;
+  margin-bottom: 1em;
+}
+
+.chatbot-markdown li {
+  color: #FAF9F5;
+}

@@ -1,0 +1,6 @@
+STACK_NAME=f1-two
+S3_BUCKET=f1-two-frontend
+CLOUDFRONT_ID=E196O1FYMHCBWL
+CLOUDFRONT_URL=https://d35j0v9a2xhzgj.cloudfront.net
+REGION=us-east-1
+DEPLOYED_AT=2025년 9월 29일 월요일 09시 55분 38초 KST

@@ -1,0 +1,47 @@
+{
+    "service": "w1",
+    "region": "us-east-1",
+    "accountId": "887078546492",
+    "timestamp": "2025-09-24T06:03:46Z",
+    "endpoints": {
+        "rest_api": {
+            "id": "16ayefk5lc",
+            "url": "https://16ayefk5lc.execute-api.us-east-1.amazonaws.com/prod",
+            "stage": "prod"
+        },
+        "websocket_api": {
+            "id": "prsebeg7ub",
+            "url": "wss://prsebeg7ub.execute-api.us-east-1.amazonaws.com/prod",
+            "stage": "prod"
+        },
+        "cloudfront": {
+            "distributionId": "E1FTI3D31B6SXW
+E3UHP3CMDCZCUR
+E10S6CKR5TLUBG",
+            "domain": "d1jr0dnwnnrlr1.cloudfront.net
+dwme7h338xphl.cloudfront.net
+d9am5o27m55dc.cloudfront.net",
+            "url": "https://d1jr0dnwnnrlr1.cloudfront.net
+dwme7h338xphl.cloudfront.net
+d9am5o27m55dc.cloudfront.net"
+        },
+        "s3": {
+            "bucket": "w1-frontend",
+            "region": "us-east-1"
+        }
+    },
+    "lambda_functions": {
+        "connect": "w1-websocket-connect",
+        "disconnect": "w1-websocket-disconnect",
+        "message": "w1-websocket-message",
+        "conversation": "w1-conversation-api",
+        "prompt": "w1-prompt-crud",
+        "usage": "w1-usage-handler"
+    },
+    "dynamodb_tables": {
+        "conversations": "w1-conversations-v2",
+        "prompts": "w1-prompts-v2",
+        "usage": "w1-usage",
+        "connections": "w1-websocket-connections"
+    }
+}

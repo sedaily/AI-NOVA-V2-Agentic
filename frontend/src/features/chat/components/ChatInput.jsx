@@ -14,6 +14,7 @@ import {
   connectWebSocket,
   sendChatMessage,
   isWebSocketConnected,
+  reconnectForBuddy,
 } from '../services/websocketService';
 import { getBuddyConfig } from '../../../config/buddyServiceConfig';
 
@@ -78,9 +79,12 @@ const ChatInput = forwardRef(
     useEffect(() => {
       const initWebSocket = async () => {
         try {
+          // 현재 버디 타입 가져오기
+          const currentBuddyType = localStorage.getItem('currentBuddyType');
+
           if (!isWebSocketConnected()) {
-            console.log("WebSocket 연결 시도...");
-            await connectWebSocket();
+            console.log("WebSocket 연결 시도... 버디:", currentBuddyType || "기본");
+            await connectWebSocket(currentBuddyType);
             setIsConnected(true);
             console.log("WebSocket 연결 성공!");
           } else {
@@ -314,8 +318,10 @@ const ChatInput = forwardRef(
               }
             }
             
-            console.log(`${engineType} 엔진으로 메시지 전송:`, fullMessage);
-            await sendChatMessage(fullMessage, engineType, [], null, null, selectedModel, webSearchEnabled, currentBuddyService);
+            // currentBuddyService에서 engineType을 가져오거나 기본값 사용
+            const actualEngineType = currentBuddyService?.engineType || engineType;
+            console.log(`${actualEngineType} 엔진으로 메시지 전송:`, fullMessage, '| 버디:', currentBuddyService);
+            await sendChatMessage(fullMessage, actualEngineType, [], null, null, selectedModel, webSearchEnabled, currentBuddyService);
 
             // WebSocket 응답은 별도의 리스너에서 처리
             // onTitlesGenerated는 WebSocket 메시지 핸들러에서 호출됨
@@ -332,10 +338,11 @@ const ChatInput = forwardRef(
             setIsLoading(false);
           }
         } else if (!onStartChat && !isConnected) {
-          console.warn("WebSocket이 연결되지 않았습니다. 재연결 시도 중...");
           // 재연결 시도
+          const currentBuddyType = localStorage.getItem('currentBuddyType');
+          console.warn("WebSocket이 연결되지 않았습니다. 재연결 시도 중... 버디:", currentBuddyType || "기본");
           try {
-            await connectWebSocket();
+            await connectWebSocket(currentBuddyType);
             setIsConnected(true);
             // 재연결 후 다시 시도
             handleSubmit(e);
@@ -777,12 +784,20 @@ const ChatInput = forwardRef(
               return (
               <button
                 key={label}
-                onClick={() => {
+                onClick={async () => {
                   setSelectedBuddyInfo(selectedBuddyInfo?.label === label ? null : { label, info });
                   if (buddyConfig) {
                     setCurrentBuddyService(buddyConfig);
                     localStorage.setItem('currentBuddyType', label);
                     console.log('🎯 버디 선택:', label, buddyConfig);
+                    // 서비스가 변경되면 WebSocket 재연결
+                    try {
+                      await reconnectForBuddy(label);
+                      setIsConnected(true);
+                    } catch (error) {
+                      console.error('WebSocket 재연결 실패:', error);
+                      setIsConnected(false);
+                    }
                   }
                 }}
                 className="px-2.5 py-1 text-sm font-medium transition-all duration-200 whitespace-nowrap"
@@ -878,12 +893,20 @@ const ChatInput = forwardRef(
               return (
               <button
                 key={label}
-                onClick={() => {
+                onClick={async () => {
                   setSelectedBuddyInfo(selectedBuddyInfo?.label === label ? null : { label, info });
                   if (buddyConfig) {
                     setCurrentBuddyService(buddyConfig);
                     localStorage.setItem('currentBuddyType', label);
                     console.log('🎯 버디 선택:', label, buddyConfig);
+                    // 서비스가 변경되면 WebSocket 재연결
+                    try {
+                      await reconnectForBuddy(label);
+                      setIsConnected(true);
+                    } catch (error) {
+                      console.error('WebSocket 재연결 실패:', error);
+                      setIsConnected(false);
+                    }
                   }
                 }}
                 className="px-2.5 py-1 text-sm font-medium transition-all duration-200 whitespace-nowrap"

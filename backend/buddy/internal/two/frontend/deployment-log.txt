@@ -1,0 +1,16 @@
+========================================
+Frontend 재배포 완료
+========================================
+배포 시간: 2025년 10월 10일 09시 14분 42초 KST
+서비스: f2-two
+
+S3 버킷: f2-two-frontend
+CloudFront ID: E1LFL5A9YH99EY
+CloudFront URL: https://d2jd7isapnx6e.cloudfront.net
+
+API 엔드포인트:
+- REST API: https://.execute-api.us-east-1.amazonaws.com/prod
+- WebSocket: wss://.execute-api.us-east-1.amazonaws.com/prod
+
+캐시 무효화 ID: I4JDZK1BQOKC9DD45TB9KH9PBN
+========================================
