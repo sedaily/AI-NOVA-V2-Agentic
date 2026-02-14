@@ -1,0 +1,4 @@
+CLOUDFRONT_DISTRIBUTION_ID=EH9OF7IFDTPLW
+CUSTOM_DOMAIN=r1.sedaily.ai
+S3_BUCKET=sedaily-column-frontend
+CLOUDFRONT_DOMAIN=d3ck0lkvawjvhg.cloudfront.net

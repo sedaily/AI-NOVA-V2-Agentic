@@ -1,0 +1,87 @@
+{
+  "policies": [
+    {
+      "name": "LambdaDynamoDBPolicy",
+      "description": "Allow Lambda functions to access DynamoDB tables",
+      "statements": [
+        {
+          "effect": "Allow",
+          "actions": [
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:UpdateItem",
+            "dynamodb:DeleteItem"
+          ],
+          "resources": [
+            "arn:aws:dynamodb:us-east-1:*:table/nexus-*",
+            "arn:aws:dynamodb:us-east-1:*:table/nexus-*/index/*"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LambdaBedrockPolicy",
+      "description": "Allow Lambda functions to invoke Bedrock models",
+      "statements": [
+        {
+          "effect": "Allow",
+          "actions": [
+            "bedrock:InvokeModel",
+            "bedrock:InvokeModelWithResponseStream"
+          ],
+          "resources": [
+            "arn:aws:bedrock:us-east-1::foundation-model/*"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LambdaS3Policy",
+      "description": "Allow Lambda functions to access S3 buckets",
+      "statements": [
+        {
+          "effect": "Allow",
+          "actions": [
+            "s3:GetObject",
+            "s3:PutObject",
+            "s3:DeleteObject"
+          ],
+          "resources": [
+            "arn:aws:s3:::nexus-*/*"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LambdaCloudWatchLogsPolicy",
+      "description": "Allow Lambda functions to write logs",
+      "statements": [
+        {
+          "effect": "Allow",
+          "actions": [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ],
+          "resources": [
+            "arn:aws:logs:us-east-1:*:*"
+          ]
+        }
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "name": "NexusLambdaExecutionRole",
+      "trustedEntity": "lambda.amazonaws.com",
+      "attachedPolicies": [
+        "LambdaDynamoDBPolicy",
+        "LambdaBedrockPolicy",
+        "LambdaS3Policy",
+        "LambdaCloudWatchLogsPolicy"
+      ]
+    }
+  ]
+}

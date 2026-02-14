@@ -1,0 +1,7 @@
+CloudFront Distribution Information
+====================================
+Distribution ID: E2Y96Q11K5DVPS
+Domain Name: https://d1y2rjuowlwn37.cloudfront.net
+S3 Bucket: sedaily-column-frontend-1764856283
+Created at: 2025년 12월  4일 목요일 22시 56분 09초 KST
+Status: InProgress

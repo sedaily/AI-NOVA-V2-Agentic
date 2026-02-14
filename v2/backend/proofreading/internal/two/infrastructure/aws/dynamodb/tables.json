@@ -1,0 +1,42 @@
+{
+  "tables": [
+    {
+      "name": "nexus-conversations",
+      "partitionKey": "conversationId",
+      "indexes": [
+        {
+          "name": "userId-index",
+          "partitionKey": "userId",
+          "sortKey": "updatedAt"
+        }
+      ]
+    },
+    {
+      "name": "nexus-prompts",
+      "partitionKey": "promptId",
+      "indexes": [
+        {
+          "name": "userId-index",
+          "partitionKey": "userId",
+          "sortKey": "updatedAt"
+        }
+      ]
+    },
+    {
+      "name": "nexus-usage",
+      "partitionKey": "userId",
+      "sortKey": "usageDate#engineType",
+      "indexes": [
+        {
+          "name": "date-index",
+          "partitionKey": "usageDate",
+          "sortKey": "userId"
+        }
+      ]
+    },
+    {
+      "name": "nexus-websocket-connections",
+      "partitionKey": "connectionId"
+    }
+  ]
+}

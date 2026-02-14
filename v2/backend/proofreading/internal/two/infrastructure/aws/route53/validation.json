@@ -1,0 +1,18 @@
+{
+    "Comment": "CNAME record for ACM certificate validation",
+    "Changes": [
+        {
+            "Action": "CREATE",
+            "ResourceRecordSet": {
+                "Name": "_1234567890abcdef.app.nexus-title.com",
+                "Type": "CNAME",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "_validation.acm.amazonaws.com"
+                    }
+                ]
+            }
+        }
+    ]
+}

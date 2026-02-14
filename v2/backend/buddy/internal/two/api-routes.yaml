@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: W1 Service API
+  version: 1.0.0
+  description: Nexus Title Generation Service API
+
+servers:
+  - url: https://16ayefk5lc.execute-api.us-east-1.amazonaws.com/prod
+    description: Production server
+
+paths:
+  /admin/dashboard:
+    get:
+      summary: Get admin dashboard data
+      tags:
+        - Admin
+      responses:
+        "200":
+          description: Dashboard data retrieved successfully
+    put:
+      summary: Update dashboard configuration
+      tags:
+        - Admin
+      responses:
+        "200":
+          description: Dashboard updated successfully
+    options:
+      summary: CORS preflight
+      responses:
+        "200":
+          description: CORS headers returned
+
+  /tenants:
+    get:
+      summary: List all tenants
+      tags:
+        - Tenants
+      responses:
+        "200":
+          description: List of tenants returned
+    put:
+      summary: Update tenant information
+      tags:
+        - Tenants
+      responses:
+        "200":
+          description: Tenant updated successfully
+    options:
+      summary: CORS preflight
+      responses:
+        "200":
+          description: CORS headers returned
+
+  /users:
+    get:
+      summary: List all users
+      tags:
+        - Users
+      responses:
+        "200":
+          description: List of users returned
+    put:
+      summary: Update user information
+      tags:
+        - Users
+      responses:
+        "200":
+          description: User updated successfully
+    options:
+      summary: CORS preflight
+      responses:
+        "200":
+          description: CORS headers returned
+
+  /conversations:
+    get:
+      summary: List all conversations
+      tags:
+        - Conversations
+      responses:
+        "200":
+          description: List of conversations returned
+    post:
+      summary: Create new conversation
+      tags:
+        - Conversations
+      responses:
+        "201":
+          description: Conversation created successfully
+
+  /conversations/{conversationId}:
+    get:
+      summary: Get conversation by ID
+      tags:
+        - Conversations
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique conversation identifier
+      responses:
+        "200":
+          description: Conversation details returned
+        "404":
+          description: Conversation not found
+    delete:
+      summary: Delete conversation
+      tags:
+        - Conversations
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Conversation deleted successfully
+        "404":
+          description: Conversation not found
+    options:
+      summary: CORS preflight
+      responses:
+        "200":
+          description: CORS headers returned
+
+  /prompts:
+    get:
+      summary: List all prompts
+      tags:
+        - Prompts
+      responses:
+        "200":
+          description: List of prompts returned
+    post:
+      summary: Create new prompt
+      tags:
+        - Prompts
+      responses:
+        "201":
+          description: Prompt created successfully
+
+  /usage:
+    get:
+      summary: Get usage statistics
+      tags:
+        - Usage
+      responses:
+        "200":
+          description: Usage statistics returned
+    post:
+      summary: Track usage event
+      tags:
+        - Usage
+      responses:
+        "201":
+          description: Usage event recorded
+
+tags:
+  - name: Admin
+    description: Administrative endpoints
+  - name: Tenants
+    description: Tenant management
+  - name: Users
+    description: User management
+  - name: Conversations
+    description: Conversation operations
+  - name: Prompts
+    description: Prompt templates
+  - name: Usage
+    description: Usage tracking and analytics
+
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string

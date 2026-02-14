@@ -1,0 +1,6 @@
+STACK_NAME=p2-two
+S3_BUCKET=p2-two-frontend
+CLOUDFRONT_ID=E2WPOE6AL2G5DZ
+CLOUDFRONT_URL=https://dxiownvrignup.cloudfront.net
+REGION=us-east-1
+DEPLOYED_AT=2025년 9월 26일 금요일 13시 20분 38초 KST

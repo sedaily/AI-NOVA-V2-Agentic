@@ -1,0 +1,75 @@
+{
+  "agentName": "language-detection-agent",
+  "agentResourceRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/AmazonBedrockExecutionRoleForAgents",
+  "foundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+  "instruction": "당신은 텍스트의 언어를 감지하는 전문가입니다. 한국어, 영어, 일본어를 구분하고, 외신 번역이 필요한지 판단하세요. 외신 번역이 필요하면 적절한 서비스 설정을 제공하세요.",
+  "idleSessionTTLInSeconds": 600,
+  "actionGroups": [
+    {
+      "actionGroupName": "language-detection",
+      "description": "텍스트의 언어를 감지하고 외신 번역 필요 여부를 판단합니다",
+      "actionGroupExecutor": {
+        "lambda": "arn:aws:lambda:us-east-1:YOUR_ACCOUNT_ID:function:language-detector"
+      },
+      "apiSchema": {
+        "payload": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Language Detection API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/detect": {
+              "post": {
+                "summary": "언어 감지",
+                "description": "입력 텍스트의 언어를 감지합니다",
+                "operationId": "detectLanguage",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string",
+                            "description": "분석할 텍스트"
+                          }
+                        },
+                        "required": ["text"]
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "언어 감지 결과",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "language": {
+                              "type": "string",
+                              "enum": ["ko", "en", "ja", "unknown"]
+                            },
+                            "needsForeignAgent": {
+                              "type": "boolean"
+                            },
+                            "foreignConfig": {
+                              "type": "object"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

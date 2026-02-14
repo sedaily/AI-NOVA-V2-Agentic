@@ -1,0 +1,43 @@
+# Environment files
+.env.deploy
+.env.local
+.env*.local
+
+# Dependencies
+node_modules/
+package/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Lambda deployment
+lambda-deployment.zip
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+venv/
+.venv/
+
+# Test
+coverage/
+.coverage

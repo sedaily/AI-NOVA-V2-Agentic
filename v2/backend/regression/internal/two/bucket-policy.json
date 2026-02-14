@@ -1,0 +1,19 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::sedaily-column-frontend-1764856283/*",
+      "Condition": {
+        "StringLike": {
+          "AWS:SourceArn": "arn:aws:cloudfront::*:distribution/*"
+        }
+      }
+    }
+  ]
+}

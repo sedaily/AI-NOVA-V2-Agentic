@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멀티테넌트 실시간 관리 대시보드</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // API 엔드포인트 (실제 API Gateway URL)
+        const API_BASE = 'https://t75vorhge1.execute-api.us-east-1.amazonaws.com/prod';
+
+        // 플랜별 토큰 한도
+        const PLAN_LIMITS = {
+            'enterprise': 500000,
+            'pro': 200000,
+            'basic': 100000,
+            'free': 10000
+        };
+
+        function RealtimeDashboard() {
+            const [loading, setLoading] = useState(true);
+            const [tenants, setTenants] = useState([]);
+            const [users, setUsers] = useState([]);
+            const [usageStats, setUsageStats] = useState({});
+            const [selectedView, setSelectedView] = useState('overview');
+            const [selectedTenant, setSelectedTenant] = useState('all');
+            const [showBlockModal, setShowBlockModal] = useState(false);
+            const [blockUser, setBlockUser] = useState(null);
+            const [refreshing, setRefreshing] = useState(false);
+            const [lastUpdate, setLastUpdate] = useState(new Date());
+
+            // 데이터 로드 (실제 API 호출)
+            const loadData = async () => {
+                setRefreshing(true);
+                try {
+                    // 실제 API 호출
+                    const response = await axios.get(`${API_BASE}/admin/dashboard`);
+                    const data = response.data;
+                    setTenants(data.tenants || []);
+                    setUsers(data.users || []);
+                    setUsageStats(data.usage_stats || {});
+
+                    /* 백업용 시뮬레이션 데이터
+                    const mockData = {
+                        tenants: [
+                            {
+                                tenantId: 'sedaily',
+                                tenant_name: '서울경제신문',
+                                domain: 'sedaily.ai',
+                                plan: 'enterprise',
+                                billing_type: 'fixed',
+                                status: 'active',
+                                settings: {
+                                    max_users: 100,
+                                    features: ['c1', 'c2', 'c7'],
+                                    monthly_token_limit: 10000000,
+                                    monthly_price: 5000000
+                                }
+                            },
+                            {
+                                tenantId: 'digital-news',
+                                tenant_name: '전자신문',
+                                domain: 'digital-news.co.kr',
+                                plan: 'pro',
+                                billing_type: 'fixed',
+                                status: 'active',
+                                settings: {
+                                    max_users: 50,
+                                    features: ['c1', 'c7'],
+                                    monthly_token_limit: 5000000,
+                                    monthly_price: 2000000
+                                }
+                            },
+                            {
+                                tenantId: 'newsis',
+                                tenant_name: '뉴시스',
+                                domain: 'newsis.com',
+                                plan: 'enterprise',
+                                billing_type: 'pay_as_you_go',
+                                status: 'active',
+                                settings: {
+                                    max_users: 100,
+                                    features: ['c1', 'c2', 'c7'],
+                                    price_per_1k_tokens: 500,
+                                    spending_limit: 3000000,
+                                    current_spending: 1250000
+                                }
+                            },
+                            {
+                                tenantId: 'chosun',
+                                tenant_name: '조선일보',
+                                domain: 'chosun.ai',
+                                plan: 'pro',
+                                billing_type: 'fixed',
+                                status: 'active',
+                                settings: {
+                                    max_users: 50,
+                                    features: ['c1', 'c7'],
+                                    monthly_token_limit: 5000000,
+                                    monthly_price: 2000000
+                                }
+                            },
+                            {
+                                tenantId: 'demo',
+                                tenant_name: '데모신문사',
+                                domain: 'demo.ai',
+                                plan: 'free',
+                                billing_type: 'fixed',
+                                status: 'trial',
+                                settings: {
+                                    max_users: 5,
+                                    features: ['c1'],
+                                    monthly_token_limit: 100000
+                                }
+                            }
+                        ],
+                        users: [],  // API에서 실제 데이터 받아옴
+                        usage_stats: {
+                            total_users: 75,
+                            total_tokens: 12500000,
+                            high_usage_users: [
+                                {email: 'user25@digital-news.com', name: '김민수 (선임기자)', tenant: '전자신문', usage_percentage: 92, tokens_used: 184000},
+                                {email: 'user18@newsis.com', name: '박지훈 (부장)', tenant: '뉴시스', usage_percentage: 88, tokens_used: 440000},
+                                {email: 'intern@sedaily.com', name: '정인턴', tenant: '서울경제신문', usage_percentage: 95, tokens_used: 9500}
+                            ],
+                            by_plan: {
+                                'enterprise': {users: 35, tokens: 8000000},
+                                'pro': {users: 25, tokens: 3500000},
+                                'basic': {users: 10, tokens: 800000},
+                                'free': {users: 5, tokens: 200000}
+                            }
+                        }
+                    };
+
+                    // 백업 데이터 사용 시
+                    // setTenants(mockData.tenants);
+                    // setUsers(mockData.users);
+                    // setUsageStats(mockData.usage_stats);
+                    */
+
+                    setLastUpdate(new Date());
+
+                } catch (error) {
+                    console.error('데이터 로드 실패:', error);
+                    alert('데이터를 불러오는데 실패했습니다.');
+                } finally {
+                    setLoading(false);
+                    setRefreshing(false);
+                }
+            };
+
+            // 모의 사용자 데이터 생성 (백업용 - 사용 안 함)
+            /*
+            function generateMockUsers() {
+                const users = [];
+                const tenantsList = ['sedaily', 'digital-news', 'newsis', 'chosun', 'demo'];
+                const tenantNames = {
+                    'sedaily': '서울경제신문',
+                    'digital-news': '전자신문',
+                    'newsis': '뉴시스',
+                    'chosun': '조선일보',
+                    'demo': '데모신문사'
+                };
+
+                tenantsList.forEach(tenantId => {
+                    // 각 테넌트별로 사용자 생성
+                    for (let i = 1; i <= 15; i++) {
+                        const isAdmin = i <= 2;
+                        const role = isAdmin ? 'admin' : 'user';
+                        const email = isAdmin ? `admin${i}@${tenantId.replace('-', '')}.com` : `user${i}@${tenantId.replace('-', '')}.com`;
+
+                        const plans = ['enterprise', 'pro', 'basic', 'free'];
+                        const plan = isAdmin ? 'enterprise' : plans[Math.floor(Math.random() * plans.length)];
+
+                        const usage = Math.floor(Math.random() * 100);
+                        const status = usage >= 95 ? 'blocked' : usage >= 80 ? 'warning' : 'active';
+
+                        users.push({
+                            userId: `user-${tenantId}-${i}`,
+                            email: email,
+                            name: `사용자${i}`,
+                            tenant_id: tenantId,
+                            tenant_name: tenantNames[tenantId],
+                            role: role,
+                            plan: plan,
+                            status: status,
+                            usage_percentage: usage,
+                            tokens_used: Math.floor((PLAN_LIMITS[plan] * usage) / 100),
+                            tokens_limit: PLAN_LIMITS[plan]
+                        });
+                    }
+                });
+
+                return users;
+            }
+            */
+
+            useEffect(() => {
+                loadData();
+                // 30초마다 자동 새로고침
+                const interval = setInterval(loadData, 30000);
+                return () => clearInterval(interval);
+            }, []);
+
+            // 사용자 차단 처리
+            const handleBlockUser = (user) => {
+                setBlockUser(user);
+                setShowBlockModal(true);
+            };
+
+            const confirmBlock = () => {
+                const updatedUsers = users.map(u =>
+                    u.userId === blockUser.userId
+                        ? {...u, status: 'blocked', usage_percentage: 100}
+                        : u
+                );
+                setUsers(updatedUsers);
+                setShowBlockModal(false);
+
+                // 실제 API 호출
+                /*
+                axios.put(`${API_BASE}/admin/users/${blockUser.userId}`, {
+                    status: 'blocked'
+                });
+                */
+
+                alert(`${blockUser.name}님이 차단되었습니다. 더 이상 서비스를 사용할 수 없습니다.`);
+            };
+
+            // 필터링된 사용자
+            const filteredUsers = selectedTenant === 'all'
+                ? users
+                : users.filter(u => u.tenant_id === selectedTenant);
+
+            // 헬퍼 함수들
+            const getStatusBadge = (status) => {
+                const colors = {
+                    'active': 'bg-green-100 text-green-800',
+                    'warning': 'bg-yellow-100 text-yellow-800',
+                    'blocked': 'bg-red-100 text-red-800',
+                    'trial': 'bg-blue-100 text-blue-800'
+                };
+                return colors[status] || 'bg-gray-100 text-gray-800';
+            };
+
+            const getPlanBadge = (plan) => {
+                const colors = {
+                    'enterprise': 'bg-purple-100 text-purple-800',
+                    'pro': 'bg-blue-100 text-blue-800',
+                    'basic': 'bg-green-100 text-green-800',
+                    'free': 'bg-gray-100 text-gray-800'
+                };
+                return colors[plan] || 'bg-gray-100 text-gray-800';
+            };
+
+            const formatNumber = (num) => {
+                return new Intl.NumberFormat('ko-KR').format(num);
+            };
+
+            const formatCurrency = (num) => {
+                return new Intl.NumberFormat('ko-KR', {
+                    style: 'currency',
+                    currency: 'KRW'
+                }).format(num);
+            };
+
+            if (loading) {
+                return (
+                    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                        <div className="text-center">
+                            <i className="fas fa-spinner fa-spin text-4xl text-blue-600"></i>
+                            <p className="mt-4 text-gray-600">데이터 로딩중...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {/* Header */}
+                    <div className="bg-white shadow-sm border-b">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center py-4">
+                                <div className="flex items-center space-x-3">
+                                    <i className="fas fa-building text-blue-600 text-2xl"></i>
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-gray-900">
+                                            멀티테넌트 실시간 관리 대시보드
+                                        </h1>
+                                        <p className="text-xs text-gray-500">
+                                            마지막 업데이트: {lastUpdate.toLocaleTimeString()}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-3">
+                                    <button
+                                        onClick={loadData}
+                                        className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${refreshing ? 'opacity-50' : ''}`}
+                                        disabled={refreshing}
+                                    >
+                                        <i className={`fas fa-sync-alt ${refreshing ? 'fa-spin' : ''} mr-2`}></i>
+                                        새로고침
+                                    </button>
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                        <span className="text-sm text-gray-600">실시간</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="bg-white border-b">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex space-x-8 py-3">
+                                {['overview', 'tenants', 'users', 'usage', 'billing'].map(view => (
+                                    <button
+                                        key={view}
+                                        onClick={() => setSelectedView(view)}
+                                        className={`pb-2 px-1 border-b-2 ${selectedView === view ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600'} hover:text-blue-600 transition-colors`}
+                                    >
+                                        <i className={`fas fa-${view === 'overview' ? 'chart-pie' : view === 'tenants' ? 'building' : view === 'users' ? 'users' : view === 'usage' ? 'chart-line' : 'credit-card'} mr-2`}></i>
+                                        {view === 'overview' ? '전체 현황' : view === 'tenants' ? '테넌트' : view === 'users' ? '사용자' : view === 'usage' ? '사용량' : '요금'}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        {/* Overview View */}
+                        {selectedView === 'overview' && (
+                            <div className="space-y-6">
+                                {/* Stats Cards */}
+                                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+                                                <i className="fas fa-building text-blue-600 text-xl"></i>
+                                            </div>
+                                            <div className="ml-4">
+                                                <p className="text-sm text-gray-500">테넌트</p>
+                                                <p className="text-2xl font-semibold text-gray-900">{tenants.length}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0 bg-green-100 rounded-lg p-3">
+                                                <i className="fas fa-users text-green-600 text-xl"></i>
+                                            </div>
+                                            <div className="ml-4">
+                                                <p className="text-sm text-gray-500">총 사용자</p>
+                                                <p className="text-2xl font-semibold text-gray-900">{users.length}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
+                                                <i className="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                                            </div>
+                                            <div className="ml-4">
+                                                <p className="text-sm text-gray-500">한도 임박</p>
+                                                <p className="text-2xl font-semibold text-gray-900">
+                                                    {users.filter(u => u.usage_percentage >= 80).length}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0 bg-red-100 rounded-lg p-3">
+                                                <i className="fas fa-ban text-red-600 text-xl"></i>
+                                            </div>
+                                            <div className="ml-4">
+                                                <p className="text-sm text-gray-500">차단됨</p>
+                                                <p className="text-2xl font-semibold text-gray-900">
+                                                    {users.filter(u => u.status === 'blocked').length}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0 bg-purple-100 rounded-lg p-3">
+                                                <i className="fas fa-coins text-purple-600 text-xl"></i>
+                                            </div>
+                                            <div className="ml-4">
+                                                <p className="text-sm text-gray-500">총 토큰</p>
+                                                <p className="text-lg font-semibold text-gray-900">
+                                                    {(usageStats.total_tokens / 1000000).toFixed(1)}M
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* High Usage Alert */}
+                                {usageStats.high_usage_users && usageStats.high_usage_users.length > 0 && (
+                                    <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+                                        <div className="flex">
+                                            <div className="flex-shrink-0">
+                                                <i className="fas fa-exclamation-triangle text-red-400"></i>
+                                            </div>
+                                            <div className="ml-3">
+                                                <h3 className="text-sm font-medium text-red-800">
+                                                    사용량 경고
+                                                </h3>
+                                                <div className="mt-2 text-sm text-red-700">
+                                                    <p>다음 사용자들이 한도의 80% 이상을 사용했습니다:</p>
+                                                    <ul className="list-disc list-inside mt-1">
+                                                        {usageStats.high_usage_users.slice(0, 3).map((user, idx) => (
+                                                            <li key={idx}>
+                                                                {user.name} ({user.tenant}) - {user.usage_percentage.toFixed(1)}% 사용
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Tenants View */}
+                        {selectedView === 'tenants' && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-gray-900 mb-4">테넌트 목록</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {tenants.map(tenant => (
+                                        <div key={tenant.tenantId} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+                                            <div className={`h-2 bg-${tenant.plan === 'enterprise' ? 'purple' : tenant.plan === 'pro' ? 'blue' : tenant.plan === 'basic' ? 'green' : 'gray'}-500 rounded-t-lg`}></div>
+                                            <div className="p-6">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold">{tenant.tenant_name}</h3>
+                                                        <p className="text-sm text-gray-500">{tenant.domain}</p>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className={`px-2 py-1 text-xs rounded-full ${getPlanBadge(tenant.plan)}`}>
+                                                            {tenant.plan.toUpperCase()}
+                                                        </span>
+                                                        <p className="text-xs text-gray-500 mt-1">
+                                                            {tenant.billing_type === 'pay_as_you_go' ? '종량제' : '정액제'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-3">
+                                                    {tenant.billing_type === 'pay_as_you_go' ? (
+                                                        <>
+                                                            <div className="flex justify-between text-sm">
+                                                                <span className="text-gray-600">현재 사용 요금</span>
+                                                                <span className="font-medium">
+                                                                    {formatCurrency(tenant.settings.current_spending || 0)}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex justify-between text-sm">
+                                                                <span className="text-gray-600">월 한도</span>
+                                                                <span className="font-medium">
+                                                                    {formatCurrency(tenant.settings.spending_limit)}
+                                                                </span>
+                                                            </div>
+                                                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                                                <div
+                                                                    className="bg-blue-500 h-2 rounded-full"
+                                                                    style={{width: `${((tenant.settings.current_spending || 0) / tenant.settings.spending_limit) * 100}%`}}
+                                                                ></div>
+                                                            </div>
+                                                            <p className="text-xs text-gray-500">
+                                                                1000토큰당 {formatCurrency(tenant.settings.price_per_1k_tokens)}
+                                                            </p>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <div className="flex justify-between text-sm">
+                                                                <span className="text-gray-600">월 요금</span>
+                                                                <span className="font-medium">
+                                                                    {formatCurrency(tenant.settings.monthly_price || 0)}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex justify-between text-sm">
+                                                                <span className="text-gray-600">토큰 한도</span>
+                                                                <span className="font-medium">
+                                                                    {formatNumber(tenant.settings.monthly_token_limit)}
+                                                                </span>
+                                                            </div>
+                                                        </>
+                                                    )}
+
+                                                    <div className="flex justify-between text-sm">
+                                                        <span className="text-gray-600">사용자</span>
+                                                        <span className="font-medium">
+                                                            {users.filter(u => u.tenant_id === tenant.tenantId).length}/{tenant.settings.max_users}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-4 pt-4 border-t">
+                                                    <p className="text-xs text-gray-600 mb-2">사용 가능 엔진</p>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {tenant.settings.features.map((feature, idx) => (
+                                                            <span key={idx} className="px-2 py-1 bg-gray-100 text-xs rounded uppercase">
+                                                                {feature}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Users View */}
+                        {selectedView === 'users' && (
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-xl font-bold text-gray-900">사용자 관리</h2>
+                                    <select
+                                        value={selectedTenant}
+                                        onChange={(e) => setSelectedTenant(e.target.value)}
+                                        className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="all">전체 테넌트</option>
+                                        {tenants.map(tenant => (
+                                            <option key={tenant.tenantId} value={tenant.tenantId}>
+                                                {tenant.tenant_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="bg-white rounded-lg shadow overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        사용자
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        테넌트
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        역할
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        플랜
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        사용량
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        상태
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        작업
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200">
+                                                {filteredUsers.slice(0, 20).map(user => (
+                                                    <tr key={user.userId} className="hover:bg-gray-50">
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <div>
+                                                                <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                                                                <div className="text-sm text-gray-500">{user.email}</div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className="text-sm text-gray-900">{user.tenant_name}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className={`px-2 py-1 text-xs rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                                {user.role === 'admin' ? '관리자' : '사용자'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className={`px-2 py-1 text-xs rounded-full ${getPlanBadge(user.plan)}`}>
+                                                                {user.plan.toUpperCase()}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <div className="flex items-center">
+                                                                <span className={`text-sm font-medium ${user.usage_percentage >= 90 ? 'text-red-600' : user.usage_percentage >= 70 ? 'text-yellow-600' : 'text-green-600'}`}>
+                                                                    {user.usage_percentage}%
+                                                                </span>
+                                                                <div className="ml-2 w-24 bg-gray-200 rounded-full h-2">
+                                                                    <div
+                                                                        className={`h-2 rounded-full ${user.usage_percentage >= 90 ? 'bg-red-500' : user.usage_percentage >= 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                                                                        style={{width: `${Math.min(user.usage_percentage, 100)}%`}}
+                                                                    ></div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(user.status)}`}>
+                                                                {user.status === 'active' ? '활성' : user.status === 'warning' ? '경고' : '차단됨'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                            {user.usage_percentage >= 90 && user.status !== 'blocked' && (
+                                                                <button
+                                                                    onClick={() => handleBlockUser(user)}
+                                                                    className="text-red-600 hover:text-red-900"
+                                                                >
+                                                                    <i className="fas fa-ban"></i> 차단
+                                                                </button>
+                                                            )}
+                                                            {user.status === 'blocked' && (
+                                                                <button
+                                                                    onClick={() => {
+                                                                        const updatedUsers = users.map(u =>
+                                                                            u.userId === user.userId
+                                                                                ? {...u, status: 'active', usage_percentage: 0}
+                                                                                : u
+                                                                        );
+                                                                        setUsers(updatedUsers);
+                                                                        alert(`${user.name}님의 차단이 해제되었습니다.`);
+                                                                    }}
+                                                                    className="text-green-600 hover:text-green-900"
+                                                                >
+                                                                    <i className="fas fa-check"></i> 해제
+                                                                </button>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Usage View */}
+                        {selectedView === 'usage' && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-gray-900 mb-4">사용량 모니터링</h2>
+
+                                {/* Plan Usage Stats */}
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    {Object.entries(usageStats.by_plan || {}).map(([plan, data]) => (
+                                        <div key={plan} className="bg-white rounded-lg shadow p-6">
+                                            <h3 className="text-sm font-medium text-gray-900 mb-2 uppercase">{plan} 플랜</h3>
+                                            <p className="text-3xl font-bold text-gray-900">
+                                                {(data.tokens / 1000000).toFixed(1)}M
+                                            </p>
+                                            <p className="text-xs text-gray-500 mt-1">토큰 사용</p>
+                                            <div className="mt-4">
+                                                <p className="text-xs text-gray-600">사용자: {data.users}명</p>
+                                                <p className="text-xs text-gray-600">평균: {formatNumber(Math.round(data.tokens / data.users))} 토큰</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* High Usage Users */}
+                                {usageStats.high_usage_users && usageStats.high_usage_users.length > 0 && (
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <h3 className="text-lg font-semibold mb-4">사용량 상위 사용자</h3>
+                                        <div className="space-y-3">
+                                            {usageStats.high_usage_users.map((user, idx) => (
+                                                <div key={idx} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded">
+                                                    <div className="flex items-center space-x-3">
+                                                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                            <span className="text-xs font-bold">{idx + 1}</span>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-medium">{user.name}</p>
+                                                            <p className="text-xs text-gray-500">{user.tenant}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <span className={`text-sm font-medium ${user.usage_percentage >= 90 ? 'text-red-600' : user.usage_percentage >= 70 ? 'text-yellow-600' : 'text-green-600'}`}>
+                                                            {user.usage_percentage.toFixed(1)}%
+                                                        </span>
+                                                        <div className="w-32 bg-gray-200 rounded-full h-2">
+                                                            <div
+                                                                className={`h-2 rounded-full ${user.usage_percentage >= 90 ? 'bg-red-500' : user.usage_percentage >= 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                                                                style={{width: `${user.usage_percentage}%`}}
+                                                            ></div>
+                                                        </div>
+                                                        <span className="text-xs text-gray-500">
+                                                            {formatNumber(user.tokens_used)} 토큰
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Billing View */}
+                        {selectedView === 'billing' && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-gray-900 mb-4">요금 관리</h2>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {/* 정액제 테넌트 */}
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <h3 className="text-lg font-semibold mb-4">정액제 고객</h3>
+                                        <div className="space-y-3">
+                                            {tenants.filter(t => t.billing_type === 'fixed').map(tenant => {
+                                                const tenantUsers = users.filter(u => u.tenant_id === tenant.tenantId);
+                                                const totalUsage = tenantUsers.reduce((sum, u) => sum + u.tokens_used, 0);
+                                                const usagePercent = (totalUsage / tenant.settings.monthly_token_limit) * 100;
+
+                                                return (
+                                                    <div key={tenant.tenantId} className="border rounded-lg p-4">
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <div>
+                                                                <h4 className="font-medium">{tenant.tenant_name}</h4>
+                                                                <p className="text-sm text-gray-500">{tenant.plan} 플랜</p>
+                                                            </div>
+                                                            <span className="text-lg font-bold">
+                                                                {formatCurrency(tenant.settings.monthly_price || 0)}
+                                                            </span>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <div className="flex justify-between text-sm">
+                                                                <span>사용량</span>
+                                                                <span>{formatNumber(totalUsage)} / {formatNumber(tenant.settings.monthly_token_limit)} 토큰</span>
+                                                            </div>
+                                                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                                                <div
+                                                                    className={`h-2 rounded-full ${usagePercent >= 90 ? 'bg-red-500' : usagePercent >= 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                                                                    style={{width: `${Math.min(usagePercent, 100)}%`}}
+                                                                ></div>
+                                                            </div>
+                                                            <p className="text-xs text-gray-500">
+                                                                {usagePercent.toFixed(1)}% 사용
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* 종량제 테넌트 */}
+                                    <div className="bg-white rounded-lg shadow p-6">
+                                        <h3 className="text-lg font-semibold mb-4">종량제 고객 (Pay-as-you-go)</h3>
+                                        <div className="space-y-3">
+                                            {tenants.filter(t => t.billing_type === 'pay_as_you_go').map(tenant => {
+                                                const tenantUsers = users.filter(u => u.tenant_id === tenant.tenantId);
+                                                const totalUsage = tenantUsers.reduce((sum, u) => sum + u.tokens_used, 0);
+                                                const currentSpending = (totalUsage / 1000) * tenant.settings.price_per_1k_tokens;
+                                                const spendingPercent = (currentSpending / tenant.settings.spending_limit) * 100;
+
+                                                return (
+                                                    <div key={tenant.tenantId} className="border rounded-lg p-4">
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <div>
+                                                                <h4 className="font-medium">{tenant.tenant_name}</h4>
+                                                                <p className="text-sm text-gray-500">{tenant.plan} 플랜</p>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <p className="text-lg font-bold">
+                                                                    {formatCurrency(currentSpending)}
+                                                                </p>
+                                                                <p className="text-xs text-gray-500">
+                                                                    / {formatCurrency(tenant.settings.spending_limit)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <div className="flex justify-between text-sm">
+                                                                <span>토큰 사용</span>
+                                                                <span>{formatNumber(totalUsage)} 토큰</span>
+                                                            </div>
+                                                            <div className="flex justify-between text-sm">
+                                                                <span>단가</span>
+                                                                <span>{formatCurrency(tenant.settings.price_per_1k_tokens)}/1K 토큰</span>
+                                                            </div>
+                                                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                                                <div
+                                                                    className={`h-2 rounded-full ${spendingPercent >= 90 ? 'bg-red-500' : spendingPercent >= 70 ? 'bg-yellow-500' : 'bg-blue-500'}`}
+                                                                    style={{width: `${Math.min(spendingPercent, 100)}%`}}
+                                                                ></div>
+                                                            </div>
+                                                            <p className="text-xs text-gray-500">
+                                                                한도의 {spendingPercent.toFixed(1)}% 사용
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 월별 예상 청구액 */}
+                                <div className="bg-white rounded-lg shadow p-6">
+                                    <h3 className="text-lg font-semibold mb-4">이번 달 예상 청구액</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="border rounded-lg p-4">
+                                            <h4 className="font-medium mb-2">정액제</h4>
+                                            <p className="text-2xl font-bold text-blue-600">
+                                                {formatCurrency(
+                                                    tenants
+                                                        .filter(t => t.billing_type === 'fixed')
+                                                        .reduce((sum, t) => sum + (t.settings.monthly_price || 0), 0)
+                                                )}
+                                            </p>
+                                        </div>
+                                        <div className="border rounded-lg p-4">
+                                            <h4 className="font-medium mb-2">종량제</h4>
+                                            <p className="text-2xl font-bold text-green-600">
+                                                {formatCurrency(
+                                                    tenants
+                                                        .filter(t => t.billing_type === 'pay_as_you_go')
+                                                        .reduce((sum, t) => {
+                                                            const tenantUsers = users.filter(u => u.tenant_id === t.tenantId);
+                                                            const totalUsage = tenantUsers.reduce((s, u) => s + u.tokens_used, 0);
+                                                            return sum + (totalUsage / 1000) * t.settings.price_per_1k_tokens;
+                                                        }, 0)
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-lg font-medium">총 예상 청구액</span>
+                                            <span className="text-3xl font-bold text-purple-600">
+                                                {formatCurrency(
+                                                    tenants.reduce((sum, t) => {
+                                                        if (t.billing_type === 'fixed') {
+                                                            return sum + (t.settings.monthly_price || 0);
+                                                        } else {
+                                                            const tenantUsers = users.filter(u => u.tenant_id === t.tenantId);
+                                                            const totalUsage = tenantUsers.reduce((s, u) => s + u.tokens_used, 0);
+                                                            return sum + (totalUsage / 1000) * t.settings.price_per_1k_tokens;
+                                                        }
+                                                    }, 0)
+                                                )}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Block Modal */}
+                    {showBlockModal && blockUser && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                                <h3 className="text-lg font-semibold mb-4">사용자 차단 확인</h3>
+                                <p className="text-sm text-gray-600 mb-4">
+                                    {blockUser.name}님 ({blockUser.email})의 사용량이 {blockUser.usage_percentage}%에 도달했습니다.
+                                </p>
+                                <p className="text-sm text-red-600 mb-6">
+                                    차단하시면 이 사용자는 더 이상 AI 서비스를 이용할 수 없습니다.
+                                </p>
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={() => setShowBlockModal(false)}
+                                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                                    >
+                                        취소
+                                    </button>
+                                    <button
+                                        onClick={confirmBlock}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                    >
+                                        차단하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<RealtimeDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>

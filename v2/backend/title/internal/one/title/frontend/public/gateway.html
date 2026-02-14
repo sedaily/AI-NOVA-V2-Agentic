@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서울경제 AI NEXUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #app-container {
+            width: 100%;
+            height: 100vh;
+            display: none;
+        }
+        
+        #app-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .access-denied {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: white;
+        }
+        
+        .access-denied-content {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+        
+        .access-denied h1 {
+            color: #ef4444;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .access-denied p {
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: white;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .btn-back {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        
+        .btn-back:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+    </div>
+    
+    <div id="access-denied" class="access-denied" style="display: none;">
+        <div class="access-denied-content">
+            <h1>접근 권한이 없습니다</h1>
+            <p>이 서비스는 서울경제 CMS를 통해서만 접근 가능합니다.</p>
+            <p style="font-size: 14px; color: #9ca3af;">
+                정상적인 경로로 접근하신 경우에도 이 메시지가 표시된다면<br>
+                IT 지원팀에 문의해주세요.
+            </p>
+            <a href="#" onclick="window.history.back()" class="btn-back">돌아가기</a>
+        </div>
+    </div>
+    
+    <div id="app-container">
+        <iframe id="app-frame" src=""></iframe>
+    </div>
+
+    <script>
+        // 설정
+        const CONFIG = {
+            allowedReferrers: [
+                'cms.sedaily.com',
+                'admin.sedaily.com',
+                'sedaily.com',
+                'localhost',
+                '127.0.0.1'
+            ],
+            appUrl: 'https://d1jjxbf1f82fxa.cloudfront.net',
+            secretKey: 'sedaily-nexus-2024'
+        };
+
+        // 접근 권한 체크
+        function checkAccess() {
+            // 1. Referrer 체크
+            const referrer = document.referrer;
+            const isFromAllowedDomain = CONFIG.allowedReferrers.some(domain => 
+                referrer.includes(domain)
+            );
+            
+            // 2. URL 파라미터 체크
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const userId = urlParams.get('userId');
+            const userName = urlParams.get('userName');
+            const department = urlParams.get('dept');
+            
+            // 개발 환경이거나 허용된 referrer에서 왔을 경우
+            if (window.location.hostname === 'localhost' || isFromAllowedDomain) {
+                return {
+                    allowed: true,
+                    userData: { userId, userName, department }
+                };
+            }
+            
+            // 토큰이 있을 경우 검증
+            if (token) {
+                // 간단한 토큰 검증 (실제로는 서버에서 검증 권장)
+                const expectedToken = btoa(CONFIG.secretKey + '-' + (userId || '')).substring(0, 16);
+                if (token === expectedToken) {
+                    return {
+                        allowed: true,
+                        userData: { userId, userName, department }
+                    };
+                }
+            }
+            
+            return { allowed: false };
+        }
+        
+        // 앱 로드
+        function loadApp(userData) {
+            const iframe = document.getElementById('app-frame');
+            const container = document.getElementById('app-container');
+            const loading = document.getElementById('loading');
+            
+            // URL 파라미터 전달
+            let appUrl = CONFIG.appUrl;
+            if (userData.userId) {
+                const params = new URLSearchParams({
+                    userId: userData.userId,
+                    userName: userData.userName || '',
+                    dept: userData.department || '',
+                    source: 'cms'
+                });
+                appUrl += '?' + params.toString();
+            }
+            
+            iframe.src = appUrl;
+            
+            iframe.onload = () => {
+                loading.style.display = 'none';
+                container.style.display = 'block';
+                
+                // CMS와 통신 설정
+                setupCommunication(iframe, userData);
+            };
+            
+            iframe.onerror = () => {
+                showAccessDenied('앱을 로드하는 중 오류가 발생했습니다.');
+            };
+        }
+        
+        // CMS와 양방향 통신 설정
+        function setupCommunication(iframe, userData) {
+            // iframe에서 메시지 수신
+            window.addEventListener('message', (event) => {
+                // 보안: origin 체크
+                if (event.origin !== CONFIG.appUrl.replace(/\/$/, '')) {
+                    return;
+                }
+                
+                // 메시지 처리
+                if (event.data.type === 'resize') {
+                    // iframe 크기 조정
+                    iframe.style.height = event.data.height + 'px';
+                } else if (event.data.type === 'navigate') {
+                    // CMS 내부 네비게이션
+                    window.parent.postMessage(event.data, '*');
+                }
+            });
+            
+            // 초기 사용자 정보 전송
+            iframe.contentWindow.postMessage({
+                type: 'init',
+                userData: userData
+            }, CONFIG.appUrl);
+        }
+        
+        // 접근 거부 표시
+        function showAccessDenied(message) {
+            const loading = document.getElementById('loading');
+            const accessDenied = document.getElementById('access-denied');
+            
+            loading.style.display = 'none';
+            accessDenied.style.display = 'flex';
+            
+            if (message) {
+                accessDenied.querySelector('p').textContent = message;
+            }
+        }
+        
+        // 페이지 로드 시 실행
+        window.onload = () => {
+            const accessResult = checkAccess();
+            
+            if (accessResult.allowed) {
+                loadApp(accessResult.userData);
+            } else {
+                showAccessDenied();
+            }
+        };
+        
+        // 개발자 도구 감지 및 경고 (선택사항)
+        if (CONFIG.appUrl.includes('cloudfront')) {
+            const devtools = {open: false, orientation: null};
+            setInterval(() => {
+                if (window.outerHeight - window.innerHeight > 200 || 
+                    window.outerWidth - window.innerWidth > 200) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        console.warn('⚠️ 이 애플리케이션은 서울경제신문 내부용입니다.');
+                    }
+                }
+            }, 500);
+        }
+    </script>
+</body>
+</html>

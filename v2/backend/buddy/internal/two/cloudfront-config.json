@@ -1,0 +1,63 @@
+{
+  "CallerReference": "buddy-frontend-202512042253",
+  "Comment": "Buddy Frontend CloudFront Distribution",
+  "DefaultRootObject": "index.html",
+  "Origins": {
+    "Items": [
+      {
+        "Id": "S3-buddy-frontend-202512042253",
+        "DomainName": "buddy-frontend-202512042253.s3.amazonaws.com",
+        "S3OriginConfig": {
+          "OriginAccessIdentity": ""
+        }
+      }
+    ],
+    "Quantity": 1
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "S3-buddy-frontend-202512042253",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "AllowedMethods": {
+      "Items": ["GET", "HEAD", "OPTIONS"],
+      "Quantity": 3,
+      "CachedMethods": {
+        "Items": ["GET", "HEAD"],
+        "Quantity": 2
+      }
+    },
+    "Compress": true,
+    "ForwardedValues": {
+      "QueryString": false,
+      "Cookies": {
+        "Forward": "none"
+      }
+    },
+    "TrustedSigners": {
+      "Enabled": false,
+      "Quantity": 0
+    },
+    "MinTTL": 0,
+    "DefaultTTL": 86400,
+    "MaxTTL": 31536000
+  },
+  "CustomErrorResponses": {
+    "Items": [
+      {
+        "ErrorCode": 404,
+        "ResponsePagePath": "/index.html",
+        "ResponseCode": "200",
+        "ErrorCachingMinTTL": 300
+      },
+      {
+        "ErrorCode": 403,
+        "ResponsePagePath": "/index.html",
+        "ResponseCode": "200",
+        "ErrorCachingMinTTL": 300
+      }
+    ],
+    "Quantity": 2
+  },
+  "Enabled": true,
+  "HttpVersion": "http2",
+  "PriceClass": "PriceClass_All"
+}

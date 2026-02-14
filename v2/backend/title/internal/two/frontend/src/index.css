@@ -1,0 +1,882 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables for Claude theme */
+:root {
+  --claude-sidebar-width: 3.05rem;
+  --claude-sidebar-expanded-width: 320px;
+
+  /* Claude 원본 CSS 변수들 */
+  --font-styrene-a: "styreneA", "styreneA Fallback";
+  --font-styrene-b: "styreneB", "styreneB Fallback";
+  --font-copernicus: "copernicus", "copernicus Fallback";
+  --font-tiempos: "Crimson Text", "tiempos Fallback";
+  --font-open-dyslexic: "openDyslexic", "openDyslexic Fallback";
+  --font-jetbrains: "jetbrains", "jetbrains Fallback";
+  --always-white: 0 0% 100%;
+  --always-black: 0 0% 0%;
+  --font-fallback-serif: Georgia, "Times New Roman", Times, serif;
+  --font-fallback-sans: system-ui, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-fallback-monospace: Menlo, Monaco, monospace, monospace;
+  --font-mono: var(--font-jetbrains), var(--font-fallback-monospace);
+  --font-ui: "Inter", var(--font-fallback-sans);
+  --font-ui-serif: Georgia, "Times New Roman", Times, serif;
+  --font-claude-response: var(--font-tiempos), var(--font-fallback-serif);
+  --font-serif: var(--font-tiempos), ui-serif, Georgia, Cambria,
+    "Times New Roman", Times, serif;
+  --font-sans-serif: var(--font-styrene-b), ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  --font-system: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-dyslexia: var(--font-open-dyslexic), "Comic Sans MS", ui-serif, Georgia,
+    Cambria, "Times New Roman", Times, serif;
+  --dropdown-max-height: 480px;
+
+  /* 색상 변수들 */
+  --accent-brand: 15 63.1% 59.6%;
+  --accent-main-000: 15 55.6% 52.4%;
+  --accent-main-100: 15 63.1% 59.6%;
+  --accent-main-200: 15 63.1% 59.6%;
+  --accent-main-900: 0 0% 0%;
+  --accent-pro-000: 251 84.6% 74.5%;
+  --accent-pro-100: 251 40.2% 54.1%;
+  --accent-pro-200: 251 40% 45.1%;
+  --accent-pro-900: 250 25.3% 19.4%;
+  --accent-secondary-000: 210 71.1% 62%;
+  --accent-secondary-100: 210 70.9% 51.6%;
+  --accent-secondary-200: 210 70.9% 51.6%;
+  --accent-secondary-900: 210 55.9% 24.6%;
+  --bg-000: 60 2.1% 18.4%;
+  --bg-100: 60 2.7% 14.5%;
+  --bg-200: 30 3.3% 11.8%;
+  --bg-300: 60 2.6% 7.6%;
+  --bg-400: 60 3.4% 5.7%;
+  --bg-500: 60 3.4% 5.7%;
+  --border-100: 51 16.5% 84.5%;
+  --border-200: 51 16.5% 84.5%;
+  --border-300: 51 16.5% 84.5%;
+  --border-400: 51 16.5% 84.5%;
+
+  /* 다크 모드에서 실제 사용되는 border 색상 */
+  --border-300-dark: 60 2.6% 25%;
+  --border-400-dark: 60 3.4% 30%;
+  --danger-000: 0 73.1% 66.5%;
+  --danger-100: 0 58.6% 34.1%;
+  --danger-200: 0 58.6% 34.1%;
+  --danger-900: 0 23% 15.6%;
+  --oncolor-100: 0 0% 100%;
+  --oncolor-200: 60 6.7% 97.1%;
+  --oncolor-300: 60 6.7% 97.1%;
+  --text-000: 48 33.3% 97.1%;
+  --text-100: 48 33.3% 97.1%;
+  --text-200: 50 9% 73.7%;
+  --text-300: 50 9% 73.7%;
+  --text-400: 48 4.8% 59.2%;
+  --text-500: 48 4.8% 59.2%;
+  --font-user-message: var(--font-sans-serif);
+  --font-claude-message: var(--font-serif);
+  --tw-text-opacity: 1;
+}
+
+/* Base styles */
+* {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  font-variation-settings: normal;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01";
+  font-feature-settings: "ss01";
+  line-height: inherit;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: hsl(var(--bg-100));
+  color: hsl(var(--text-100));
+  font-family: var(--font-ui);
+  line-height: inherit;
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+  pointer-events: auto;
+  border: 0 solid;
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x: ;
+  --tw-pan-y: ;
+  --tw-pinch-zoom: ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position: ;
+  --tw-gradient-via-position: ;
+  --tw-gradient-to-position: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-ring-inset: ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: hsl(var(--accent-secondary-100) / 1);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-backdrop-blur: ;
+  --tw-backdrop-brightness: ;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-grayscale: ;
+  --tw-backdrop-hue-rotate: ;
+  --tw-backdrop-invert: ;
+  --tw-backdrop-opacity: ;
+  --tw-backdrop-saturate: ;
+  --tw-backdrop-sepia: ;
+  --tw-contain-size: ;
+  --tw-contain-layout: ;
+  --tw-contain-paint: ;
+  --tw-contain-style: ;
+  outline-color: hsl(var(--accent-secondary-100));
+  scrollbar-width: thin;
+  scrollbar-color: hsla(var(--border-300) / 35%) transparent;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(35 35 40);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(100 100 100);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(120 120 120);
+}
+
+/* Animation utilities */
+@layer utilities {
+  .transition-claude {
+    transition: all 0.3s cubic-bezier(0.165, 0.85, 0.45, 1);
+  }
+
+  .sidebar-width {
+    width: var(--claude-sidebar-width);
+  }
+
+  .sidebar-expanded-width {
+    width: var(--claude-sidebar-expanded-width);
+  }
+
+  .can-focus {
+    /* Focus styles for accessibility */
+  }
+
+  .can-focus:focus-visible {
+    outline: 2px solid rgb(255 107 53);
+    outline-offset: 2px;
+  }
+}
+
+/* Additional Claude-specific styles */
+@layer components {
+  .font-base-bold {
+    font-weight: 600;
+  }
+
+  .font-small {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Sidebar specific styles */
+  .sidebar-collapsed {
+    background-color: hsl(var(--bg-100));
+    border-right: 0.5px solid hsl(var(--border-300) / 0.15);
+  }
+
+  .sidebar-expanded {
+    background-color: hsl(var(--bg-200));
+    border-right: 0.5px solid hsl(var(--border-300) / 0.15);
+  }
+
+  /* Claude 공통 테두리 스타일 - 원본과 동일 */
+  .claude-border {
+    border-radius: 0.75rem;
+    border-width: 0.5px;
+    border-color: hsl(var(--border-300) / 0.15);
+    background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+    --tw-gradient-from: hsl(var(--bg-100) / 1) var(--tw-gradient-from-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    --tw-gradient-to: hsl(var(--bg-100) / 0.3) var(--tw-gradient-to-position);
+    transition-property: all;
+    transition-duration: 0.15s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 400;
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    line-height: 1.4;
+    letter-spacing: -0.03em;
+  }
+
+  /* 모든 테두리 요소에 적용할 기본 스타일 */
+  .border-claude {
+    border: 0.5px solid hsl(var(--border-300) / 0.15);
+  }
+
+  .border-claude-gradient {
+    border: 0.5px solid hsl(var(--border-300) / 0.15);
+    background-image: linear-gradient(
+      to bottom,
+      hsl(var(--bg-100) / 1) 0%,
+      hsl(var(--bg-100) / 0.3) 100%
+    );
+  }
+
+  /* Claude 버튼 스타일 - 원본과 동일 */
+  .claude-button {
+    padding: 0;
+    -webkit-appearance: button;
+    background-color: transparent;
+    background-image: none;
+    cursor: pointer;
+    pointer-events: auto !important;
+    position: relative;
+    display: inline-flex;
+    height: 2rem;
+    min-width: 2rem;
+    flex-shrink: 0;
+    user-select: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border-width: 0.5px;
+    border-color: hsl(var(--border-300) / 0.15);
+    padding-left: 7.5px;
+    padding-right: 7.5px;
+    color: hsl(var(--text-300));
+    outline-offset: 1px !important;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    border-style: solid;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    font-size: 100%;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    margin: 0;
+    text-transform: none;
+    /* 추가 원본 스타일들 */
+    outline: 0 solid hsla(var(--accent-secondary-000) / 0%);
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .claude-button:hover {
+    color: hsl(var(--text-200) / 0.9);
+    background-color: hsl(var(--bg-100));
+  }
+
+  .claude-button:active {
+    transform: scale(0.98);
+  }
+
+  /* 드롭다운 메뉴 스타일 */
+  .dropdown-menu {
+    z-index: 50;
+    background-color: hsl(var(--bg-000));
+    border: 0.5px solid hsl(var(--border-300) / 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 0.75rem;
+    min-width: 8rem;
+    overflow: hidden;
+    padding: 0.375rem;
+    color: hsl(var(--text-300));
+    box-shadow: 0 0 0 1px hsl(var(--always-black) / 4%);
+    max-height: min(
+      var(--radix-dropdown-menu-content-available-height),
+      var(--dropdown-max-height)
+    );
+    overflow-y: auto;
+  }
+
+  .dropdown-menu-item {
+    font-family: var(--font-base);
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    align-items: center;
+    outline: none;
+    user-select: none;
+    transition: all 0.15s ease;
+  }
+
+  .dropdown-menu-item:hover {
+    background-color: hsl(var(--bg-200));
+    color: hsl(var(--text-000));
+  }
+
+  .dropdown-menu-item.danger {
+    color: hsl(var(--danger-000)) !important;
+  }
+
+  .dropdown-menu-item.danger:hover {
+    background-color: hsl(var(--danger-900)) !important;
+  }
+
+  .dropdown-separator {
+    height: 0;
+    border-top: 0.5px solid hsl(var(--border-300) / 0.15);
+    margin: 0.25rem;
+  }
+
+  /* 모달 스타일 */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    background-color: hsl(var(--bg-100));
+    border: 0.5px solid hsl(var(--border-300) / 0.15);
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 28rem;
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  /* 모달 애니메이션 */
+  @keyframes zoom {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* 폰트 클래스 추가 */
+  .font-xl-bold {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+  }
+
+  .font-large {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .font-claude-response {
+    font-family: var(--font-claude-response);
+    font-size: 0.9375rem;
+    line-height: 1.65rem;
+    letter-spacing: -0.015em;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01";
+  }
+
+  /* 입력 필드 스타일 */
+  .input-field {
+    background-color: hsl(var(--bg-000));
+    border: 1px solid hsl(var(--border-300) / 0.15);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: hsl(var(--text-100));
+    transition: border-color 0.2s;
+  }
+
+  .input-field:hover {
+    border-color: hsl(var(--border-200) / 0.3);
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: hsl(var(--accent-main-100));
+    box-shadow: 0 0 0 2px hsl(var(--accent-main-100) / 0.2);
+  }
+
+  .input-field::placeholder {
+    color: hsl(var(--text-500));
+  }
+
+  /* 지침 텍스트 영역 스크롤바 스타일 */
+  .instructions-textarea {
+    scrollbar-color: hsl(var(--text-500));
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .instructions-textarea::-webkit-scrollbar {
+    margin-top: 1rem;
+    width: 0.25rem;
+  }
+
+  .instructions-textarea::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 0.25rem 0;
+  }
+
+  .instructions-textarea::-webkit-scrollbar-thumb {
+    border-radius: 1em;
+    border: 0.25rem solid transparent;
+    background-clip: padding-box;
+    background-color: hsl(var(--text-500) / 0.8);
+  }
+
+  .instructions-textarea::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--text-500));
+  }
+
+  .instructions-textarea.has-bottom-scroll {
+    mask-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 3%
+    );
+  }
+
+  /* Typography Styles for Assistant Messages */
+  .assistant-message {
+    font-family: var(--font-claude-response);
+    letter-spacing: -0.015em;
+    line-height: 1.65rem;
+  }
+
+  /* Grid layout for message content */
+  .message-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 0.625rem;
+  }
+
+  .message-grid > * {
+    min-width: 0;
+  }
+
+  /* List Styles */
+  .assistant-message-list {
+    list-style-type: decimal;
+    padding-left: 1.75rem;
+    space-y: 0.625rem;
+  }
+
+  .assistant-message-list:not(:last-child) ul,
+  .assistant-message-list:not(:last-child) ol {
+    padding-bottom: 0.25rem;
+  }
+
+  .assistant-message-list li {
+    white-space: normal;
+    word-break: break-word;
+    position: relative;
+  }
+
+  .assistant-message-list li::marker {
+    color: hsl(var(--text-300));
+    font-weight: 500;
+  }
+
+  /* Paragraph styles */
+  .assistant-paragraph {
+    white-space: normal;
+    word-break: break-word;
+    color: hsl(var(--text-200));
+  }
+
+  /* Title list specific */
+  .title-list-item {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .title-list-item:hover .copy-button {
+    opacity: 1;
+  }
+
+  .copy-button {
+    opacity: 0;
+    transition: opacity 200ms;
+    padding: 0.25rem;
+    border-radius: 0.375rem;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+  }
+
+  .copy-button:hover {
+    background-color: hsl(var(--bg-300));
+  }
+}
+
+/* ========================================
+   챗봇 답변 출력 스타일
+   ======================================== */
+
+/* 마크다운 스타일링 향상 */
+.chatbot-markdown {
+  max-width: none;
+  color: hsl(var(--text-100));
+}
+
+.chatbot-markdown h1 {
+  font-size: 1.875rem !important;
+  margin-bottom: 1.5rem !important;
+  margin-top: 2rem !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 2px solid hsl(var(--border-200)) !important;
+  color: hsl(var(--text-100)) !important;
+  font-weight: 700 !important;
+}
+
+.chatbot-markdown h2 {
+  font-size: 1.5rem !important;
+  margin-bottom: 1.25rem !important;
+  margin-top: 1.75rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid hsl(var(--border-200)) !important;
+  color: hsl(var(--text-100)) !important;
+  font-weight: 700 !important;
+}
+
+.chatbot-markdown h3 {
+  font-size: 1.25rem !important;
+  margin-bottom: 1rem !important;
+  margin-top: 1.5rem !important;
+  color: hsl(var(--accent-main-100)) !important;
+  font-weight: 700 !important;
+}
+
+.chatbot-markdown p {
+  margin-bottom: 1.5rem !important;
+  line-height: 1.8 !important;
+}
+
+.chatbot-markdown ul {
+  margin-bottom: 2rem !important;
+  padding-left: 1.5rem !important;
+  list-style-type: disc !important;
+}
+
+.chatbot-markdown ol {
+  margin-bottom: 2rem !important;
+  padding-left: 1.5rem !important;
+  list-style-type: decimal !important;
+}
+
+.chatbot-markdown li {
+  margin-bottom: 0.75rem !important;
+  line-height: 1.8 !important;
+}
+
+.chatbot-markdown strong {
+  font-weight: 700 !important;
+  color: hsl(var(--text-100)) !important;
+}
+
+.chatbot-markdown code {
+  font-size: 0.875rem !important;
+  background-color: hsl(var(--bg-300)) !important;
+  padding: 0.125rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+  color: hsl(var(--accent-main-100)) !important;
+  font-family: var(--font-mono) !important;
+}
+
+.chatbot-markdown pre {
+  background-color: hsl(var(--bg-200)) !important;
+  padding: 1.5rem !important;
+  border-radius: 0.5rem !important;
+  overflow-x: auto !important;
+  font-size: 0.875rem !important;
+  border: 1px solid hsl(var(--border-200)) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.chatbot-markdown pre code {
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+.chatbot-markdown blockquote {
+  border-left: 4px solid hsl(var(--border-300)) !important;
+  padding-left: 1.5rem !important;
+  font-style: italic !important;
+  margin: 1.5rem 0 !important;
+  color: hsl(var(--text-300)) !important;
+}
+
+.chatbot-markdown a {
+  color: hsl(var(--accent-main-000)) !important;
+  text-decoration: underline !important;
+  font-weight: 500 !important;
+  transition: color 0.2s !important;
+}
+
+.chatbot-markdown a:hover {
+  color: hsl(var(--accent-main-200)) !important;
+}
+
+/* Landing Page Animations */
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@keyframes gradient {
+  0%, 100% { 
+    background-size: 200% 200%; 
+    background-position: left center; 
+  }
+  50% { 
+    background-size: 200% 200%; 
+    background-position: right center; 
+  }
+}
+
+.animate-gradient {
+  animation: gradient 4s ease infinite;
+}
+
+.chatbot-markdown hr {
+  margin: 2rem 0 !important;
+  border: none !important;
+  border-top: 1px solid hsl(var(--border-300)) !important;
+}
+
+/* 테이블 스타일 */
+.chatbot-table-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.chatbot-table-wrapper table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px hsla(var(--border-300)/0.2), 0 4px 12px hsla(var(--always-black)/0.05);
+}
+
+.chatbot-table-wrapper thead {
+  background: linear-gradient(to bottom, hsl(var(--bg-200)), hsl(var(--bg-300)));
+}
+
+.chatbot-table-wrapper th {
+  border-bottom: 2px solid hsl(var(--border-300));
+  border-right: 1px solid hsl(var(--border-400));
+  padding: 14px 18px;
+  font-weight: 600;
+  text-align: left;
+  color: hsl(var(--text-100));
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.chatbot-table-wrapper th:last-child {
+  border-right: none;
+}
+
+.chatbot-table-wrapper tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.chatbot-table-wrapper tbody tr:hover {
+  background-color: hsl(var(--bg-100));
+}
+
+.chatbot-table-wrapper td {
+  border-bottom: 1px solid hsl(var(--border-400));
+  border-right: 1px solid hsla(var(--border-400)/0.3);
+  padding: 14px 18px;
+  color: hsl(var(--text-100));
+  font-size: 14px;
+}
+
+.chatbot-table-wrapper td:last-child {
+  border-right: none;
+}
+
+.chatbot-table-wrapper tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========================================
+   AI 응답 제미나이 스타일 애니메이션
+   ======================================== */
+
+@keyframes geminiTextReveal {
+  0% {
+    opacity: 0.2;
+    transform: translateY(8px);
+    filter: blur(0.5px);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateY(4px);
+    filter: blur(0.2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes geminiContentFade {
+  from {
+    opacity: 0.3;
+    filter: blur(0.3px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* AI 응답 컨테이너 - 제미나이 스타일 */
+.ai-response-container {
+  animation: geminiTextReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-response-content {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 제미나이 스타일 스트리밍 컨텐트 */
+.streaming-content {
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.streaming-content.gemini-updating {
+  opacity: 0.3;
+  transform: translateY(2px);
+  filter: blur(0.3px);
+}
+
+/* 부드러운 타이핑을 위한 섬세한 펄스 애니메이션 */
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.96;
+    transform: translateY(-0.5px);
+  }
+}
+
+/* 실시간 스트리밍 컨텐츠 애니메이션 */
+.streaming-text {
+  animation: subtle-fade-in 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes subtle-fade-in {
+  from {
+    opacity: 0.7;
+    transform: translateY(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

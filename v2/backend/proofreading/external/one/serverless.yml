@@ -1,0 +1,16 @@
+service: nexus-proofreading-external-one
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+
+functions:
+  main:
+    handler: handler.handler
+    events:
+      - http:
+          path: /proofreading/external/one
+          method: POST
+          cors: true

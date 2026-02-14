@@ -1,0 +1,7 @@
+{
+  "Name": "sedaily-column-oac-1764856444",
+  "Description": "OAC for Sedaily Column Frontend",
+  "SigningProtocol": "sigv4",
+  "SigningBehavior": "always",
+  "OriginAccessControlOriginType": "s3"
+}

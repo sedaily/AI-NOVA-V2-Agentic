@@ -1,0 +1,21 @@
+REST_API_ENDPOINT=https://3q79ieal3g.execute-api.us-east-1.amazonaws.com/prod
+WEBSOCKET_API_ENDPOINT=wss://eskq5llc5c.execute-api.us-east-1.amazonaws.com/prod
+REST_API_ENDPOINT=https://fulnhviof7.execute-api.us-east-1.amazonaws.com/prod
+WEBSOCKET_API_ENDPOINT=wss://z04tl783fj.execute-api.us-east-1.amazonaws.com/prod
+WEBSOCKET_API_ENDPOINT=wss://8cav3cdm9b.execute-api.us-east-1.amazonaws.com/prod
+REST_API_ENDPOINT=https://wkcit6cqu7.execute-api.us-east-1.amazonaws.com/prod
+REST_API_ENDPOINT=https://fulnhviof7.execute-api.us-east-1.amazonaws.com/prod
+CLOUDFRONT_DOMAIN=d1jr0dnwnnrlr1.cloudfront.net
+CLOUDFRONT_DISTRIBUTION_ID=E1FTI3D31B6SXW
+CLOUDFRONT_DOMAIN=dwme7h338xphl.cloudfront.net
+CLOUDFRONT_DISTRIBUTION_ID=E3UHP3CMDCZCUR
+REST_API_ENDPOINT=https://16ayefk5lc.execute-api.us-east-1.amazonaws.com/prod
+WEBSOCKET_API_ENDPOINT=wss://prsebeg7ub.execute-api.us-east-1.amazonaws.com/prod
+CLOUDFRONT_DOMAIN=d9am5o27m55dc.cloudfront.net
+CLOUDFRONT_DISTRIBUTION_ID=E10S6CKR5TLUBG
+
+# w1.sedaily.ai 프론트엔드 배포 정보
+S3_BUCKET=w1-sedaily-frontend
+CLOUDFRONT_DISTRIBUTION_ID=E3UHR4V2VCS8ES
+CLOUDFRONT_DOMAIN=d10b1s6f1qn6f8.cloudfront.net
+ORIGIN_ACCESS_IDENTITY=E30HRVQOIFZDCD

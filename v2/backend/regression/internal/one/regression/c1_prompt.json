@@ -1,0 +1,8 @@
+{
+    "Item": {
+        "createdAt": {
+            "S": "2025-09-18T06:49:06.058741Z"
+        },
+        "description": {
+            "S": 
+'cp949' codec can't encode character '\ufe0f' in position 491: illegal multibyte sequence

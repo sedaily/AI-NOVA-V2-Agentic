@@ -1,0 +1,27 @@
+{
+  "models": [
+    {
+      "name": "Claude Sonnet 4.0",
+      "modelId": "us.anthropic.claude-sonnet-4-20250514-v1:0",
+      "region": "us-east-1",
+      "pricing": {
+        "inputTokensPer1K": 0.003,
+        "outputTokensPer1K": 0.015
+      },
+      "limits": {
+        "maxTokens": 16384,
+        "rateLimit": 100000
+      },
+      "parameters": {
+        "temperature": 0.81,
+        "topP": 0.9,
+        "topK": 50
+      }
+    }
+  ],
+  "guardrail": {
+    "id": "ycwjnmzxut7k",
+    "version": "1",
+    "description": "Content filtering for public users"
+  }
+}
