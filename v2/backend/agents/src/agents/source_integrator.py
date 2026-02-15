@@ -48,11 +48,18 @@ class SourceIntegratorAgent(BaseAgent):
         }
 
         for source in selected_sources:
-            integrated_context["sources"].append({
-                "title": source.get("title", ""),
-                "content": source.get("content", ""),
-                "source_type": source.get("source", "unknown"),
-            })
+            if isinstance(source, dict):
+                integrated_context["sources"].append({
+                    "title": source.get("title", ""),
+                    "content": source.get("content", ""),
+                    "source_type": source.get("source", "unknown"),
+                })
+            elif isinstance(source, str):
+                integrated_context["sources"].append({
+                    "title": "수집된 정보",
+                    "content": source,
+                    "source_type": "text",
+                })
 
         # 통합된 텍스트 생성
         system_prompt = """당신은 기사 작성을 위한 소스 정리 전문가입니다.
@@ -65,10 +72,13 @@ class SourceIntegratorAgent(BaseAgent):
 4. 관련 이해관계자
 5. 추가 확인 필요 사항"""
 
-        source_texts = "\n\n".join([
-            f"[소스 {i+1}] {s.get('title', '')}\n{s.get('content', '')}"
-            for i, s in enumerate(selected_sources)
-        ])
+        source_texts_list = []
+        for i, s in enumerate(selected_sources):
+            if isinstance(s, dict):
+                source_texts_list.append(f"[소스 {i+1}] {s.get('title', '')}\n{s.get('content', '')}")
+            elif isinstance(s, str):
+                source_texts_list.append(f"[소스 {i+1}] {s}")
+        source_texts = "\n\n".join(source_texts_list)
 
         messages = self.build_messages(system_prompt, source_texts)
 

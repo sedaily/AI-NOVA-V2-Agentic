@@ -355,10 +355,17 @@ class BaseAgent(ABC):
                 tool_name = tc["name"]
                 tool_args = tc["args"]
 
-                if tool_name in {t.name if hasattr(t, 'name') else t.__name__ for t in self.tools}:
+                def get_tool_name(t):
+                    if hasattr(t, 'name'):
+                        return t.name
+                    elif hasattr(t, '__name__'):
+                        return t.__name__
+                    return str(t)
+
+                if tool_name in {get_tool_name(t) for t in self.tools}:
                     # 도구 찾기
                     tool = next(
-                        (t for t in self.tools if (getattr(t, 'name', t.__name__) == tool_name)),
+                        (t for t in self.tools if get_tool_name(t) == tool_name),
                         None
                     )
                     if tool:

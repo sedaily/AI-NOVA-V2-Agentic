@@ -45,7 +45,10 @@ class SourceAnalyzerAgent(BaseAgent):
         # 소스 내용 추출
         source_texts = []
         for source in all_sources[:10]:  # 최대 10개
-            source_texts.append(f"[{source.get('source', 'unknown')}] {source.get('title', '')}\n{source.get('content', '')[:500]}")
+            if isinstance(source, dict):
+                source_texts.append(f"[{source.get('source', 'unknown')}] {source.get('title', '')}\n{source.get('content', '')[:500]}")
+            elif isinstance(source, str):
+                source_texts.append(source[:500])
 
         # LLM으로 분석
         system_prompt = """당신은 서울경제신문의 편집국장입니다.

@@ -26,7 +26,7 @@ class W1WriterAgent(BaseAgent):
             agent_id="W1",
             model_id="apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
             temperature=0.81,
-            max_tokens=16384,
+            max_tokens=8000,  # Bedrock Converse API limit: 8192
         )
 
     async def run(self, state: Dict[str, Any]) -> Dict[str, Any]:

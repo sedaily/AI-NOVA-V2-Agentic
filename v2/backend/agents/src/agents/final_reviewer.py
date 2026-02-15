@@ -39,7 +39,7 @@ class FinalReviewerAgent(BaseAgent):
         titles = state.get("titles", [])
         quality_score = state.get("quality_score", 0)
         corrections = state.get("corrections", [])
-        fact_check = state.get("fact_check_report", {})
+        fact_check = state.get("fact_check_report") or {}
         image_url = state.get("image_url")
         tts_url = state.get("tts_url")
         infographic_data = state.get("infographic_data")
