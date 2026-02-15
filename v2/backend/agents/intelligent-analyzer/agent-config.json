@@ -1,0 +1,98 @@
+{
+  "agentName": "nova-intelligent-analyzer",
+  "description": "Claude Opus 4.5 기반 고품질 콘텐츠 분석 에이전트",
+  "foundationModel": "us.anthropic.claude-opus-4-5-20251101-v1:0",
+  "instruction": "당신은 서울경제신문 AI NOVA의 핵심 콘텐츠 분석 엔진입니다.\n\n## 핵심 역량\n- 다국어 텍스트 언어 식별 (한국어, 영어, 일본어)\n- 보도자료 vs 일반 기사 정확한 분류\n- 뉴스 카테고리 분류 (경제, 사회, 기술, 국제)\n- 문체 및 길이 분석\n- 최적의 AI 서비스 라우팅 결정\n\n## 분석 원칙\n1. 맥락을 고려한 심층 분석\n2. 모호한 경우 보수적 판단\n3. 항상 JSON 형식으로 구조화된 응답\n4. 판단 근거 명시",
+  "idleSessionTTLInSeconds": 600,
+  "actionGroups": [
+    {
+      "actionGroupName": "content-analysis",
+      "description": "텍스트 콘텐츠 심층 분석",
+      "actionGroupExecutor": {
+        "lambda": "arn:aws:lambda:us-east-1:YOUR_ACCOUNT_ID:function:nova-intelligent-analyzer"
+      },
+      "apiSchema": {
+        "payload": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Content Analysis API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/analyze": {
+              "post": {
+                "operationId": "analyzeContent",
+                "description": "텍스트 콘텐츠를 분석하여 언어, 유형, 카테고리, 문체를 식별하고 최적의 서비스 라우팅을 결정합니다",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string",
+                            "description": "분석할 텍스트 (기사, 보도자료 등)"
+                          }
+                        },
+                        "required": ["text"]
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "분석 결과",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "analysis": {
+                              "type": "object",
+                              "description": "상세 분석 결과"
+                            },
+                            "routing": {
+                              "type": "object",
+                              "description": "서비스 라우팅 정보"
+                            },
+                            "reasoning": {
+                              "type": "string",
+                              "description": "판단 근거"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "promptOverrideConfiguration": {
+    "promptConfigurations": [
+      {
+        "promptType": "ORCHESTRATION",
+        "basePromptTemplate": "사용자의 요청을 분석하고 content-analysis 액션을 사용하여 텍스트를 분석하세요.",
+        "inferenceConfiguration": {
+          "temperature": 0.1,
+          "topP": 0.9,
+          "maximumLength": 4096
+        }
+      },
+      {
+        "promptType": "POST_PROCESSING",
+        "basePromptTemplate": "분석 결과를 사용자에게 명확하게 전달하세요. JSON 형식을 유지하고 routing 정보를 강조하세요.",
+        "inferenceConfiguration": {
+          "temperature": 0.2,
+          "topP": 0.9,
+          "maximumLength": 2048
+        }
+      }
+    ]
+  }
+}

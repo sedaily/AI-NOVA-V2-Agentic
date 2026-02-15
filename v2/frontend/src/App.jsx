@@ -45,6 +45,15 @@ const SubscriptionPage = lazy(() =>
 const ProfilePage = lazy(() =>
   import("./features/profile/components/ProfilePage")
 );
+const MarketingLanding = lazy(() =>
+  import("./features/landing/components/MarketingLanding")
+);
+const WriterWorkspace = lazy(() =>
+  import("./features/workspace/components/WriterWorkspace")
+);
+const ArticleEditor = lazy(() =>
+  import("./features/workspace/components/ArticleEditor")
+);
 
 // Loading component - 임시 텍스트 추가
 const LoadingSpinner = () => {
@@ -289,9 +298,9 @@ function AppContent() {
     navigate(`/${enginePath}/chat`);
   };
 
-  // 사이드바를 보여줄 페이지 확인 (랜딩, 로그인, 회원가입, 대시보드, 구독, 프로필 제외)
+  // 사이드바를 보여줄 페이지 확인 (워크스페이스, 에디터, 마케팅, 로그인, 회원가입, 대시보드, 구독, 프로필 제외)
   const showSidebar =
-    !["/", "/login", "/signup", "/subscription", "/profile"].includes(
+    !["/", "/editor", "/marketing", "/login", "/signup", "/subscription", "/profile"].includes(
       location.pathname
     ) && !location.pathname.includes("/dashboard");
 
@@ -335,7 +344,27 @@ function AppContent() {
             >
               <Route
                 path="/"
-                element={<Navigate to="/11" replace />}
+                element={
+                  <PageTransition pageKey="workspace">
+                    <WriterWorkspace />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/marketing"
+                element={
+                  <PageTransition pageKey="marketing-landing">
+                    <MarketingLanding />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/editor"
+                element={
+                  <PageTransition pageKey="article-editor">
+                    <ArticleEditor />
+                  </PageTransition>
+                }
               />
               <Route
                 path="/login"
@@ -478,7 +507,7 @@ function AppContent() {
                   </ProtectedRoute>
                 }
               />
-              {/* 기본 리다이렉트 */}
+                            {/* 기본 리다이렉트 */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

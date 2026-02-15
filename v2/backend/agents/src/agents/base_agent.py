@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 
 # AWS 설정
 AWS_REGION = os.getenv("AWS_REGION", "ap-northeast-2")
-BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-sonnet-4-20250514")
+# APAC Inference Profile 사용 (ap-northeast-2 리전)
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "apac.anthropic.claude-3-5-sonnet-20241022-v2:0")
 
 
 class BaseAgent(ABC):
@@ -29,7 +30,7 @@ class BaseAgent(ABC):
         self,
         name: str,
         agent_id: str,
-        model_id: str = "anthropic.claude-sonnet-4-20250514",
+        model_id: str = "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
         temperature: float = 0.7,
         max_tokens: int = 4096,
     ):

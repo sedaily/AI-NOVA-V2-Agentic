@@ -6,9 +6,10 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import { ArrowUp, Globe } from "lucide-react";
+import { ArrowUp, Globe, Bot, Sparkles } from "lucide-react";
 import clsx from "clsx";
 import FileUploadButton from "./FileUploadButton";
+import AgenticPanel from "./AgenticPanel";
 import toast from "react-hot-toast";
 import {
   connectWebSocket,
@@ -47,6 +48,14 @@ const ChatInput = forwardRef(
 
     // AI Agent 모드 상태
     const [selectedAgentType, setSelectedAgentType] = useState(null);
+
+    // Agentic AI 상태
+    const [isAgenticMode, setIsAgenticMode] = useState(false);
+    const [agenticPanelOpen, setAgenticPanelOpen] = useState(false);
+    const [agenticExecutionLog, setAgenticExecutionLog] = useState([]);
+    const [agenticFinalResult, setAgenticFinalResult] = useState(null);
+    const [agenticRunning, setAgenticRunning] = useState(false);
+    const [agenticIterations, setAgenticIterations] = useState(0);
 
     // 웹 검색 토글 함수
     const toggleWebSearch = () => {
@@ -230,7 +239,12 @@ const ChatInput = forwardRef(
     const handleAgentButton = (agentType) => {
       console.log('🎯 AI Agent 버튼 클릭:', agentType);
       console.log('📊 현재 selectedAgentType:', selectedAgentType);
-      
+
+      // Agentic 모드 해제
+      if (isAgenticMode) {
+        setIsAgenticMode(false);
+      }
+
       if (selectedAgentType === agentType) {
         console.log('✅ 모드 해제:', agentType);
         setSelectedAgentType(null);
@@ -246,6 +260,151 @@ const ChatInput = forwardRef(
           duration: 1500,
           position: 'top-center',
         });
+      }
+    };
+
+    // Agentic AI 모드 토글
+    const handleAgenticToggle = () => {
+      if (isAgenticMode) {
+        setIsAgenticMode(false);
+        setSelectedAgentType(null);
+        toast.success('일반 모드로 전환', { duration: 1500 });
+      } else {
+        setIsAgenticMode(true);
+        setSelectedAgentType(null); // 다른 Agent 모드 해제
+        toast.success('🤖 Agentic AI 모드 활성화! AI가 자율적으로 작업합니다.', {
+          duration: 2500,
+          icon: '🚀',
+        });
+      }
+    };
+
+    // Agentic AI 실행
+    const runAgenticAI = async (userMessage) => {
+      console.log('🤖 Agentic AI 실행 시작:', userMessage);
+
+      setAgenticPanelOpen(true);
+      setAgenticRunning(true);
+      setAgenticExecutionLog([]);
+      setAgenticFinalResult(null);
+      setAgenticIterations(0);
+
+      // AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25초 타임아웃 (API Gateway 29초 제한 고려)
+
+      try {
+        // API 엔드포인트
+        const API_URL = 'https://ieec2gpr0c.execute-api.us-east-1.amazonaws.com/prod/agentic';
+
+        toast.loading('🤖 Agentic AI 처리 중... (최대 25초)', { id: 'agentic-loading' });
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: userMessage,
+            sessionId: `agentic_${Date.now()}`,
+            max_iterations: 3, // 빠른 응답을 위해 최대 3회 반복
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        toast.dismiss('agentic-loading');
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+
+        const result = await response.json();
+        console.log('🤖 Agentic AI 결과:', result);
+
+        if (result.success) {
+          setAgenticExecutionLog(result.executionLog || []);
+          setAgenticFinalResult(result.agentResult);
+          setAgenticIterations(result.iterations || 0);
+
+          toast.success('🎉 Agentic AI 완료!', { duration: 2000 });
+
+          // 결과를 채팅에 추가
+          if (onTitlesGenerated && result.agentResult) {
+            onTitlesGenerated([{
+              role: 'assistant',
+              content: `🤖 **Agentic AI 실행 완료**\n\n${result.agentResult}`,
+              timestamp: new Date().toISOString(),
+              isAgentic: true,
+            }]);
+          }
+        } else {
+          throw new Error(result.error || 'Agentic AI 실행 실패');
+        }
+      } catch (error) {
+        clearTimeout(timeoutId);
+        toast.dismiss('agentic-loading');
+
+        console.error('❌ Agentic AI 오류:', error);
+
+        if (error.name === 'AbortError') {
+          toast.error('⏱️ 처리 시간 초과 - 시뮬레이션 모드로 전환', { duration: 3000 });
+        } else {
+          toast.error(`Agentic AI: ${error.message}`, { duration: 3000 });
+        }
+
+        // 에러 시 로컬에서 시뮬레이션 (데모용)
+        simulateAgenticExecution(userMessage);
+      } finally {
+        setAgenticRunning(false);
+      }
+    };
+
+    // 로컬 시뮬레이션 (API 미배포 시 데모용)
+    const simulateAgenticExecution = async (userMessage) => {
+      const steps = [
+        { type: 'tool_call', tool: 'analyze_content', input: { text: userMessage } },
+        { type: 'tool_result', tool: 'analyze_content', result: '분석 완료: 언어=한국어, 유형=보도자료, 카테고리=기업/경제' },
+        { type: 'tool_call', tool: 'write_article', input: { content: userMessage, style: 'economy' } },
+        { type: 'tool_result', tool: 'write_article', result: '기사 초안 작성 완료 (500자)' },
+        { type: 'tool_call', tool: 'proofread', input: { text: '...' } },
+        { type: 'tool_result', tool: 'proofread', result: '교열 완료: 3개 수정 사항 발견' },
+        { type: 'tool_call', tool: 'generate_titles', input: { article: '...' } },
+        { type: 'tool_result', tool: 'generate_titles', result: '제목 5개 생성 완료' },
+      ];
+
+      for (let i = 0; i < steps.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setAgenticExecutionLog(prev => [...prev, steps[i]]);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const demoResult = `## 기사 초안
+
+${userMessage.slice(0, 100)}...에 대한 AI 분석 결과입니다.
+
+### 생성된 제목
+1. [속보] 핵심 내용 요약 제목
+2. 분석적 시각의 제목
+3. 독자 관심 유발 제목
+4. 키워드 중심 제목
+5. 미래 전망 제목
+
+---
+*이것은 시뮬레이션 결과입니다. 실제 Agentic API가 배포되면 Claude Opus 4.5가 자율적으로 작업합니다.*`;
+
+      setAgenticFinalResult(demoResult);
+      setAgenticIterations(4);
+
+      if (onTitlesGenerated) {
+        onTitlesGenerated([{
+          role: 'assistant',
+          content: `🤖 **Agentic AI 실행 완료** (시뮬레이션)\n\n${demoResult}`,
+          timestamp: new Date().toISOString(),
+          isAgentic: true,
+        }]);
       }
     };
 
@@ -265,6 +424,27 @@ const ChatInput = forwardRef(
         const messageText = message.trim();
         isProcessingRef.current = true;
 
+        // Agentic AI 모드일 때
+        if (isAgenticMode && messageText) {
+          console.log('🚀 Agentic AI 모드 실행!');
+          setMessage('');
+          setUploadedFiles([]);
+          if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+          }
+
+          // 사용자 메시지를 채팅에 표시
+          if (onSendMessage) {
+            onSendMessage(messageText, null);
+          }
+
+          // Agentic AI 실행
+          await runAgenticAI(messageText);
+
+          isProcessingRef.current = false;
+          return;
+        }
+
         // AI Agent 모드일 때
         if (selectedAgentType && messageText) {
           console.log('🤖🤖🤖 AI Agent 모드 감지!');
@@ -278,41 +458,57 @@ const ChatInput = forwardRef(
           }
           
           try {
-            console.log('🌐 API 호출 시작:', 'https://ieec2gpr0c.execute-api.us-east-1.amazonaws.com/prod/invoke-agent');
-            
-            // CORS 테스트
-            const response = await fetch('https://ieec2gpr0c.execute-api.us-east-1.amazonaws.com/prod/invoke-agent', {
+            console.log('🌐 API 호출 시작:', 'https://ieec2gpr0c.execute-api.us-east-1.amazonaws.com/prod/invoke-agent-v2');
+
+            // Claude Opus 4.5 기반 고품질 Agent v2 호출
+            const response = await fetch('https://ieec2gpr0c.execute-api.us-east-1.amazonaws.com/prod/invoke-agent-v2', {
               method: 'POST',
               mode: 'cors',
-              headers: { 
+              headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
               },
               body: JSON.stringify({ message: messageText, sessionId: `session-${Date.now()}` })
             });
-            
+
             console.log('📡 응답 상태:', response.status, response.statusText);
-            
+
             if (!response.ok) {
               const errorText = await response.text();
               console.error('❌ API 에러 응답:', errorText);
               throw new Error(`Agent 호출 실패: ${response.status} ${errorText}`);
             }
-            
+
             const result = await response.json();
-            console.log('🤖 Bedrock Agent 응답:', result);
-            console.log('🤖 응답 내용:', result.response);
-            
-            // Agent 응답을 채팅창에 표시
-            if (result.response && onTitlesGenerated) {
-              console.log('✅ Agent 응답을 채팅창에 표시');
+            console.log('🤖 Claude Opus 4.5 Agent 응답:', result);
+            console.log('🤖 분석 결과:', result.analysis);
+
+            // v2 응답 포맷 처리
+            if (result.success && onTitlesGenerated) {
+              console.log('✅ Agent v2 응답을 채팅창에 표시');
+
+              // 분석 결과 포맷팅
+              const analysisInfo = result.analysis ?
+                `\n\n📊 **분석 결과**\n- 서비스: ${result.analysis.serviceCode}\n- 유형: ${result.analysis.promptType}\n- 확신도: ${Math.round(result.analysis.confidence * 100)}%\n- 근거: ${result.analysis.reasoning}` : '';
+
+              const serviceResult = result.serviceResult ?
+                `\n\n📝 **처리 결과**\n${typeof result.serviceResult === 'string' ? result.serviceResult : JSON.stringify(result.serviceResult, null, 2)}` : '';
+
+              onTitlesGenerated([{
+                role: 'assistant',
+                content: `🤖 ${result.message || 'AI Agent 분석 완료'}${analysisInfo}${serviceResult}`,
+                timestamp: new Date().toISOString()
+              }]);
+            } else if (result.response && onTitlesGenerated) {
+              // 기존 v1 호환
+              console.log('✅ Agent v1 호환 응답');
               onTitlesGenerated([{
                 role: 'assistant',
                 content: '🤖 ' + result.response,
                 timestamp: new Date().toISOString()
               }]);
             } else {
-              console.log('❌ result.response가 없거나 onTitlesGenerated 없음:', { hasResponse: !!result.response, hasCallback: !!onTitlesGenerated });
+              console.log('❌ 응답 처리 실패:', { hasSuccess: !!result.success, hasCallback: !!onTitlesGenerated });
             }
             
             setMessage('');
@@ -714,6 +910,30 @@ const ChatInput = forwardRef(
 
                 {/* AI Agent 버튼들 */}
                 <div className="flex items-center gap-2">
+                  {/* Agentic AI (자율형) */}
+                  <button
+                    onClick={handleAgenticToggle}
+                    disabled={isLoading}
+                    className="inline-flex items-center justify-center h-8 px-3 rounded-md transition-all gap-1.5"
+                    style={{
+                      background: isAgenticMode
+                        ? 'linear-gradient(135deg, hsl(280, 70%, 50%), hsl(320, 70%, 50%))'
+                        : 'hsl(var(--bg-200))',
+                      color: isAgenticMode ? 'white' : 'hsl(var(--text-400))',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
+                      opacity: isLoading ? 0.5 : 1,
+                      pointerEvents: isLoading ? 'none' : 'auto',
+                      boxShadow: isAgenticMode ? '0 2px 8px rgba(168, 85, 247, 0.4)' : 'none',
+                    }}
+                    title="Agentic AI: AI가 자율적으로 분석, 작성, 교열, 제목생성까지 한번에"
+                  >
+                    <Bot size={14} />
+                    Agentic
+                    {isAgenticMode && <Sparkles size={12} />}
+                  </button>
+
                   {/* AI 보도 */}
                   <button
                     onClick={() => handleAgentButton('AI 보도')}
@@ -1198,6 +1418,17 @@ const ChatInput = forwardRef(
             </div>
           </div>
         )}
+
+        {/* Agentic AI Panel */}
+        <AgenticPanel
+          isOpen={agenticPanelOpen}
+          onClose={() => setAgenticPanelOpen(false)}
+          executionLog={agenticExecutionLog}
+          finalResult={agenticFinalResult}
+          isRunning={agenticRunning}
+          iterations={agenticIterations}
+          onCopyResult={() => toast.success('결과가 클립보드에 복사되었습니다!', { duration: 2000 })}
+        />
       </fieldset>
     );
   }

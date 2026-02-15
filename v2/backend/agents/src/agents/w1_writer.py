@@ -24,7 +24,7 @@ class W1WriterAgent(BaseAgent):
         super().__init__(
             name="W1Writer",
             agent_id="W1",
-            model_id="anthropic.claude-sonnet-4-20250514",
+            model_id="apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
             temperature=0.81,
             max_tokens=16384,
         )
