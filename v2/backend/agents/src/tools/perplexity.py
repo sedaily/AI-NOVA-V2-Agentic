@@ -30,11 +30,12 @@ PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY", "")
 MAX_RETRIES = 3
 RETRY_DELAY = 1.0
 
-# 모델 설정
+# 모델 설정 (2025년 새 Sonar 모델)
 MODELS = {
-    "fast": "llama-3.1-sonar-small-128k-online",
-    "balanced": "llama-3.1-sonar-large-128k-online",
-    "pro": "llama-3.1-sonar-huge-128k-online",
+    "fast": "sonar",                    # 경량 검색
+    "balanced": "sonar-pro",            # 심층 검색
+    "pro": "sonar-reasoning",           # 실시간 추론
+    "research": "sonar-deep-research",  # 장문 리서치
 }
 
 # 검색 기간 필터
