@@ -1,10 +1,15 @@
 """
 LangGraph 워크플로우 정의
 기사 작성 전체 파이프라인을 구성합니다.
+
+AgentCore Memory 통합:
+- 체크포인트: 워크플로우 상태 저장 (세션 간 유지)
+- 스토어: 기자 스타일/선호도 장기 기억
 """
 
 import os
-from typing import Dict, Any
+import logging
+from typing import Dict, Any, Optional
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
 
@@ -14,6 +19,9 @@ from .routers import (
     fact_check_router,
     media_generation_router,
 )
+from ..memory import get_memory_manager, AgentCoreMemoryManager
+
+logger = logging.getLogger(__name__)
 
 # Agent imports (lazy import to avoid circular dependencies)
 def get_agents():
@@ -55,12 +63,16 @@ def get_agents():
     }
 
 
-def create_workflow(use_agentcore_memory: bool = False) -> StateGraph:
+def create_workflow(
+    use_agentcore_memory: bool = False,
+    memory_manager: Optional[AgentCoreMemoryManager] = None,
+) -> StateGraph:
     """
     기사 작성 워크플로우 생성
 
     Args:
         use_agentcore_memory: AgentCore Memory 사용 여부
+        memory_manager: 외부에서 주입할 메모리 관리자 (선택)
 
     Returns:
         컴파일된 LangGraph 워크플로우
@@ -70,6 +82,10 @@ def create_workflow(use_agentcore_memory: bool = False) -> StateGraph:
     workflow = StateGraph(ArticleState)
 
     agents = get_agents()
+
+    # 메모리 관리자 설정
+    if memory_manager is None and use_agentcore_memory:
+        memory_manager = get_memory_manager()
 
     # ===== Phase 1: 소재 수집 노드 =====
     workflow.add_node("issue_collector", agents["issue_collector"])
@@ -138,21 +154,38 @@ def create_workflow(use_agentcore_memory: bool = False) -> StateGraph:
     workflow.add_edge("parallel_media", "final_reviewer")
     workflow.add_edge("final_reviewer", END)
 
-    # ===== 체크포인터 설정 =====
-    if use_agentcore_memory:
+    # ===== 체크포인터 및 스토어 설정 =====
+    checkpointer = MemorySaver()  # 기본값
+    store = None
+
+    if use_agentcore_memory and memory_manager:
+        # AgentCore Memory 사용
+        checkpointer = memory_manager.checkpointer
+        store = memory_manager.store
+        logger.info("Using AgentCore Memory for workflow")
+    elif use_agentcore_memory:
+        # 직접 초기화 시도
         try:
-            from langgraph_checkpoint_aws import AgentCoreMemorySaver
+            from langgraph_checkpoint_aws import AgentCoreMemorySaver, AgentCoreMemoryStore
             memory_id = os.environ.get("AGENTCORE_MEMORY_ID")
             region = os.environ.get("AWS_REGION", "ap-northeast-2")
-            checkpointer = AgentCoreMemorySaver(memory_id, region_name=region)
-        except ImportError:
-            print("Warning: AgentCore Memory not available, using in-memory")
-            checkpointer = MemorySaver()
-    else:
-        checkpointer = MemorySaver()
 
-    # 컴파일
-    compiled_graph = workflow.compile(checkpointer=checkpointer)
+            if memory_id:
+                checkpointer = AgentCoreMemorySaver(memory_id, region_name=region)
+                store = AgentCoreMemoryStore(memory_id, region_name=region)
+                logger.info(f"AgentCore Memory initialized: {memory_id}")
+            else:
+                logger.warning("AGENTCORE_MEMORY_ID not set, using in-memory")
+        except ImportError:
+            logger.warning("AgentCore Memory SDK not available, using in-memory")
+        except Exception as e:
+            logger.error(f"AgentCore Memory init failed: {e}")
+
+    # 컴파일 (store 포함)
+    if store:
+        compiled_graph = workflow.compile(checkpointer=checkpointer, store=store)
+    else:
+        compiled_graph = workflow.compile(checkpointer=checkpointer)
 
     return compiled_graph
 
@@ -220,11 +253,58 @@ async def parallel_media_node(state: ArticleState) -> ArticleState:
 
 
 # 기본 그래프 인스턴스
-graph = None
+_graph = None
+_graph_with_memory = None
 
-def get_graph():
-    """그래프 싱글톤 인스턴스 반환"""
-    global graph
-    if graph is None:
-        graph = create_workflow()
-    return graph
+
+def get_graph(use_memory: bool = False):
+    """
+    그래프 싱글톤 인스턴스 반환
+
+    Args:
+        use_memory: AgentCore Memory 사용 여부
+
+    Returns:
+        컴파일된 LangGraph 워크플로우
+    """
+    global _graph, _graph_with_memory
+
+    if use_memory:
+        if _graph_with_memory is None:
+            _graph_with_memory = create_workflow(use_agentcore_memory=True)
+        return _graph_with_memory
+    else:
+        if _graph is None:
+            _graph = create_workflow(use_agentcore_memory=False)
+        return _graph
+
+
+async def get_graph_async(use_memory: bool = True):
+    """
+    비동기 그래프 초기화 (Memory 사전 초기화 포함)
+
+    Args:
+        use_memory: AgentCore Memory 사용 여부
+
+    Returns:
+        컴파일된 LangGraph 워크플로우
+    """
+    global _graph_with_memory
+
+    if use_memory:
+        # 메모리 관리자 초기화
+        memory_manager = get_memory_manager()
+        await memory_manager.initialize()
+
+        if _graph_with_memory is None:
+            _graph_with_memory = create_workflow(
+                use_agentcore_memory=True,
+                memory_manager=memory_manager
+            )
+        return _graph_with_memory
+    else:
+        return get_graph(use_memory=False)
+
+
+# Legacy 호환
+graph = None  # Deprecated: use get_graph() instead

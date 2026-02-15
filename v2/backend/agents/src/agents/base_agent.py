@@ -1,7 +1,7 @@
 """
 Base Agent 클래스
 모든 Agent의 공통 기능을 정의합니다.
-AWS Bedrock 사용
+AWS Bedrock + AgentCore Memory 통합
 """
 
 from abc import ABC, abstractmethod
@@ -15,6 +15,9 @@ from langchain_aws import ChatBedrockConverse
 from ..prompts.prompt_loader import prompt_loader
 from ..prompts.prompt_templates import PROMPT_TEMPLATES
 
+# AgentCore Memory
+from ..memory import get_memory_manager, AgentCoreMemoryManager
+
 logger = logging.getLogger(__name__)
 
 # AWS 설정
@@ -24,7 +27,14 @@ BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "apac.anthropic.claude-3-5-sonn
 
 
 class BaseAgent(ABC):
-    """Agent 기본 클래스"""
+    """
+    Agent 기본 클래스
+
+    AgentCore Memory 통합:
+    - 기자 스타일 학습
+    - 세션 컨텍스트 유지
+    - 작성 패턴 분석
+    """
 
     def __init__(
         self,
@@ -33,12 +43,14 @@ class BaseAgent(ABC):
         model_id: str = "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
         temperature: float = 0.7,
         max_tokens: int = 4096,
+        use_memory: bool = True,
     ):
         self.name = name
         self.agent_id = agent_id
         self.model_id = model_id
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.use_memory = use_memory
 
         # LLM 초기화
         self.llm = ChatBedrockConverse(
@@ -47,6 +59,16 @@ class BaseAgent(ABC):
             temperature=temperature,
             max_tokens=max_tokens,
         )
+
+        # Memory Manager (lazy initialization)
+        self._memory_manager: Optional[AgentCoreMemoryManager] = None
+
+    @property
+    def memory(self) -> AgentCoreMemoryManager:
+        """AgentCore Memory Manager 반환"""
+        if self._memory_manager is None:
+            self._memory_manager = get_memory_manager()
+        return self._memory_manager
 
     @abstractmethod
     async def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -80,11 +102,66 @@ class BaseAgent(ABC):
             return []
 
     async def get_reporter_context(self, reporter_id: str) -> str:
-        """기자 스타일 조회"""
+        """
+        기자 스타일 조회 (AgentCore Memory 통합)
+
+        Args:
+            reporter_id: 기자 ID
+
+        Returns:
+            기자 스타일 컨텍스트 문자열
+        """
+        if not reporter_id:
+            return ""
+
         try:
-            return await get_reporter_style(reporter_id)
+            # AgentCore Memory에서 조회
+            if self.use_memory:
+                await self.memory.initialize()
+
+                # 스타일 정보
+                style = await self.memory.get_reporter_preference(reporter_id, "style")
+
+                # 작성 패턴
+                patterns = await self.memory.get_reporter_preference(reporter_id, "writing_patterns")
+
+                if style or patterns:
+                    context_parts = []
+
+                    if style:
+                        context_parts.append(f"선호 문체: {style.get('style_summary', '')}")
+                        if style.get('preferred_tone'):
+                            context_parts.append(f"선호 어조: {style.get('preferred_tone')}")
+
+                    if patterns:
+                        avg_length = patterns.get('avg_length', 0)
+                        if avg_length:
+                            context_parts.append(f"평균 기사 길이: {avg_length}자")
+
+                        common_phrases = patterns.get('common_phrases', [])[:5]
+                        if common_phrases:
+                            context_parts.append(f"자주 사용하는 표현: {', '.join(common_phrases)}")
+
+                    if context_parts:
+                        return "\n".join(context_parts)
+
+            # 폴백: 기존 방식
+            return await self._get_reporter_style_legacy(reporter_id)
+
         except Exception as e:
             logger.error(f"기자 스타일 조회 실패: {e}")
+            return ""
+
+    async def _get_reporter_style_legacy(self, reporter_id: str) -> str:
+        """기자 스타일 조회 (Legacy)"""
+        try:
+            # 기존 get_reporter_style 함수 호출 (존재하는 경우)
+            from ..database.kb_repository import get_reporter_style
+            return await get_reporter_style(reporter_id)
+        except ImportError:
+            return ""
+        except Exception as e:
+            logger.debug(f"Legacy reporter style lookup failed: {e}")
             return ""
 
     def build_messages(
@@ -178,3 +255,123 @@ class BaseAgent(ABC):
             context_parts.append(f"\n\n[기자 스타일]\n{reporter_context}")
 
         return base_prompt + "".join(context_parts)
+
+    # =========================================================================
+    # AgentCore Memory 통합 메서드
+    # =========================================================================
+
+    async def learn_from_article(
+        self,
+        reporter_id: str,
+        article_text: str,
+        article_metadata: Optional[Dict[str, Any]] = None,
+    ) -> bool:
+        """
+        기사에서 작성 패턴 학습
+
+        Args:
+            reporter_id: 기자 ID
+            article_text: 기사 본문
+            article_metadata: 기사 메타데이터 (유형, 주제 등)
+
+        Returns:
+            학습 성공 여부
+        """
+        if not self.use_memory or not reporter_id:
+            return False
+
+        try:
+            await self.memory.initialize()
+            return await self.memory.learn_writing_pattern(
+                reporter_id=reporter_id,
+                article_text=article_text,
+                article_metadata=article_metadata or {},
+            )
+        except Exception as e:
+            logger.error(f"Article pattern learning failed: {e}")
+            return False
+
+    async def update_reporter_style(
+        self,
+        reporter_id: str,
+        style_data: Dict[str, Any],
+    ) -> bool:
+        """
+        기자 스타일 정보 업데이트
+
+        Args:
+            reporter_id: 기자 ID
+            style_data: 스타일 데이터
+
+        Returns:
+            성공 여부
+        """
+        if not self.use_memory or not reporter_id:
+            return False
+
+        try:
+            await self.memory.initialize()
+            return await self.memory.store_reporter_preference(
+                reporter_id=reporter_id,
+                preference_type="style",
+                data=style_data,
+            )
+        except Exception as e:
+            logger.error(f"Update reporter style failed: {e}")
+            return False
+
+    async def save_session_summary(
+        self,
+        reporter_id: str,
+        session_id: str,
+        summary: Dict[str, Any],
+    ) -> bool:
+        """
+        세션 요약 저장
+
+        Args:
+            reporter_id: 기자 ID
+            session_id: 세션 ID
+            summary: 세션 요약 데이터
+
+        Returns:
+            성공 여부
+        """
+        if not self.use_memory:
+            return False
+
+        try:
+            await self.memory.initialize()
+            return await self.memory.store_session_summary(
+                reporter_id=reporter_id,
+                session_id=session_id,
+                summary=summary,
+            )
+        except Exception as e:
+            logger.error(f"Save session summary failed: {e}")
+            return False
+
+    async def get_recent_context(
+        self,
+        reporter_id: str,
+        limit: int = 3,
+    ) -> List[Dict[str, Any]]:
+        """
+        최근 세션 컨텍스트 조회
+
+        Args:
+            reporter_id: 기자 ID
+            limit: 최대 세션 수
+
+        Returns:
+            최근 세션 요약 리스트
+        """
+        if not self.use_memory or not reporter_id:
+            return []
+
+        try:
+            await self.memory.initialize()
+            return await self.memory.get_recent_sessions(reporter_id, limit)
+        except Exception as e:
+            logger.error(f"Get recent context failed: {e}")
+            return []
