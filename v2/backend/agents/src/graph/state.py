@@ -1,10 +1,28 @@
 """
 LangGraph State 정의
 기사 작성 워크플로우의 상태를 관리합니다.
+
+Tool 통합:
+- tool_calls: 현재 처리해야 할 도구 호출 목록
+- tool_results: 도구 실행 결과
 """
 
-from typing import TypedDict, List, Optional, Annotated
+from typing import TypedDict, List, Optional, Annotated, Any
 from operator import add
+
+
+class ToolCall(TypedDict):
+    """도구 호출 정보"""
+    id: str                  # 도구 호출 ID
+    name: str                # 도구 이름
+    args: dict               # 도구 인자
+
+
+class ToolResult(TypedDict):
+    """도구 실행 결과"""
+    tool_call_id: str        # 도구 호출 ID
+    name: str                # 도구 이름
+    result: Any              # 실행 결과
 
 
 class ArticleState(TypedDict):
@@ -33,6 +51,11 @@ class ArticleState(TypedDict):
     image_url: Optional[str]            # 대표 이미지 URL
     tts_url: Optional[str]              # TTS 음성 URL
     fact_check_report: Optional[dict]   # 팩트체크 리포트
+
+    # ===== Tool Integration =====
+    tool_calls: List[ToolCall]          # 현재 처리해야 할 도구 호출
+    tool_results: List[ToolResult]      # 도구 실행 결과
+    pending_tool_calls: bool            # 처리 대기 중인 도구 호출 여부
 
     # ===== Meta =====
     reporter_id: str                    # 기자 ID

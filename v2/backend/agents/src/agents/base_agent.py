@@ -1,15 +1,21 @@
 """
 Base Agent 클래스
 모든 Agent의 공통 기능을 정의합니다.
-AWS Bedrock + AgentCore Memory + pgvector 통합
+AWS Bedrock + AgentCore Memory + pgvector 통합 + Tools
+
+Tool 통합:
+- bind_tools(): LLM에 도구 바인딩
+- invoke_with_tools(): 도구 사용 가능한 LLM 호출
+- parse_tool_calls(): 응답에서 도구 호출 추출
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Callable
 import logging
 import os
 
 from langchain_aws import ChatBedrockConverse
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
 # 프롬프트 로더
 from ..prompts.prompt_loader import prompt_loader
@@ -20,6 +26,9 @@ from ..memory import get_memory_manager, AgentCoreMemoryManager
 
 # pgvector 검색 (토큰 절약)
 from ..database import search_kb_rules, search_stylebook, search_examples, get_reporter_style
+
+# Tools
+from ..tools import get_all_tools, get_research_tools, get_factcheck_tools
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +46,10 @@ class BaseAgent(ABC):
     - 기자 스타일 학습
     - 세션 컨텍스트 유지
     - 작성 패턴 분석
+
+    Tool 통합:
+    - LLM에 도구 바인딩
+    - 도구 사용 가능한 호출
     """
 
     def __init__(
@@ -47,6 +60,7 @@ class BaseAgent(ABC):
         temperature: float = 0.7,
         max_tokens: int = 4096,
         use_memory: bool = True,
+        tools: Optional[List[Callable]] = None,
     ):
         self.name = name
         self.agent_id = agent_id
@@ -63,6 +77,10 @@ class BaseAgent(ABC):
             max_tokens=max_tokens,
         )
 
+        # Tools
+        self._tools = tools
+        self._llm_with_tools = None
+
         # Memory Manager (lazy initialization)
         self._memory_manager: Optional[AgentCoreMemoryManager] = None
 
@@ -72,6 +90,38 @@ class BaseAgent(ABC):
         if self._memory_manager is None:
             self._memory_manager = get_memory_manager()
         return self._memory_manager
+
+    @property
+    def tools(self) -> List[Callable]:
+        """사용 가능한 도구 목록"""
+        if self._tools is None:
+            # 기본 도구 설정 (Agent 유형별)
+            self._tools = self._get_default_tools()
+        return self._tools
+
+    @property
+    def llm_with_tools(self):
+        """도구가 바인딩된 LLM"""
+        if self._llm_with_tools is None and self.tools:
+            self._llm_with_tools = self.llm.bind_tools(self.tools)
+        return self._llm_with_tools if self._llm_with_tools else self.llm
+
+    def _get_default_tools(self) -> List[Callable]:
+        """Agent 유형별 기본 도구 반환"""
+        # Agent ID에 따라 다른 도구 세트 반환
+        if self.agent_id in ["COLLECTOR", "SOURCE_ANALYZER"]:
+            return get_research_tools()
+        elif self.agent_id in ["FACT_CHECKER", "P1"]:
+            return get_factcheck_tools()
+        else:
+            # 기본적으로 모든 도구 사용 가능
+            return get_all_tools()
+
+    def bind_tools(self, tools: List[Callable]) -> None:
+        """도구 바인딩"""
+        self._tools = tools
+        self._llm_with_tools = self.llm.bind_tools(tools)
+        logger.info(f"[{self.name}] Bound {len(tools)} tools")
 
     @abstractmethod
     async def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -249,6 +299,115 @@ class BaseAgent(ABC):
         except Exception as e:
             logger.error(f"LLM 호출 실패: {e}")
             raise
+
+    async def invoke_with_tools(
+        self,
+        messages: List[Dict],
+        max_iterations: int = 5,
+    ) -> Dict[str, Any]:
+        """
+        도구 사용 가능한 LLM 호출
+
+        Args:
+            messages: 메시지 리스트
+            max_iterations: 최대 도구 호출 반복 횟수
+
+        Returns:
+            {
+                "content": 최종 응답,
+                "tool_calls": 실행된 도구 호출 목록,
+                "tool_results": 도구 실행 결과,
+            }
+        """
+        from ..graph.tool_node import parse_tool_calls_from_response
+
+        if not self.tools:
+            # 도구 없으면 일반 호출
+            response = await self.llm.ainvoke(messages)
+            return {
+                "content": response.content,
+                "tool_calls": [],
+                "tool_results": [],
+            }
+
+        all_tool_calls = []
+        all_tool_results = []
+        current_messages = list(messages)
+
+        for iteration in range(max_iterations):
+            # 도구 바인딩된 LLM 호출
+            response = await self.llm_with_tools.ainvoke(current_messages)
+
+            # 도구 호출 파싱
+            tool_calls = parse_tool_calls_from_response(response)
+
+            if not tool_calls:
+                # 도구 호출 없음 - 최종 응답
+                return {
+                    "content": response.content if hasattr(response, 'content') else str(response),
+                    "tool_calls": all_tool_calls,
+                    "tool_results": all_tool_results,
+                }
+
+            # 도구 실행
+            tool_results = []
+            for tc in tool_calls:
+                tool_name = tc["name"]
+                tool_args = tc["args"]
+
+                if tool_name in {t.name if hasattr(t, 'name') else t.__name__ for t in self.tools}:
+                    # 도구 찾기
+                    tool = next(
+                        (t for t in self.tools if (getattr(t, 'name', t.__name__) == tool_name)),
+                        None
+                    )
+                    if tool:
+                        try:
+                            if hasattr(tool, 'ainvoke'):
+                                result = await tool.ainvoke(tool_args)
+                            else:
+                                result = await tool(**tool_args)
+                            tool_results.append({
+                                "tool_call_id": tc["id"],
+                                "name": tool_name,
+                                "result": result,
+                            })
+                        except Exception as e:
+                            logger.error(f"Tool {tool_name} error: {e}")
+                            tool_results.append({
+                                "tool_call_id": tc["id"],
+                                "name": tool_name,
+                                "result": f"Error: {str(e)}",
+                            })
+
+            all_tool_calls.extend(tool_calls)
+            all_tool_results.extend(tool_results)
+
+            # 메시지에 AI 응답 추가
+            current_messages.append({
+                "role": "assistant",
+                "content": response.content if hasattr(response, 'content') else "",
+                "tool_calls": tool_calls,
+            })
+
+            # 도구 결과 메시지 추가
+            for tr in tool_results:
+                current_messages.append({
+                    "role": "tool",
+                    "tool_call_id": tr["tool_call_id"],
+                    "name": tr["name"],
+                    "content": str(tr["result"]),
+                })
+
+            self.log_step(f"도구 실행 완료 (iteration {iteration + 1}): {len(tool_results)}개")
+
+        # 최대 반복 도달
+        logger.warning(f"[{self.name}] Max tool iterations reached")
+        return {
+            "content": "",
+            "tool_calls": all_tool_calls,
+            "tool_results": all_tool_results,
+        }
 
     def log_step(self, step: str, details: Optional[Dict] = None):
         """단계 로깅"""
