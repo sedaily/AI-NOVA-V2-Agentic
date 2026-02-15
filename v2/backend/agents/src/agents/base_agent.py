@@ -1,7 +1,7 @@
 """
 Base Agent 클래스
 모든 Agent의 공통 기능을 정의합니다.
-AWS Bedrock + AgentCore Memory 통합
+AWS Bedrock + AgentCore Memory + pgvector 통합
 """
 
 from abc import ABC, abstractmethod
@@ -17,6 +17,9 @@ from ..prompts.prompt_templates import PROMPT_TEMPLATES
 
 # AgentCore Memory
 from ..memory import get_memory_manager, AgentCoreMemoryManager
+
+# pgvector 검색 (토큰 절약)
+from ..database import search_kb_rules, search_stylebook, search_examples, get_reporter_style
 
 logger = logging.getLogger(__name__)
 
@@ -75,28 +78,89 @@ class BaseAgent(ABC):
         """Agent 실행 (서브클래스에서 구현)"""
         pass
 
-    async def get_kb_context(self, query: str, top_k: int = 5) -> str:
-        """KB 규칙 검색"""
+    async def get_kb_context(
+        self,
+        query: str,
+        top_k: int = 5,
+        engine_type: Optional[str] = None,
+    ) -> str:
+        """
+        KB 규칙 검색 (pgvector)
+
+        Args:
+            query: 검색 쿼리 (기사 내용 일부)
+            top_k: 상위 K개
+            engine_type: 엔진 유형 (11: 기업, 22: 정부/공공)
+
+        Returns:
+            관련 KB 규칙 텍스트 (줄바꿈 구분)
+        """
         try:
-            rules = await search_kb_rules(self.agent_id, query, top_k)
+            rules = await search_kb_rules(
+                agent_id=self.agent_id,
+                query=query,
+                top_k=top_k,
+                engine_type=engine_type,
+            )
             return "\n".join(rules) if rules else ""
         except Exception as e:
             logger.error(f"KB 검색 실패: {e}")
             return ""
 
-    async def get_style_context(self, query: str, top_k: int = 3) -> str:
-        """스타일북 검색"""
+    async def get_style_context(
+        self,
+        query: str,
+        top_k: int = 3,
+        category: Optional[str] = None,
+    ) -> str:
+        """
+        스타일북 검색 (pgvector)
+
+        Args:
+            query: 검색 쿼리
+            top_k: 상위 K개
+            category: 카테고리 필터
+
+        Returns:
+            스타일 규칙 텍스트 (줄바꿈 구분)
+        """
         try:
-            styles = await search_stylebook(query, top_k)
+            styles = await search_stylebook(
+                query=query,
+                top_k=top_k,
+                category=category,
+            )
             return "\n".join(styles) if styles else ""
         except Exception as e:
             logger.error(f"스타일북 검색 실패: {e}")
             return ""
 
-    async def get_examples(self, query: str, top_k: int = 3) -> List[Dict]:
-        """Few-shot 예시 검색"""
+    async def get_examples(
+        self,
+        query: str,
+        top_k: int = 3,
+        article_type: Optional[str] = None,
+        engine_type: Optional[str] = None,
+    ) -> List[Dict]:
+        """
+        Few-shot 예시 검색 (pgvector)
+
+        Args:
+            query: 검색 쿼리
+            top_k: 상위 K개
+            article_type: 기사 유형 필터
+            engine_type: 엔진 유형 필터
+
+        Returns:
+            예시 기사 리스트
+        """
         try:
-            return await search_examples(query, top_k)
+            return await search_examples(
+                query=query,
+                top_k=top_k,
+                article_type=article_type,
+                engine_type=engine_type,
+            )
         except Exception as e:
             logger.error(f"예시 검색 실패: {e}")
             return []
@@ -153,13 +217,10 @@ class BaseAgent(ABC):
             return ""
 
     async def _get_reporter_style_legacy(self, reporter_id: str) -> str:
-        """기자 스타일 조회 (Legacy)"""
+        """기자 스타일 조회 (Legacy - DB 기반)"""
         try:
-            # 기존 get_reporter_style 함수 호출 (존재하는 경우)
-            from ..database.kb_repository import get_reporter_style
+            # DB에서 기자 스타일 조회
             return await get_reporter_style(reporter_id)
-        except ImportError:
-            return ""
         except Exception as e:
             logger.debug(f"Legacy reporter style lookup failed: {e}")
             return ""

@@ -3,7 +3,7 @@ Stylebook Repository
 스타일북 규칙 관리
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from .vector_store import VectorStore
 
 
@@ -57,6 +57,3 @@ class StylebookRepository:
             data=data,
             text_field="rule_text",
         )
-
-
-from typing import Optional
