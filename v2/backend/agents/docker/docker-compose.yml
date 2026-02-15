@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with pgvector extension (Aurora PostgreSQL 로컬 대체)
+  postgres-pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: nexus-pgvector
+    environment:
+      POSTGRES_USER: nexus_user
+      POSTGRES_PASSWORD: nexus_dev_password
+      POSTGRES_DB: nexus_kb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus_user -d nexus_kb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # DynamoDB Local (프롬프트 저장용)
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: nexus-dynamodb
+    ports:
+      - "8000:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/data"]
+    volumes:
+      - dynamodb_data:/data
+    restart: unless-stopped
+
+  # Redis (세션/캐시용)
+  redis:
+    image: redis:7-alpine
+    container_name: nexus-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgvector_data:
+  dynamodb_data:
+  redis_data:

@@ -41,25 +41,8 @@ class FactCheckerAgent(BaseAgent):
         if not draft:
             return state
 
-        # 1단계: 검증 필요 항목 추출
-        system_prompt = """당신은 팩트체크 전문가입니다.
-
-기사에서 검증이 필요한 항목을 추출해주세요:
-1. 숫자/통계 (금액, 비율, 수량 등)
-2. 인명/기관명
-3. 날짜/시간
-4. 주요 주장/인용문
-
-다음 JSON 형식으로 응답:
-{
-    "items_to_verify": [
-        {
-            "text": "검증할 텍스트",
-            "type": "number|name|date|claim",
-            "context": "문맥"
-        }
-    ]
-}"""
+        # 1단계: 검증 필요 항목 추출 (DynamoDB 또는 폴백 템플릿에서 로드)
+        system_prompt = self.get_system_prompt("FACT_CHECK")
 
         messages = self.build_messages(system_prompt, draft)
 

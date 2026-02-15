@@ -1,6 +1,7 @@
 """
 Database Connection
 Aurora PostgreSQL 연결 관리
+로컬 Docker 및 AWS Aurora 지원
 """
 
 import os
@@ -11,11 +12,25 @@ import asyncpg
 
 logger = logging.getLogger(__name__)
 
-DB_HOST = os.getenv("AURORA_HOST", "localhost")
-DB_PORT = int(os.getenv("AURORA_PORT", "5432"))
-DB_NAME = os.getenv("AURORA_DB", "nexus_kb")
-DB_USER = os.getenv("AURORA_USER", "postgres")
-DB_PASSWORD = os.getenv("AURORA_PASSWORD", "")
+# DATABASE_URL이 있으면 우선 사용 (로컬 Docker 환경)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # DATABASE_URL 파싱
+    from urllib.parse import urlparse
+    parsed = urlparse(DATABASE_URL)
+    DB_HOST = parsed.hostname or "localhost"
+    DB_PORT = parsed.port or 5432
+    DB_NAME = parsed.path.lstrip("/") or "nexus_kb"
+    DB_USER = parsed.username or "nexus_user"
+    DB_PASSWORD = parsed.password or "nexus_dev_password"
+else:
+    # 개별 환경 변수 사용 (프로덕션)
+    DB_HOST = os.getenv("AURORA_HOST", "localhost")
+    DB_PORT = int(os.getenv("AURORA_PORT", "5432"))
+    DB_NAME = os.getenv("AURORA_DB", "nexus_kb")
+    DB_USER = os.getenv("AURORA_USER", "nexus_user")
+    DB_PASSWORD = os.getenv("AURORA_PASSWORD", "nexus_dev_password")
 
 _pool: Optional[asyncpg.Pool] = None
 

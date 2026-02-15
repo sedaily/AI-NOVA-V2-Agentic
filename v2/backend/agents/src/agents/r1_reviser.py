@@ -51,25 +51,22 @@ class R1ReviserAgent(BaseAgent):
         # 교정 사항 텍스트화
         corrections_text = ""
         if corrections:
-            corrections_text = "\n".join([
+            corrections_text = "\n[반영할 교정 사항]\n" + "\n".join([
                 f"- {c.get('original', '')} → {c.get('corrected', '')} ({c.get('reason', '')})"
                 for c in corrections[:10]
             ])
 
-        system_prompt = f"""당신은 서울경제신문의 퇴고 전문가입니다.
+        # DynamoDB에서 R1 프롬프트 로드 (또는 폴백 템플릿 사용)
+        base_prompt = self.get_prompt_with_context(
+            prompt_type="R1",
+            kb_context=kb_rules,
+            style_context=style_rules,
+        )
 
-{f'[퇴고 규칙]{chr(10)}{kb_rules}' if kb_rules else ''}
+        # 교정 사항 및 출력 지시 추가
+        system_prompt = f"""{base_prompt}
 
-{f'[스타일북]{chr(10)}{style_rules}' if style_rules else ''}
-
-[퇴고 원칙]
-1. 문장의 간결성: 불필요한 수식어 제거
-2. 명확성: 모호한 표현 구체화
-3. 논리적 흐름: 문단 간 연결 강화
-4. 가독성: 긴 문장 분리, 적절한 문단 나누기
-5. 톤앤매너: 서울경제 스타일 일관성 유지
-
-{f'[반영할 교정 사항]{chr(10)}{corrections_text}' if corrections_text else ''}
+{corrections_text}
 
 수정된 기사 전문을 반환해주세요. 설명 없이 기사 본문만 출력하세요."""
 

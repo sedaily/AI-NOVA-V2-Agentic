@@ -52,35 +52,28 @@ class T1TitlerAgent(BaseAgent):
         # KB 규칙 검색
         kb_rules = await self.get_kb_context(draft[:500])
 
-        system_prompt = f"""당신은 TITLE-NOMICS 3.0, 경제 저널리즘의 창의적 혁명을 이끄는 AI 협업 시스템입니다.
+        # DynamoDB에서 T1 프롬프트 로드 (또는 폴백 템플릿 사용)
+        base_prompt = self.get_prompt_with_context(
+            prompt_type="T1",
+            kb_context=kb_rules,
+        )
 
-[4명의 전문가 협업]
-1. 김경제 (창의적 비전 디렉터): 경쟁사가 놓친 독창적 관점
-2. 정경제 (통찰력 분석가): 표면 너머의 본질적 의미
-3. 박한글 (언어 혁신가): '면비디아' 수준의 신조어와 메타포
-4. 이디지 (디지털 전략가): SEO와 소셜 확산 전략
-
-{f'[적용할 규칙]{chr(10)}{kb_rules}' if kb_rules else ''}
-
-[제목 5종 생성 기준]
-1. 저널리즘 충실형: 핵심 팩트의 의외성과 전문적 함의
-2. 균형잡힌 후킹형: 정확한 분석과 호기심 자극의 균형
-3. 클릭유도형: 참신한 앵글과 감정적 임팩트
-4. SEO/AEO 최적화형: 검색 의도 최적화, 질문형 포함
-5. 소셜미디어 공유형: 공감과 확산을 위한 감성적 연결
-
+        # JSON 출력 형식 추가
+        output_format = """
 다음 JSON 형식으로 응답해주세요:
-{{
+{
     "titles": [
-        {{"type": "journalism", "title": "...", "rationale": "..."}},
-        {{"type": "balanced", "title": "...", "rationale": "..."}},
-        {{"type": "click", "title": "...", "rationale": "..."}},
-        {{"type": "seo", "title": "...", "rationale": "..."}},
-        {{"type": "social", "title": "...", "rationale": "..."}}
+        {"type": "journalism", "title": "...", "rationale": "..."},
+        {"type": "balanced", "title": "...", "rationale": "..."},
+        {"type": "click", "title": "...", "rationale": "..."},
+        {"type": "seo", "title": "...", "rationale": "..."},
+        {"type": "social", "title": "...", "rationale": "..."}
     ],
     "recommended": "가장 추천하는 제목 유형",
     "keywords": ["핵심", "키워드", "목록"]
-}}"""
+}"""
+
+        system_prompt = f"{base_prompt}\n{output_format}"
 
         user_message = f"""다음 {self._get_article_type_name(article_type)} 기사의 제목 5종을 생성해주세요:
 

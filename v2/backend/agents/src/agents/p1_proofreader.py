@@ -53,43 +53,19 @@ class P1ProofreaderAgent(BaseAgent):
         examples = await self.get_examples(draft[:300])
         examples_text = ""
         if examples:
-            examples_text = "\n".join([
+            examples_text = "\n[교정 예시]\n" + "\n".join([
                 f"잘못: {ex.get('wrong', '')}\n올바름: {ex.get('correct', '')}\n이유: {ex.get('explanation', '')}"
                 for ex in examples[:3]
             ])
 
-        system_prompt = f"""당신은 서울경제신문의 교정 전문가입니다.
+        # DynamoDB에서 P1 프롬프트 로드 (또는 폴백 템플릿 사용)
+        base_prompt = self.get_prompt_with_context(
+            prompt_type="P1",
+            kb_context=kb_rules,
+            style_context=style_rules,
+        )
 
-{f'[교정 규칙]{chr(10)}{kb_rules}' if kb_rules else ''}
-
-{f'[스타일북]{chr(10)}{style_rules}' if style_rules else ''}
-
-{f'[교정 예시]{chr(10)}{examples_text}' if examples_text else ''}
-
-[검사 항목]
-1. 맞춤법 오류
-2. 띄어쓰기 오류
-3. 문법 오류
-4. 어색한 문장 구조
-5. 서울경제 스타일 위반
-6. 팩트 체크 필요 항목
-
-다음 JSON 형식으로 응답해주세요:
-{{
-    "corrections": [
-        {{
-            "original": "원문",
-            "corrected": "수정안",
-            "reason": "수정 이유",
-            "category": "spelling|grammar|style|structure|fact",
-            "severity": "high|medium|low"
-        }}
-    ],
-    "suggestions": ["개선 제안 목록"],
-    "fact_check_items": ["확인 필요 항목"],
-    "style_issues": ["스타일 이슈"],
-    "overall_score": 85
-}}"""
+        system_prompt = f"{base_prompt}{examples_text}"
 
         user_message = f"""다음 기사를 교정해주세요:
 

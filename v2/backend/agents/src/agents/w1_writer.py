@@ -73,15 +73,18 @@ class W1WriterAgent(BaseAgent):
                 f"- {ex.get('correct', '')}" for ex in examples[:2]
             ])
 
-        # 시스템 프롬프트 구성
-        system_prompt = self._build_system_prompt(
+        # 시스템 프롬프트 구성 (DynamoDB 또는 폴백 템플릿에서 로드)
+        base_prompt = self.get_prompt_with_context(
+            prompt_type="W1",
             engine_type=engine_type,
-            article_type=article_type,
-            kb_rules=kb_rules,
-            style_rules=style_rules,
-            reporter_style=reporter_style,
-            examples_text=examples_text,
+            kb_context=kb_rules,
+            style_context=style_rules,
+            reporter_context=reporter_style,
         )
+
+        # 기사 유형별 추가 지시 + 예시 추가
+        article_instruction = self._get_article_instruction(article_type)
+        system_prompt = f"{base_prompt}\n\n{article_instruction}{examples_text}"
 
         # 사용자 메시지
         user_message = f"""다음 소스를 바탕으로 {self._get_article_type_name(article_type)} 기사를 작성해주세요.
@@ -104,60 +107,6 @@ class W1WriterAgent(BaseAgent):
         self.log_step("기사 작성 완료")
 
         return state
-
-    def _build_system_prompt(
-        self,
-        engine_type: str,
-        article_type: str,
-        kb_rules: str,
-        style_rules: str,
-        reporter_style: str,
-        examples_text: str,
-    ) -> str:
-        """시스템 프롬프트 구성"""
-
-        # 엔진별 기본 지시
-        if engine_type == "22":
-            engine_instruction = """[정부/공공 보도자료 기사화 시스템 v2.0]
-
-절대 규칙:
-- 대통령, 장관, 국회의원 등 모든 정치인 실명 사용 금지
-- 여당, 야당, 정당명 일체 언급 금지
-- 성공적, 실패한, 파격적 등 가치판단 표현 금지
-- 경제적 영향 중심으로 분석
-
-핵심 원칙:
-1. 정치적 중립성 절대 유지
-2. 경제적 영향 중심 분석
-3. 독자 관점 재구성
-4. 팩트 기반 작성"""
-        else:
-            engine_instruction = """[기업 보도자료 기사화 시스템]
-
-핵심 역량:
-1. 분석력: 기업 발표의 표면적 내용과 실제 의미 구분
-2. 판단력: 뉴스가치와 독자 관심도 정확히 평가
-3. 작성력: 복잡한 경제 현상을 명확하게 전달
-4. 정확성: 팩트 체크와 검증을 통한 신뢰성 확보
-
-독자: 투자자, 기업 관계자"""
-
-        # 기사 유형별 지시
-        article_instruction = self._get_article_instruction(article_type)
-
-        return f"""당신은 서울경제신문의 AI 기자입니다.
-
-{engine_instruction}
-
-{article_instruction}
-
-{f'[적용할 규칙]{chr(10)}{kb_rules}' if kb_rules else ''}
-
-{f'[스타일북]{chr(10)}{style_rules}' if style_rules else ''}
-
-{f'[기자 스타일]{chr(10)}{reporter_style}' if reporter_style else ''}
-
-{examples_text}"""
 
     def _get_article_instruction(self, article_type: str) -> str:
         """기사 유형별 지시문"""

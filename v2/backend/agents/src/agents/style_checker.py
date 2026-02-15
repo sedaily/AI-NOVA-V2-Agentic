@@ -34,29 +34,11 @@ class StyleCheckerAgent(BaseAgent):
         # 스타일북 규칙 검색
         style_rules = await self.get_style_context(draft[:500])
 
-        system_prompt = f"""당신은 서울경제신문의 스타일 가이드 검토자입니다.
-
-{f'[스타일북 규칙]{chr(10)}{style_rules}' if style_rules else ''}
-
-[검사 항목]
-1. 표기법: 숫자, 날짜, 단위 표기
-2. 용어: 경제/금융 전문용어 통일
-3. 문장 스타일: 서울경제 톤앤매너
-4. 금지 표현: 비속어, 차별적 표현
-5. 인용 형식: 인용문, 출처 표기
-
-다음 JSON 형식으로 응답해주세요:
-{{
-    "violations": [
-        {{
-            "text": "위반 텍스트",
-            "rule": "위반한 규칙",
-            "suggestion": "수정 제안"
-        }}
-    ],
-    "compliance_score": 0-100,
-    "summary": "전체 평가 요약"
-}}"""
+        # DynamoDB 또는 폴백 템플릿에서 로드
+        system_prompt = self.get_prompt_with_context(
+            prompt_type="STYLE_CHECK",
+            style_context=style_rules,
+        )
 
         user_message = f"다음 기사의 스타일 가이드 준수 여부를 검사해주세요:\n\n{draft}"
 

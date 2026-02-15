@@ -1,17 +1,25 @@
 """
 Base Agent 클래스
 모든 Agent의 공통 기능을 정의합니다.
+AWS Bedrock 사용
 """
 
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional, List
 import logging
+import os
 
 from langchain_aws import ChatBedrockConverse
-from ..database.aurora import search_kb_rules, search_stylebook, search_examples
-from ..memory.agentcore import get_reporter_style
+
+# 프롬프트 로더
+from ..prompts.prompt_loader import prompt_loader
+from ..prompts.prompt_templates import PROMPT_TEMPLATES
 
 logger = logging.getLogger(__name__)
+
+# AWS 설정
+AWS_REGION = os.getenv("AWS_REGION", "ap-northeast-2")
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-sonnet-4-20250514")
 
 
 class BaseAgent(ABC):
@@ -108,3 +116,64 @@ class BaseAgent(ABC):
         logger.info(f"[{self.name}] {step}")
         if details:
             logger.debug(f"[{self.name}] Details: {details}")
+
+    def get_system_prompt(
+        self,
+        prompt_type: str,
+        engine_type: Optional[str] = None,
+    ) -> str:
+        """
+        DynamoDB에서 시스템 프롬프트 로딩
+
+        Args:
+            prompt_type: W1, T1, P1, R1 등
+            engine_type: 11 (기업) 또는 22 (정부/공공)
+
+        Returns:
+            시스템 프롬프트 문자열
+        """
+        try:
+            return prompt_loader.get_system_prompt(prompt_type, engine_type)
+        except Exception as e:
+            logger.warning(f"프롬프트 로딩 실패, 폴백 사용: {e}")
+            # 폴백: 템플릿에서 로딩
+            template = PROMPT_TEMPLATES.get(prompt_type, {})
+            if engine_type and engine_type in template:
+                return template[engine_type].get("instruction", "")
+            return template.get("default", {}).get("instruction", "")
+
+    def get_prompt_with_context(
+        self,
+        prompt_type: str,
+        engine_type: Optional[str] = None,
+        kb_context: str = "",
+        style_context: str = "",
+        reporter_context: str = "",
+    ) -> str:
+        """
+        프롬프트 + KB 컨텍스트 조합
+
+        Args:
+            prompt_type: W1, T1, P1, R1 등
+            engine_type: 11 또는 22
+            kb_context: KB 규칙 컨텍스트
+            style_context: 스타일북 컨텍스트
+            reporter_context: 기자 스타일 컨텍스트
+
+        Returns:
+            최종 시스템 프롬프트
+        """
+        base_prompt = self.get_system_prompt(prompt_type, engine_type)
+
+        context_parts = []
+
+        if kb_context:
+            context_parts.append(f"\n\n[KB 규칙]\n{kb_context}")
+
+        if style_context:
+            context_parts.append(f"\n\n[스타일 가이드]\n{style_context}")
+
+        if reporter_context:
+            context_parts.append(f"\n\n[기자 스타일]\n{reporter_context}")
+
+        return base_prompt + "".join(context_parts)
