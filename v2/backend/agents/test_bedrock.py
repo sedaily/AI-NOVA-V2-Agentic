@@ -11,7 +11,7 @@ from datetime import datetime
 
 # 환경 변수
 AWS_REGION = os.getenv("AWS_REGION", "ap-northeast-2")
-MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-sonnet-4-20250514")
+MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "apac.anthropic.claude-3-5-sonnet-20241022-v2:0")
 
 # Bedrock Runtime 클라이언트
 bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
