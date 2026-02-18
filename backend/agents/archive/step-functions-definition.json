@@ -1,0 +1,103 @@
+{
+  "Comment": "AI NOVA Service Pipeline",
+  "StartAt": "AnalyzeContent",
+  "States": {
+    "AnalyzeContent": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "DetectLanguage",
+          "States": {
+            "DetectLanguage": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-language-detector",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "DetectCategory",
+          "States": {
+            "DetectCategory": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-category-detector",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "DetectLength",
+          "States": {
+            "DetectLength": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-length-detector",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "DetectContentType",
+          "States": {
+            "DetectContentType": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-content-type-detector",
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "DetermineService"
+    },
+    "DetermineService": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-service-router",
+      "Next": "CallPrimaryService"
+    },
+    "CallPrimaryService": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-service-caller",
+      "Next": "CheckSecondaryService"
+    },
+    "CheckSecondaryService": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.needsProofreading",
+          "BooleanEquals": true,
+          "Next": "CallProofreading"
+        },
+        {
+          "Variable": "$.needsTitleGeneration",
+          "BooleanEquals": true,
+          "Next": "CallTitleGeneration"
+        }
+      ],
+      "Default": "ReturnResult"
+    },
+    "CallProofreading": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-service-caller",
+      "Next": "CheckTitleGeneration"
+    },
+    "CheckTitleGeneration": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.needsTitleGeneration",
+          "BooleanEquals": true,
+          "Next": "CallTitleGeneration"
+        }
+      ],
+      "Default": "ReturnResult"
+    },
+    "CallTitleGeneration": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:887078546492:function:bedrock-service-caller",
+      "Next": "ReturnResult"
+    },
+    "ReturnResult": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}

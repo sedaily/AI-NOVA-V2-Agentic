@@ -1,0 +1,31 @@
+{
+  "agentName": "supervisor-agent",
+  "agentResourceRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/AmazonBedrockExecutionRoleForAgents",
+  "foundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+  "instruction": "당신은 기사 작성 파이프라인을 관리하는 슈퍼바이저입니다. 사용자 입력을 받아 다음 순서로 작업을 진행하세요:\n1. Language Agent에게 언어 감지 요청\n2. Category Agent에게 카테고리 분류 요청\n3. Length Agent에게 길이 측정 요청\n4. 각 에이전트의 결과를 종합하여 최종 설정을 제공\n\n각 에이전트와 협업하여 최적의 서비스 설정을 결정하세요.",
+  "idleSessionTTLInSeconds": 600,
+  "agentCollaboration": "SUPERVISOR_ROUTER",
+  "collaborators": [
+    {
+      "agentDescriptor": {
+        "aliasArn": "arn:aws:bedrock:us-east-1:YOUR_ACCOUNT_ID:agent-alias/LANGUAGE_AGENT_ID/ALIAS_ID"
+      },
+      "collaborationInstruction": "언어 감지가 필요할 때 이 에이전트를 호출하세요. 한국어, 영어, 일본어를 구분하고 외신 번역 필요 여부를 판단합니다.",
+      "relayConversationHistory": "TO_COLLABORATOR"
+    },
+    {
+      "agentDescriptor": {
+        "aliasArn": "arn:aws:bedrock:us-east-1:YOUR_ACCOUNT_ID:agent-alias/CATEGORY_AGENT_ID/ALIAS_ID"
+      },
+      "collaborationInstruction": "카테고리 분류가 필요할 때 이 에이전트를 호출하세요. 경제/사회 분야를 구분하고 교열 설정을 제공합니다.",
+      "relayConversationHistory": "TO_COLLABORATOR"
+    },
+    {
+      "agentDescriptor": {
+        "aliasArn": "arn:aws:bedrock:us-east-1:YOUR_ACCOUNT_ID:agent-alias/LENGTH_AGENT_ID/ALIAS_ID"
+      },
+      "collaborationInstruction": "길이 측정이 필요할 때 이 에이전트를 호출하세요. 글자수를 측정하고 단문/장문에 맞는 퇴고 설정을 제공합니다.",
+      "relayConversationHistory": "TO_COLLABORATOR"
+    }
+  ]
+}

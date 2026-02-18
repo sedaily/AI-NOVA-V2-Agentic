@@ -1,0 +1,2244 @@
+================================================================================
+NOVA v3 - Writer Agent Knowledge Base
+================================================================================
+원본: W_files.txt
+용도: Writer Agent KB (확장 모듈 - 통계청, 금융당국, 지방정부, 공공기관)
+================================================================================
+
+================================================================================
+W1 - 지식베이스 파일
+================================================================================
+
+
+============================================================
+File: KB03_expansion_modules.txt
+Prompt ID: 22
+============================================================
+
+# KB03_EXPANSION_MODULES.md - 특수 상황별 확장 모듈
+
+## 📊 통계청 발표 전문 모듈
+
+### 필수 확인 사항
+- 계절조정 여부 명시
+- 기저효과 설명 (전년 특이사항 있을 경우)
+- 잠정치/확정치 구분
+- 표본 규모와 오차범위
+
+### 통계 용어 표기
+- GDP: 국내총생산 (첫 언급시)
+- CPI: 소비자물가지수
+- PPI: 생산자물가지수
+- BSI: 기업경기실사지수
+
+### 작성 예시
+```
+통계청이 27일 발표한 '8월 산업활동동향'에 따르면 지난달 전산업 생산지수는 
+113.2(2020=100)로 전월 대비 0.3% 증가했다. 전년 동월 대비로는 2.1% 늘었다. 
+(계절조정 기준)
+```
+
+## 🏦 금융당국 발표 모듈
+
+### 한국은행
+- 금통위 결과: 만장일치/다수결 명시
+- 금리 변경: 베이시스포인트(bp) 사용
+- 물가 전망: 상·하반기 구분
+- 성장률: 소수점 한 자리까지
+
+### 금융위/금감원
+- 가계대출: 증가액과 증가율 병기
+- DSR: 총부채원리금상환비율
+- LTV: 주택담보인정비율  
+- DTI: 총부채상환비율
+
+### 작성 예시
+```
+한은 금융통화위원회는 27일 기준금리를 연 3.25%로 25bp 인상하기로 결정했다. 
+금통위원 7명 중 6명이 인상에 찬성했고, 1명이 동결 의견을 냈다.
+```
+
+## 🏛️ 지방정부 발표 모듈
+
+### 서울시
+- 시장명 생략, "서울시는" 주어 사용
+- 자치구 언급시: 강남구, 종로구 (구 붙이기)
+- 예산: 시비/국비/민자 구분
+
+### 경기도
+- 남부/북부 지역 구분 명시
+- 31개 시군 전체 적용 여부
+- 수도권/비수도권 비교 포함
+
+### 작성 예시
+```
+서울시는 27일 강남·서초·송파 등 3개구에 특별교통대책을 시행한다고 발표했다. 
+시비 500억 원을 투입해...
+```
+
+## 🏢 공공기관 발표 모듈
+
+### 공정거래위원회
+- 제재금: 과징금/과태료 구분
+- 기업 실명 사용 가능
+- 시정명령/고발 구분
+
+### 국세청/관세청
+- 세목별 정확한 명칭
+- 신고/납부 기한 명시
+- 가산세/가산금 구분
+
+### 한국전력/가스공사
+- 요금 인상률과 인상액 병기
+- 가구당 평균 부담 증가액
+- 시행 시기(검침일 기준)
+
+### 작성 예시
+```
+공정위는 27일 A사에 대해 불공정거래 행위로 과징금 100억 원을 부과하고 
+시정명령을 내렸다. B사와 C사는 각각 50억 원, 30억 원의 과징금을...
+```
+
+## 🏗️ 대규모 국책사업 모듈
+
+### 필수 정보
+- 총사업비와 연차별 투입 계획
+- 국비/지방비/민자 비율
+- 예비타당성조사 통과 여부
+- 착공/준공 예정일
+
+### 작성 구조
+1. 사업 규모와 위치
+2. 기대 효과 (일자리, 경제효과)
+3. 추진 일정
+4. 재원 조달 계획
+
+## 📈 경제위기/긴급대책 모듈
+
+### 긴급 대책 발표시
+- "긴급", "특단" 등 표현 신중 사용
+- 즉시/단계적 시행 구분
+- 한시적/항구적 조치 구분
+
+### 필수 포함 사항
+- 대책 규모 (금액/지원 대상 수)
+- 재원 (추경/예비비/기금)
+- 시행 시기와 종료 시점
+- 신청 방법과 절차
+
+## 🎯 선거 관련 정책 모듈
+
+### 주의사항
+- 선거 90일 전부터 특별 주의
+- 정당별 입장 균형 배치
+- "선심성", "표심" 등 표현 금지
+- 정책 내용에만 집중
+
+### 작성 원칙
+- 정책 발표 사실만 전달
+- 야당 반응은 팩트만 간략히
+- 선거 일정 언급 최소화
+
+## 💰 세제 개편 모듈
+
+### 필수 계산
+- 세율 변경: 전→후 비교표
+- 세부담 변화: 소득 구간별 예시
+- 세수 효과: 증감 예상액
+
+### 작성 예시
+```
+연소득 5000만 원 근로자의 경우 소득세가 현행 120만 원에서 
+100만 원으로 20만 원(16.7%) 줄어든다.
+```
+
+## 🏠 부동산 정책 모듈
+
+### 필수 구분
+- 지역별 차등 적용 명시
+- 주택 유형별 영향 (아파트/빌라/오피스텔)
+- 실수요/투자수요 영향 구분
+
+### 시장 영향 서술
+- 전문가 전망 인용
+- 과거 유사 정책 효과 비교
+- 단기/중장기 영향 구분
+
+---
+*모듈 추가: 필요시 해당 섹션 추가*
+*각 모듈은 독립적으로 작동*
+
+
+============================================================
+File: KB01_permanent_rules.txt
+Prompt ID: 22
+============================================================
+
+
+<artifact identifier="kb01-xml-clean" type="text/plain" title="KB01_PERMANENT_RULES.xml - 정상 인코딩 버전">
+<?xml version="1.0" encoding="UTF-8"?>
+<permanent_rules version="1.0" enforcement="absolute">
+<!-- 자주 틀리는 표현 (필수 점검) -->
+<common_errors priority="critical">
+<spelling_rules>
+  <rule id="SP001">
+    <category>맞춤법</category>
+    <incorrect>됬다</incorrect>
+    <correct>됐다</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="SP002">
+    <category>맞춤법</category>
+    <incorrect>않된다</incorrect>
+    <correct>안 된다</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="SP003">
+    <category>맞춤법</category>
+    <incorrect>몇일</incorrect>
+    <correct>며칠</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="SP004">
+    <category>맞춤법</category>
+    <incorrect>오랫만에</incorrect>
+    <correct>오랜만에</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+</spelling_rules>
+
+<spacing_rules>
+  <rule id="SC001">
+    <category>띄어쓰기</category>
+    <incorrect>첫번째</incorrect>
+    <correct>첫 번째</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="SC002">
+    <category>띄어쓰기</category>
+    <incorrect>더이상</incorrect>
+    <correct>더 이상</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="SC003">
+    <category>띄어쓰기</category>
+    <incorrect>200여개</incorrect>
+    <correct>200여 개</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+</spacing_rules>
+
+<currency_rules priority="highest">
+  <rule id="CR001">
+    <category>금액표기</category>
+    <pattern>([0-9]+억)원</pattern>
+    <replacement>$1 원</replacement>
+    <example>
+      <incorrect>3400억원</incorrect>
+      <correct>3400억 원</correct>
+    </example>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="CR002">
+    <category>금액표기</category>
+    <pattern>([0-9]+만)원</pattern>
+    <replacement>$1 원</replacement>
+    <example>
+      <incorrect>50만원</incorrect>
+      <correct>50만 원</correct>
+    </example>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="CR003">
+    <category>외화표기</category>
+    <note>외화는 붙여쓰기</note>
+    <example>100달러</example>
+    <spacing>no_space</spacing>
+  </rule>
+</currency_rules>
+
+<economic_verbs priority="critical">
+  <rule id="EV001">
+    <indicator>매출</indicator>
+    <incorrect>증가했다</incorrect>
+    <correct>기록했다</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="EV002">
+    <indicator>영업이익</indicator>
+    <incorrect>벌었다</incorrect>
+    <correct>달성했다</correct>
+    <auto_fix>true</auto_fix>
+  </rule>
+  <rule id="EV003">
+    <indicator>GDP</indicator>
+    <correct_verbs>
+      <verb>성장했다</verb>
+      <verb>둔화했다</verb>
+    </correct_verbs>
+    <incorrect_verbs>
+      <verb>증가했다</verb>
+      <verb>늘었다</verb>
+    </incorrect_verbs>
+  </rule>
+  <rule id="EV004">
+    <indicator>금리</indicator>
+    <correct_verbs>
+      <verb>인상했다</verb>
+      <verb>인하했다</verb>
+    </correct_verbs>
+    <incorrect_verbs>
+      <verb>올렸다</verb>
+      <verb>내렸다</verb>
+    </incorrect_verbs>
+  </rule>
+  <rule id="EV005">
+    <indicator>주가</indicator>
+    <correct_verbs>
+      <verb>상승했다</verb>
+      <verb>하락했다</verb>
+    </correct_verbs>
+    <incorrect_verbs>
+      <verb>증가했다</verb>
+      <verb>줄었다</verb>
+    </incorrect_verbs>
+  </rule>
+</economic_verbs>
+
+</common_errors>  <!-- 정치적 중립성 (절대 준수) -->
+<political_neutrality enforcement="absolute" override_all="true">
+
+<banned_expressions>
+  <category name="정치인">
+    <item>정치인 실명</item>
+    <item>대통령 이름</item>
+    <item>장관 이름</item>
+    <item>의원 이름</item>
+    <enforcement>auto_delete</enforcement>
+  </category>
+  <category name="정당">
+    <item>여당</item>
+    <item>야당</item>
+    <item>민주당</item>
+    <item>국민의힘</item>
+    <enforcement>auto_delete</enforcement>
+  </category>
+  <category name="평가어">
+    <item>성공적</item>
+    <item>실패한</item>
+    <item>획기적</item>
+    <item>파격적</item>
+    <enforcement>auto_delete</enforcement>
+  </category>
+  <category name="수식어">
+    <item>전격적</item>
+    <item>파행</item>
+    <item>일방적</item>
+    <item>독단적</item>
+    <enforcement>auto_delete</enforcement>
+  </category>
+</banned_expressions>
+
+<mandatory_expressions>
+  <context type="정부계획">
+    <expression>~한다는 방침이다</expression>
+  </context>
+  <context type="확인사실">
+    <expression>~로 나타났다</expression>
+    <expression>~로 확인됐다</expression>
+  </context>
+  <context type="발언인용">
+    <expression>~라고 밝혔다</expression>
+    <expression>~라고 설명했다</expression>
+  </context>
+  <context type="미확정">
+    <expression>~할 예정이다</expression>
+    <expression>~할 계획이다</expression>
+  </context>
+  <context type="분석전망">
+    <expression>~로 분석된다</expression>
+    <expression>~로 전망된다</expression>
+  </context>
+</mandatory_expressions>
+
+</political_neutrality>  <!-- 문장 작성 세부 규칙 -->
+<sentence_rules>
+
+<length_rules>
+  <optimal unit="words">15-20</optimal>
+  <maximum unit="words">25</maximum>
+  <enforcement>strict</enforcement>
+  <auto_split>true</auto_split>
+</length_rules>
+
+<structure_rules>
+  <rule>주어와 서술어를 가깝게 배치</rule>
+  <rule>한 문장에 하나의 정보만</rule>
+</structure_rules>
+
+<ending_diversity>
+  <restriction id="ED001">
+    <description>동일 종결어미 연속 사용</description>
+    <max_consecutive>2</max_consecutive>
+    <auto_fix>true</auto_fix>
+  </restriction>
+  <restriction id="ED002">
+    <description>~있다 종결어미 사용</description>
+    <max_per_paragraph>1</max_per_paragraph>
+    <auto_fix>true</auto_fix>
+  </restriction>
+  
+  <allowed_endings>
+    <type name="평서문">
+      <ending>~다</ending>
+      <ending>~했다</ending>
+      <ending>~된다</ending>
+      <ending>~것으로 나타났다</ending>
+    </type>
+    <type name="진행형">
+      <ending>~하는 중이다</ending>
+      <ending>~해 나간다</ending>
+      <ending>~을 진행한다</ending>
+    </type>
+    <type name="완료형">
+      <ending>~했다</ending>
+      <ending>~됐다</ending>
+      <ending>~한 상태다</ending>
+      <ending>~을 마쳤다</ending>
+    </type>
+    <type name="계획형">
+      <ending>~할 예정이다</ending>
+      <ending>~할 계획이다</ending>
+      <ending>~을 추진한다</ending>
+    </type>
+    <type name="인용형">
+      <ending>~라고 밝혔다</ending>
+      <ending>~라고 설명했다</ending>
+      <ending>~라고 전했다</ending>
+    </type>
+  </allowed_endings>
+</ending_diversity>
+
+<paragraph_structure>
+  <lead>
+    <sentences>2-3</sentences>
+    <content>핵심 압축</content>
+  </lead>
+  <body>
+    <sentences_per_paragraph>2-3</sentences_per_paragraph>
+    <optimization>모바일 고려</optimization>
+  </body>
+  <arrangement>중요도 순</arrangement>
+</paragraph_structure>
+
+</sentence_rules>
+  <!-- 서울경제 고정 스타일 -->
+<seoul_economy_style>
+
+<ministry_abbreviations>
+  <ministry id="MOEF">
+    <full_name>기획재정부</full_name>
+    <abbreviation>기재부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+  <ministry id="MOTIE">
+    <full_name>산업통상자원부</full_name>
+    <abbreviation>산업부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+  <ministry id="MOLIT">
+    <full_name>국토교통부</full_name>
+    <abbreviation>국토부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+  <ministry id="MOHW">
+    <full_name>보건복지부</full_name>
+    <abbreviation>복지부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+  <ministry id="MOE">
+    <full_name>환경부</full_name>
+    <abbreviation>없음</abbreviation>
+    <usage>환경부로 통일</usage>
+  </ministry>
+  <ministry id="MOEL">
+    <full_name>고용노동부</full_name>
+    <abbreviation>고용부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+  <ministry id="MOE_EDU">
+    <full_name>교육부</full_name>
+    <abbreviation>없음</abbreviation>
+    <usage>교육부로 통일</usage>
+  </ministry>
+  <ministry id="MSIT">
+    <full_name>과학기술정보통신부</full_name>
+    <abbreviation>과기정통부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+  <ministry id="MAFRA">
+    <full_name>농림축산식품부</full_name>
+    <abbreviation>농식품부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+  <ministry id="MOF">
+    <full_name>해양수산부</full_name>
+    <abbreviation>해수부</abbreviation>
+    <usage>첫 언급시 정식(약칭), 이후 약칭만</usage>
+  </ministry>
+</ministry_abbreviations>
+
+<financial_authorities>
+  <authority>
+    <full_name>금융위원회</full_name>
+    <abbreviation>금융위</abbreviation>
+  </authority>
+  <authority>
+    <full_name>금융감독원</full_name>
+    <abbreviation>금감원</abbreviation>
+  </authority>
+  <authority>
+    <full_name>한국은행</full_name>
+    <abbreviation>한은</abbreviation>
+  </authority>
+</financial_authorities>
+
+<title_format>
+  <order>이름 + 직위</order>
+  <correct>홍길동 장관</correct>
+  <correct>김철수 차관</correct>
+  <correct>이영희 국장</correct>
+  <incorrect>장관 홍길동</incorrect>
+  <enforcement>auto_fix</enforcement>
+</title_format>
+
+<number_formatting>
+  <currency>
+    <format>5조3000억 원</format>
+    <rule>조-억 연결, 원 띄우기</rule>
+  </currency>
+  <percentage>
+    <format>5%</format>
+    <rule>붙여쓰기</rule>
+    <format>5%포인트</format>
+    <rule>p 금지</rule>
+  </percentage>
+  <date>
+    <format>2024년 12월 31일</format>
+    <rule>년월일 한글</rule>
+  </date>
+  <period>
+    <format>3개월</format>
+    <format>2년 6개월</format>
+  </period>
+  <people>
+    <format>1만2000명</format>
+    <rule>만-천 연결, 명 붙이기</rule>
+  </people>
+</number_formatting>
+
+<legal_references>
+  <law>
+    <format>「소득세법」</format>
+    <rule>낫표 사용</rule>
+  </law>
+  <decree>
+    <format>소득세법 시행령</format>
+  </decree>
+  <ordinance>
+    <format>소득세법 시행규칙</format>
+  </ordinance>
+  <notification>
+    <format>국토부 고시 제2024-123호</format>
+  </notification>
+</legal_references>
+
+<special_characters>
+  <character name="말줄임표">
+    <unicode>U+2026</unicode>
+    <display>…</display>
+    <incorrect>...</incorrect>
+  </character>
+  <character name="가운뎃점">
+    <unicode>U+00B7</unicode>
+    <display>·</display>
+  </character>
+  <character name="화살표">
+    <unicode>U+2192</unicode>
+    <display>→</display>
+  </character>
+</special_characters>
+
+</seoul_economy_style>
+  <!-- 제목 작성 규칙 -->
+<title_rules>
+<length>
+<minimum>15</minimum>
+<maximum>35</maximum>
+<unit>characters</unit>
+</length>
+
+<restrictions>
+  <banned_punctuation>
+    <mark>!</mark>
+    <rule>사용 금지</rule>
+  </banned_punctuation>
+  <conditional_punctuation>
+    <mark>?</mark>
+    <rule>의문형 제목만</rule>
+  </conditional_punctuation>
+  <quotation>
+    <rule>직접 인용만</rule>
+  </quotation>
+</restrictions>
+
+<required_elements>
+  <element id="WHO">영향 받는 주체</element>
+  <element id="WHAT">정책 핵심 내용</element>
+  <element id="WHEN" condition="important">시행 시기</element>
+  <element id="HOW_MUCH" condition="if_exists">규모/금액</element>
+</required_elements>
+
+<keyword_placement>앞쪽 배치</keyword_placement>
+
+</title_rules>
+  <!-- 본문 작성 규칙 -->
+<body_writing_rules>
+<sentence_composition>
+<max_length>50</max_length>
+<unit>characters</unit>
+<voice>능동형 우선</voice>
+<subject>명확히 명시</subject>
+<pronoun>애매한 대명사 금지</pronoun>
+</sentence_composition>
+
+<paragraph_composition>
+  <sentences>3-4</sentences>
+  <topic>단락별 하나</topic>
+  <connection>논리적 연결</connection>
+</paragraph_composition>
+
+<quotation_handling>
+  <direct>
+    <format>"___" + 발언자 + 라고 말했다</format>
+  </direct>
+  <indirect>
+    <format>발언자는 ___라고 설명했다</format>
+  </indirect>
+  <source>
+    <format>___에 따르면</format>
+  </source>
+</quotation_handling>
+
+</body_writing_rules>
+  <!-- 시스템 메타데이터 -->
+  <metadata>
+    <last_updated>2025-09-27</last_updated>
+    <version>1.0</version>
+    <status>permanent</status>
+    <modification>prohibited</modification>
+    <priority>absolute</priority>
+  </metadata>
+</permanent_rules>
+</artifact>
+
+
+============================================================
+File: KB02_dynamic_updates.txt
+Prompt ID: 22
+============================================================
+
+# KB02_DYNAMIC_UPDATES.md - 수시 업데이트 내용
+
+*최종 업데이트: 2025년 9월 27일*
+
+## 최신 정책 용어 통일
+
+### 디지털 정책
+- ✅ 디지털플랫폼정부 (DPG 아님)
+- ✅ 인공지능(AI) *첫 언급시
+- ✅ 마이데이터
+- ✅ 디지털 뉴딜 2.0
+
+### 탄소중립 정책
+- ✅ 2050 탄소중립 (숫자 먼저)
+- ✅ RE100 (그대로 사용)
+- ✅ ESG (첫 언급시 설명 추가)
+- ✅ 녹색성장 정책
+
+### 산업 정책
+- ✅ K-반도체 벨트
+- ✅ K-바이오 랩허브
+- ✅ 뉴스페이스 (우주산업)
+- ✅ 모빌리티 (이동수단 산업)
+
+## 자주 틀리는 표현
+
+### 외래어 순화
+| 잘못된 표현 | 올바른 표현 | 비고 |
+|------------|------------|------|
+| 가이드라인 | 지침 | 정부 문서 |
+| 컨트롤타워 | 총괄 조직/사령탑 | |
+| 거버넌스 | 운영 체계 | |
+| 이니셔티브 | 계획/사업 | |
+| 패스트트랙 | 신속 처리 | |
+| 원스톱 | 일괄 처리 | |
+| 스타트업 | 창업기업 | 병기 가능 |
+
+### 최근 혼동 표현
+- ❌ 플랫폼 노동자 → ✅ 플랫폼 종사자
+- ❌ 빅테크 → ✅ 거대 기술기업
+- ❌ 리쇼어링 → ✅ 제조업 국내 복귀
+- ❌ 언택트 → ✅ 비대면
+
+## 현 정부 주요 정책 브랜드
+
+- 민생토론회
+- 규제혁신 2.0
+- 늘봄학교 (초등 돌봄)
+- 청년도약계좌
+- K-패스 (대중교통 할인)
+- 국민행복카드
+
+## 통계 작성 기준
+
+### 전월비/전년비 표현
+- 전월 대비 0.3% 상승
+- 전년 동월 대비 2.5% 증가
+- 전분기 대비 1.2% 감소
+
+### 증감률 표현
+- 10% 증가 (상승 지양)
+- 5% 감소 (하락 지양)
+- 보합세 (변동 없음)
+- 반등/반락 (추세 전환시)
+
+---
+*업데이트 원칙: 용어 통일과 표현 수정 사항만 관리*
+
+
+============================================================
+File: KB00_main system.txt
+Prompt ID: 22
+============================================================
+
+# KB00_MAIN_SYSTEM.md - 서울경제 정부 보도자료 시스템 총괄
+
+## 독자 중심 작성 원칙
+
+### 3초 판단 법칙
+- 독자는 기사를 읽을지 3초 내에 결정
+- 제목과 첫 문장이 승부처
+- 핵심 정보를 최우선 배치
+
+### 모바일 최적화
+- 한 화면에 들어오는 짧은 단락 (2-3문장)
+- 세로 스크롤에 적합한 리듬감
+- 터치하며 읽기 편한 구성
+
+### 즉시 이해 가능성
+- 한 문장 = 하나의 명확한 정보
+- 전문 용어는 즉시 쉬운 말로 설명
+- 독자 시간을 존중하는 간결한 표현
+
+## 시스템 운영 핵심 규칙
+
+### 보도자료 충실성 원칙
+- **절대 규칙**: 보도자료에 없는 내용 창작 금지
+- **적응형 제안**: 보도자료 분량에 따라 3-6개 옵션만 제시
+- **투명성 표시**: 추가 배경설명은 [편집자 주]로 명시
+
+### 분량 관리 원칙
+- **절대 규칙**: 기사는 원문보다 항상 짧아야 함
+- **권장 비율**: 원문의 50-80% 수준
+- **자동 계산**: 
+  - 원문 1000자 → 500-800자
+  - 원문 2000자 → 1000-1600자
+  - 원문 3000자 → 1500-2400자
+
+### 자동 분석 프로세스
+1. **즉시 추출 항목**
+   - 발표 부처/기관명
+   - 정책명과 핵심 내용
+   - 영향 대상 (전국민/특정계층/기업/지역)
+   - 예산 규모와 재원
+   - 시행 시기 (즉시/단계적/예정)
+
+2. **영향도 평가 기준**
+   - ★★★★★: 전국민 영향, 대규모 예산
+   - ★★★★☆: 특정 다수 계층, 중규모 예산
+   - ★★★☆☆: 특정 업종/지역, 소규모 예산
+   - ★★☆☆☆: 제한적 대상, 시범사업
+   - ★☆☆☆☆: 행정 절차, 미미한 영향
+
+### 적응형 옵션 제시
+| 보도자료 분량 | 제안 개수 | 기사 분량 |
+|---------------|-----------|-----------|
+| 1페이지 미만 | 3-4개 | 최대 800자 |
+| 1-2페이지 | 4-5개 | 최대 1500자 |
+| 2페이지 이상 | 5-6개 | 최대 2000자 |
+
+### 제목 작성 우선순위
+1. 독자에게 미치는 직접적 영향 강조
+2. 구체적 수치와 규모 포함
+3. 시행 시기 명시
+4. 비교 가능한 맥락 제공
+5. 검색 가능한 핵심 키워드 배치
+
+### 소제목 운영 규칙
+| 원문 분량 | 소제목 개수 | 배치 원칙 |
+|-----------|-------------|-----------|
+| ~1000자 | 1개 | 핵심 내용만 |
+| 1000~2000자 | 2개 | 주요 내용 + 영향/전망 |
+| 2000자~ | 3개 (최대) | 배경 + 주요 내용 + 영향/전망 |
+
+### 품질 체크 항목
+□ 정치적 중립성 유지
+□ 원문 대비 분량 적절성
+□ 필수 정보 포함 여부
+□ 경제적 영향 수치화
+□ 서울경제 스타일 준수
+
+## 시스템 업데이트 지침
+
+### 업데이트 주기
+- KB00 (본 파일): 시스템 개선 시
+- KB01: 변경 불가 (영구 규칙)
+- KB02: 월 1회 + 긴급 수시
+- KB03: 필요시 모듈 추가
+
+### 충돌 처리 우선순위
+1. KB00 (시스템 총괄)
+2. KB01 (영구 규칙)
+3. KB02 (동적 업데이트)
+4. KB03 (확장 모듈)
+
+## 운영 주의사항
+
+### 절대 금지 사항
+- 정치인 실명 언급
+- 정당명 직접 언급
+- 정치적 평가 표현
+- 원문보다 긴 기사 작성
+- 확인되지 않은 추측 포함
+
+### 필수 확인 사항
+- 숫자와 날짜 정확성
+- 적용 대상 명확성
+- 시행 시기 구체성
+- 출처 표기 정확성
+- 법령명 정확성
+
+
+============================================================
+File: KB_sedaily_style.txt
+Prompt ID: 11
+============================================================
+
+# 서울경제신문 종합 스타일북
+
+**버전**: 2.0 Extended (기업 보도자료 기사화 특화)  
+**최종수정**: 2025-01-27
+
+## 메타데이터
+
+- **이름**: 서울경제신문 종합 스타일북
+- **유형**: 전문_고급
+- **우선순위**: 20
+- **도메인**: 서울경제신문_전용
+- **설명**: 서울경제신문 고유 표기 규칙, 경제부 기자 빈발 오류, 상황별 세부 가이드라인
+- **트리거**: 서울경제, 보도자료, 실적, M&A, 투자, IPO, 기업공시, 인수합병, 유상증자, CB, BW, 매출, 영업이익, 당기순이익, EBITDA, 시가총액, 상장, 코스피, 코스닥, 거래소
+- **의존성**: KB01, KB02, KB11, KB21, KB101
+- **로드 조건**: always
+
+---
+
+## 일반 원칙
+
+### SE-P001: 서울경제 고유 표기 절대 우선 [절대규칙]
+- 표준 맞춤법과 충돌 시에도 서울경제 스타일 적용
+- 우선순위: 0
+
+### SE-P002: 경제 전문성 유지 [절대규칙]
+- 일반 독자가 이해 가능하면서도 전문성 확보
+- 우선순위: 1
+
+### SE-P003: 간결성과 명확성 [권고사항]
+- 불필요한 수식어 배제, 핵심 정보 우선
+- 우선순위: 2
+
+### SE-P004: 가독성 향상 [선택사항]
+- 긴 문장 분리, 복잡한 구조 단순화
+- 우선순위: 3
+
+---
+
+## 체크 시퀀스
+
+1. 절대규칙 확인 (금액 표기, 경제지표 용어)
+2. 서울경제 고유 표현 적용
+3. 상황별 특수 규칙 검토
+4. 권고사항 적용
+5. 선택사항 검토
+6. 최종 일관성 확인
+
+---
+
+## 절대 규칙 (MUST)
+
+### 금액 표기 절대규칙
+
+#### SE-AR001: 한국 화폐 단위 띄어쓰기 [5·필수]
+- ❌ 100억원 → ✅ 100억 원
+- ❌ 3조5000억원 → ✅ 3조 5000억 원
+- ❌ 250만원 → ✅ 250만 원
+- ❌ 5000원 → ✅ 5000원 (천 원 미만은 붙여쓰기)
+- **예외**: 원화, 원달러, 원엔 등 복합어는 붙여쓰기
+
+#### SE-AR002: 퍼센트포인트 표기 [5·필수]
+- ❌ 금리 0.25%p 인상 → ✅ 금리 0.25%포인트 인상
+- ❌ 성장률 2%P 상승 → ✅ 성장률 2%포인트 상승
+
+#### SE-AR003: 연도 표현 [5·필수]
+- ❌ 작년 → ✅ 지난해
+- ❌ 올해년 → ✅ 올해
+- ❌ 금년 → ✅ 올해
+- ❌ 내년도 → ✅ 내년
+- ❌ 작년도 → ✅ 지난해
+
+### 경제지표 용어 절대규칙
+
+#### SE-AR004: 경제지표 동사 매칭 [5·필수]
+
+**매출**
+- ✅ 달성, 기록, 돌파
+- ❌ 증가(전년 대비 제외), 상승
+- 예: ❌ 매출이 상승했다 → ✅ 매출을 기록했다
+
+**영업이익**
+- ✅ 달성, 기록, 실현
+- ❌ 벌다, 만들다
+- 예: ❌ 영업이익을 벌었다 → ✅ 영업이익을 달성했다
+
+**당기순이익**
+- ✅ 기록, 실현, 달성
+- ❌ 냈다, 만들다
+- 예: ❌ 당기순이익을 냈다 → ✅ 당기순이익을 기록했다
+
+**시가총액**
+- ✅ 달하다, 기록하다
+- ❌ 되다, 이르다
+- 예: ❌ 시총이 100조원이 됐다 → ✅ 시총이 100조 원에 달했다
+
+#### SE-AR005: 전년 대비 표현 [5·필수]
+- ❌ 전년동기대비 → ✅ 전년 동기 대비
+- ❌ YoY → ✅ 전년 동기 대비 (첫 언급 시)
+
+---
+
+## 권고 규칙 (SHOULD)
+
+### 기업명 표기 권고
+
+#### SE-RR001: 기업 그룹명 구분 [4·권고]
+- ❌ 삼성이 발표 → ✅ 삼성전자가 발표 (계열사 명확히)
+- ❌ 현대차 → ✅ 현대자동차 (첫 언급 시 정식명)
+- ❌ SK → ✅ SK그룹 (지주사는 그룹 명시)
+
+#### SE-RR002: 외국계 기업명 [4·권고]
+- ❌ 애플 → ✅ 애플(Apple) (첫 언급 시 영문 병기)
+- ❌ TSMC → ✅ TSMC(대만반도체제조공사) (약어 설명)
+
+### 인용 표현 권고
+
+#### SE-RR003: 인용 종결 표현 [4·권고]
+- ❌ "성장할 것"라고 말했다 → ✅ "성장할 것"이라고 말했다
+- ❌ "증가했다"라고 전했다 → ✅ "증가했다"고 전했다
+
+#### SE-RR004: 간접 인용 전환 [3·제안]
+- 3줄 이상 직접 인용은 간접 인용으로
+- **예시**:
+  - ❌ 김 대표는 "우리는 올해 매출 목표를 달성하기 위해 최선을 다하고 있으며, 특히 해외 시장 확대에 주력하고 있습니다. 또한 신제품 개발도 순조롭게 진행되고 있습니다"라고 말했다.
+  - ✅ 김 대표는 올해 매출 목표 달성을 위해 해외 시장 확대와 신제품 개발에 주력하고 있다고 밝혔다.
+
+---
+
+## 경제부 기자 빈발 오류 50선
+
+### 금액/숫자 오류
+
+1. ❌ 3천5백억원 → ✅ 3500억 원 (천 단위 한글 표기 금지)
+2. ❌ 10조원대 → ✅ 10조 원대
+3. ❌ 5,000만원 → ✅ 5000만 원 (콤마 사용 금지)
+4. ❌ 100억~200억원 → ✅ 100억~200억 원
+5. ❌ 상반기 매출 1조원 → ✅ 상반기 매출 1조 원
+
+### 경제용어 오용
+
+6. ❌ 매출이 증가했다 → ✅ 매출이 늘었다/매출을 기록했다
+7. ❌ 적자를 냈다 → ✅ 적자를 기록했다
+8. ❌ 흑자 전환했다 → ✅ 흑자로 전환했다
+9. ❌ 실적이 나왔다 → ✅ 실적을 발표했다/실적을 기록했다
+10. ❌ 목표치를 상회 → ✅ 목표치 상회/목표를 초과 달성
+
+### 기업 표현 오류
+
+11. ❌ 삼성전자측은 → ✅ 삼성전자는 ('측' 불필요)
+12. ❌ A사 관계자는 → ✅ A사는 (주체 명확화)
+13. ❌ 업계 1위 업체 → ✅ 업계 1위 기업
+14. ❌ 상장사 → ✅ 상장 기업/상장회사
+15. ❌ 모회사 → ✅ 지배회사 (법률 용어 준수)
+
+### 시제 호응 오류
+
+16. ❌ 내년 완공될 예정이었다 → ✅ 내년 완공될 예정이다
+17. ❌ 3분기 실적을 발표할 것이라고 밝혔다 → ✅ 3분기 실적을 발표한다고 밝혔다
+18. ❌ 투자를 결정했다고 발표했다 → ✅ 투자하기로 했다고 발표했다
+19. ❌ 성장할 것으로 예상했다 → ✅ 성장할 것으로 예상된다
+20. ❌ 달성하겠다고 말했었다 → ✅ 달성하겠다고 말했다
+
+### 전문용어 표기
+
+21. ❌ M&A → ✅ 인수합병(M&A) (첫 언급 시)
+22. ❌ IPO → ✅ 기업공개(IPO) (첫 언급 시)
+23. ❌ CB → ✅ 전환사채(CB)
+24. ❌ EBITDA → ✅ 세전영업이익(EBITDA)
+25. ❌ P/E ratio → ✅ 주가수익비율(PER)
+
+### 비교 표현
+
+26. ❌ 2배 더 높다 → ✅ 2배 높다 ('더' 중복)
+27. ❌ 가장 최대 → ✅ 최대
+28. ❌ 제일 먼저 → ✅ 가장 먼저/먼저
+29. ❌ 보다 더 → ✅ 보다
+30. ❌ 약 30% 가량 → ✅ 약 30%
+
+### 접속 표현
+
+31. ❌ 한편, → ✅ 한편 (쉼표 제거)
+32. ❌ 또한, → ✅ 또한
+33. ❌ 이에 따라서 → ✅ 이에 따라
+34. ❌ 그러나, → ✅ 그러나
+35. ❌ 특히나 → ✅ 특히
+
+### 조사/어미
+
+36. ❌ ~에 있어서 → ✅ ~에서 (간결화)
+37. ❌ ~의 경우에는 → ✅ ~의 경우
+38. ❌ ~에 대해서는 → ✅ ~에 대해
+39. ❌ ~로 인해서 → ✅ ~로 인해
+40. ❌ ~를 위해서는 → ✅ ~를 위해
+
+### 중복 표현
+
+41. ❌ 다시 재개 → ✅ 재개
+42. ❌ 서로 상생 → ✅ 상생
+43. ❌ 사전 예약 → ✅ 예약
+44. ❌ 역대 최고치 → ✅ 최고치/역대 최고
+45. ❌ 계속 지속 → ✅ 지속
+
+### 기타 빈발
+
+46. ❌ ~하길 기대 → ✅ ~하기를 기대
+47. ❌ 전망이다 → ✅ 전망된다/예상된다
+48. ❌ 분석이다 → ✅ 분석된다
+49. ❌ 가운데서 → ✅ 가운데
+50. ❌ ~할 계획이다 → ✅ ~할 계획이다/~한다는 계획이다 (주어 확인 필수)
+
+---
+
+## 상황별 세부 규칙
+
+### 실적발표
+
+#### SE-SR001: 실적 발표 리드문
+- **템플릿**: [기업명]이 [분기] [매출/영업이익] [금액]을 기록했다.
+- **예시**: 삼성전자가 3분기 매출 79조 원, 영업이익 9조 1000억 원을 기록했다.
+
+#### SE-SR002: 전년 대비 표현
+- **템플릿**: 전년 동기 대비 [수치]% [증가/감소]했다.
+- **참고**: 증감률은 소수점 첫째 자리까지
+
+#### SE-SR003: 컨센서스 대비
+- **템플릿**: 시장 전망치(컨센서스) [금액]을 [상회/하회]했다.
+
+### M&A
+
+#### SE-SR004: 인수 발표
+- **템플릿**: [인수기업]이 [피인수기업]을 [금액]에 인수한다.
+- **예시**: 카카오가 SM엔터테인먼트 지분 39.9%를 1조 2500억 원에 인수한다.
+
+#### SE-SR005: 인수 목적
+- **필수 포함**: 시너지, 사업 확대, 포트폴리오 다각화 중 택일
+
+### 투자유치
+
+#### SE-SR006: 투자 유치 발표
+- **템플릿**: [기업명]이 [투자자]로부터 [금액] 투자를 유치했다.
+
+#### SE-SR007: 기업가치 표기
+- **템플릿**: 투자 후 기업가치 [금액]으로 평가받았다.
+- **참고**: Pre/Post money 구분 명확히
+
+### IPO
+
+#### SE-SR008: 상장 예정
+- **템플릿**: [기업명]이 [거래소]에 [날짜] 상장한다.
+
+#### SE-SR009: 공모가 범위
+- **템플릿**: 희망 공모가를 [하한]~[상한]원으로 제시했다.
+
+#### SE-SR010: 시가총액 전망
+- **템플릿**: 상장 시 시가총액 [금액]이 예상된다.
+
+### 신제품 출시
+
+#### SE-SR011: 출시 발표
+- **템플릿**: [기업명]이 [제품명]을 [날짜] 출시한다.
+
+#### SE-SR012: 가격 표기
+- **템플릿**: 출고가는 [금액]이다.
+- **참고**: 부가세 포함 여부 명시
+
+### 인사 발표
+
+#### SE-SR013: 임원 인사
+- **템플릿**: [성명] [현직]이 [신직]에 [선임/임명]됐다.
+- **예시**: 김철수 전무가 대표이사에 선임됐다.
+
+#### SE-SR014: 복수 인사
+- **템플릿**: △[직급] [성명] △[직급] [성명]
+- **참고**: 가나다순 또는 직급순
+
+---
+
+## 오탐 방지 패턴
+
+### 보호 용어
+- 원달러 환율
+- 원엔 환율
+- 원화 가치
+- 10원 단위
+- 주당 1000원
+
+### 맥락 민감 패턴
+- **스포츠**: 10말 11초
+- **주식**: 매도 우위
+- **채권**: 금리 인상
+- **법률**: 지배회사
+
+---
+
+## 최종 체크리스트
+
+- [ ] 금액 단위 띄어쓰기 (억 원, 만 원)
+- [ ] 경제지표 동사 적합성
+- [ ] 기업명 정확성
+- [ ] 연도 표현 (지난해/올해)
+- [ ] 전문용어 첫 언급 시 설명
+- [ ] 인용 종결 표현
+- [ ] 시제 일관성
+- [ ] 중복 표현 제거
+- [ ] 서울경제 특수 표기 (★, ※)
+- [ ] 문장 길이 (50자 이내 권고)
+
+---
+
+## KB 상호작용
+
+### 우선순위 설정
+- KB01(표준 맞춤법)보다 서울경제 스타일 우선
+- KB02(일반 문법)보다 서울경제 문체 우선
+- KB11보다 서울경제 경제 표현 우선
+
+### 보완 관계
+- KB21: 빈발 오류 패턴 보완
+- KB04: 실제 교열 사례 참조
+
+
+
+============================================================
+File: KB_business_terms.txt
+Prompt ID: 11
+============================================================
+
+<?xml version="1.0" encoding="UTF-8"?>
+<business_terms_dictionary>
+  <!-- ==================== 메타데이터 ==================== -->
+  <metadata>
+    <name>기업 경제 전문용어 종합 사전</name>
+    <version>2.0</version>
+    <last_updated>2025-01-27</last_updated>
+    <total_terms>250+</total_terms>
+    <format>XML</format>
+    <priority>18</priority>
+    <domain>경제금융_전문</domain>
+    <load_condition>always</load_condition>
+    <description>재무회계, M&amp;A, 투자, 산업별 전문용어 및 올바른 사용법</description>
+  </metadata>
+  <!-- ==================== 1. 재무/회계 용어 (100개) ==================== -->
+  <category name="financial_accounting" code="FA" priority="critical">
+
+<!-- 손익계산서 관련 -->
+<subcategory name="income_statement">
+  
+  <term id="FA001" importance="critical">
+    <korean>매출액</korean>
+    <english>Revenue/Sales</english>
+    <definition>기업이 주된 영업활동으로 얻은 수익</definition>
+    <usage>
+      <correct>매출 100억 원을 기록했다</correct>
+      <correct>매출 100억 원을 달성했다</correct>
+      <incorrect>매출 100억 원을 벌었다</incorrect>
+      <incorrect>매출 100억 원을 냈다</incorrect>
+    </usage>
+    <related>매출총이익, 순매출, 매출원가</related>
+  </term>
+  
+  <term id="FA002" importance="high">
+    <korean>매출원가</korean>
+    <english>Cost of Goods Sold (COGS)</english>
+    <definition>판매된 제품을 생산하는 데 든 직접 비용</definition>
+    <formula>기초재고 + 당기매입 - 기말재고</formula>
+  </term>
+  
+  <term id="FA003" importance="high">
+    <korean>매출총이익</korean>
+    <english>Gross Profit</english>
+    <definition>매출액에서 매출원가를 뺀 금액</definition>
+    <formula>매출액 - 매출원가</formula>
+    <alias>총매출이익, 총이익</alias>
+  </term>
+  
+  <term id="FA004" importance="critical">
+    <korean>영업이익</korean>
+    <english>Operating Profit</english>
+    <definition>매출총이익에서 판관비를 뺀 이익</definition>
+    <usage>
+      <correct>영업이익 50억 원을 달성했다</correct>
+      <correct>영업이익 50억 원을 기록했다</correct>
+      <incorrect>영업이익 50억 원을 냈다</incorrect>
+      <incorrect>영업이익 50억 원을 벌었다</incorrect>
+    </usage>
+  </term>
+  
+  <term id="FA005" importance="critical">
+    <korean>당기순이익</korean>
+    <english>Net Income</english>
+    <definition>모든 비용과 세금을 제한 최종 이익</definition>
+    <usage>
+      <correct>당기순이익을 기록했다</correct>
+      <correct>당기순이익을 실현했다</correct>
+      <incorrect>당기순이익을 만들었다</incorrect>
+      <incorrect>당기순이익을 냈다</incorrect>
+    </usage>
+  </term>
+  
+  <term id="FA006" importance="high">
+    <korean>EBITDA</korean>
+    <full_name>Earnings Before Interest, Taxes, Depreciation and Amortization</full_name>
+    <korean_full>세전영업이익</korean_full>
+    <definition>이자, 세금, 감가상각 전 영업이익</definition>
+    <significance>현금 창출 능력 지표</significance>
+    <usage>
+      <correct>세전영업이익(EBITDA) 100억 원</correct>
+      <incorrect>EBITDA 100억 원 (첫 언급 시)</incorrect>
+    </usage>
+  </term>
+  
+  <term id="FA007">
+    <korean>판관비</korean>
+    <english>SG&amp;A</english>
+    <full_name>판매비와 관리비</full_name>
+    <components>인건비, 임차료, 광고비 등</components>
+  </term>
+  
+  <term id="FA008">
+    <korean>감가상각비</korean>
+    <english>Depreciation</english>
+    <definition>유형자산 가치 감소분을 비용 처리</definition>
+    <methods>정액법, 정률법</methods>
+  </term>
+  
+  <term id="FA009">
+    <korean>무형자산상각비</korean>
+    <english>Amortization</english>
+    <definition>무형자산 가치를 일정 기간 비용화</definition>
+    <examples>특허권, 영업권</examples>
+  </term>
+  
+  <term id="FA010">
+    <korean>영업외수익</korean>
+    <english>Non-operating Income</english>
+    <definition>주된 영업 외 활동으로 발생한 수익</definition>
+    <examples>이자수익, 배당수익</examples>
+  </term>
+  
+</subcategory>
+
+<!-- 재무상태표 관련 -->
+<subcategory name="balance_sheet">
+  
+  <term id="FA011">
+    <korean>자산</korean>
+    <english>Assets</english>
+    <classification>유동자산, 비유동자산</classification>
+    <equation>자산 = 부채 + 자본</equation>
+  </term>
+  
+  <term id="FA012">
+    <korean>유동자산</korean>
+    <english>Current Assets</english>
+    <definition>1년 내 현금화 가능한 자산</definition>
+    <examples>현금, 매출채권, 재고자산</examples>
+  </term>
+  
+  <term id="FA013">
+    <korean>비유동자산</korean>
+    <english>Non-current Assets</english>
+    <definition>1년 이상 보유 예정 자산</definition>
+    <examples>토지, 건물, 장기투자증권</examples>
+  </term>
+  
+  <term id="FA014">
+    <korean>부채</korean>
+    <english>Liabilities</english>
+    <classification>유동부채, 비유동부채</classification>
+    <alias>타인자본</alias>
+  </term>
+  
+  <term id="FA015">
+    <korean>자본</korean>
+    <english>Equity</english>
+    <components>자본금, 자본잉여금, 이익잉여금</components>
+    <alias>자기자본, 순자산</alias>
+  </term>
+  
+  <term id="FA016">
+    <korean>운전자본</korean>
+    <english>Working Capital</english>
+    <formula>유동자산 - 유동부채</formula>
+    <significance>단기 유동성 지표</significance>
+  </term>
+  
+  <term id="FA017">
+    <korean>영업권</korean>
+    <english>Goodwill</english>
+    <definition>인수 시 장부가치 초과 지불액</definition>
+    <accounting>무형자산으로 계상</accounting>
+  </term>
+  
+  <term id="FA018">
+    <korean>이연법인세자산</korean>
+    <english>Deferred Tax Assets</english>
+    <definition>미래 세금 절감 효과</definition>
+    <condition>회수 가능성 검토 필요</condition>
+  </term>
+  
+  <term id="FA019">
+    <korean>충당부채</korean>
+    <english>Provisions</english>
+    <definition>미래 발생 예상 부채</definition>
+    <examples>제품보증충당부채</examples>
+  </term>
+  
+  <term id="FA020">
+    <korean>우발부채</korean>
+    <english>Contingent Liabilities</english>
+    <definition>조건부 발생 가능 부채</definition>
+    <disclosure>주석 공시</disclosure>
+  </term>
+  
+</subcategory>
+
+<!-- 재무비율 -->
+<subcategory name="financial_ratios">
+  
+  <term id="FA021" importance="high">
+    <korean>ROE</korean>
+    <full_name>Return on Equity</full_name>
+    <korean_full>자기자본이익률</korean_full>
+    <formula>당기순이익 / 자기자본 × 100</formula>
+    <benchmark>10% 이상 양호</benchmark>
+  </term>
+  
+  <term id="FA022">
+    <korean>ROA</korean>
+    <full_name>Return on Assets</full_name>
+    <korean_full>총자산이익률</korean_full>
+    <formula>당기순이익 / 총자산 × 100</formula>
+  </term>
+  
+  <term id="FA023">
+    <korean>부채비율</korean>
+    <english>Debt Ratio</english>
+    <formula>부채 / 자본 × 100</formula>
+    <benchmark>100% 이하 안정적</benchmark>
+  </term>
+  
+  <term id="FA024">
+    <korean>유동비율</korean>
+    <english>Current Ratio</english>
+    <formula>유동자산 / 유동부채 × 100</formula>
+    <benchmark>200% 이상 우수</benchmark>
+  </term>
+  
+  <term id="FA025">
+    <korean>당좌비율</korean>
+    <english>Quick Ratio</english>
+    <formula>(유동자산-재고자산) / 유동부채 × 100</formula>
+    <benchmark>100% 이상 양호</benchmark>
+  </term>
+  
+  <term id="FA026">
+    <korean>이자보상배율</korean>
+    <english>Interest Coverage Ratio</english>
+    <formula>영업이익 / 이자비용</formula>
+    <benchmark>1.5배 이상 안정</benchmark>
+  </term>
+  
+  <term id="FA027">
+    <korean>매출채권회전율</korean>
+    <english>Receivables Turnover</english>
+    <formula>매출액 / 평균매출채권</formula>
+    <significance>채권 회수 효율성</significance>
+  </term>
+  
+  <term id="FA028">
+    <korean>재고자산회전율</korean>
+    <english>Inventory Turnover</english>
+    <formula>매출원가 / 평균재고자산</formula>
+    <significance>재고 관리 효율성</significance>
+  </term>
+  
+  <term id="FA029">
+    <korean>총자산회전율</korean>
+    <english>Asset Turnover</english>
+    <formula>매출액 / 평균총자산</formula>
+    <significance>자산 활용 효율성</significance>
+  </term>
+  
+  <term id="FA030">
+    <korean>매출액영업이익률</korean>
+    <english>Operating Profit Margin</english>
+    <formula>영업이익 / 매출액 × 100</formula>
+    <industry_average>제조업 8-10%</industry_average>
+  </term>
+  
+</subcategory>
+
+<!-- 현금흐름표 -->
+<subcategory name="cash_flow">
+  
+  <term id="FA031" importance="critical">
+    <korean>영업활동현금흐름</korean>
+    <english>Operating Cash Flow</english>
+    <definition>영업활동으로 창출/사용된 현금</definition>
+    <significance>기업 건전성 핵심 지표</significance>
+  </term>
+  
+  <term id="FA032">
+    <korean>투자활동현금흐름</korean>
+    <english>Investing Cash Flow</english>
+    <definition>투자로 인한 현금 유출입</definition>
+    <typical>대부분 음수(투자 지출)</typical>
+  </term>
+  
+  <term id="FA033">
+    <korean>재무활동현금흐름</korean>
+    <english>Financing Cash Flow</english>
+    <definition>자금조달 관련 현금 흐름</definition>
+    <examples>차입, 상환, 배당</examples>
+  </term>
+  
+  <term id="FA034">
+    <korean>잉여현금흐름</korean>
+    <english>Free Cash Flow (FCF)</english>
+    <formula>영업현금흐름 - 자본지출</formula>
+    <significance>배당 여력 지표</significance>
+  </term>
+  
+  <term id="FA035">
+    <korean>CAPEX</korean>
+    <full_name>Capital Expenditure</full_name>
+    <korean_full>자본적 지출</korean_full>
+    <definition>설비투자 등 장기자산 투자</definition>
+  </term>
+  
+</subcategory>
+
+<!-- 주식관련 지표 -->
+<subcategory name="stock_metrics">
+  
+  <term id="FA036" importance="high">
+    <korean>EPS</korean>
+    <full_name>Earnings Per Share</full_name>
+    <korean_full>주당순이익</korean_full>
+    <formula>당기순이익 / 발행주식수</formula>
+  </term>
+  
+  <term id="FA037" importance="critical">
+    <korean>PER</korean>
+    <full_name>Price Earnings Ratio</full_name>
+    <korean_full>주가수익비율</korean_full>
+    <formula>주가 / EPS</formula>
+    <interpretation>낮을수록 저평가</interpretation>
+    <usage>
+      <correct>주가수익비율(PER) 10배</correct>
+      <incorrect>PER 10배 (첫 언급 시)</incorrect>
+    </usage>
+  </term>
+  
+  <term id="FA038">
+    <korean>PBR</korean>
+    <full_name>Price Book Ratio</full_name>
+    <korean_full>주가순자산비율</korean_full>
+    <formula>주가 / BPS</formula>
+    <benchmark>1 이하면 장부가치 이하</benchmark>
+  </term>
+  
+  <term id="FA039">
+    <korean>BPS</korean>
+    <full_name>Book Value Per Share</full_name>
+    <korean_full>주당순자산가치</korean_full>
+    <formula>순자산 / 발행주식수</formula>
+  </term>
+  
+  <term id="FA040">
+    <korean>배당수익률</korean>
+    <english>Dividend Yield</english>
+    <formula>주당배당금 / 주가 × 100</formula>
+    <comparison>금리 대비 수익성</comparison>
+  </term>
+  
+  <term id="FA041">
+    <korean>배당성향</korean>
+    <english>Payout Ratio</english>
+    <formula>배당금총액 / 당기순이익 × 100</formula>
+    <benchmark>30-40% 적정</benchmark>
+  </term>
+  
+  <term id="FA042" importance="critical">
+    <korean>시가총액</korean>
+    <english>Market Capitalization</english>
+    <formula>주가 × 발행주식수</formula>
+    <usage>
+      <correct>시총 10조 원에 달했다</correct>
+      <correct>시총이 10조 원을 기록했다</correct>
+      <incorrect>시총이 10조 원이 됐다</incorrect>
+    </usage>
+  </term>
+  
+  <term id="FA043">
+    <korean>자사주</korean>
+    <english>Treasury Stock</english>
+    <definition>회사가 자기 주식을 매입한 것</definition>
+    <purpose>주가 관리, 소각</purpose>
+  </term>
+  
+  <term id="FA044">
+    <korean>유상증자</korean>
+    <english>Capital Increase</english>
+    <types>주주배정, 제3자배정, 일반공모</types>
+    <effect>지분 희석</effect>
+  </term>
+  
+  <term id="FA045">
+    <korean>무상증자</korean>
+    <english>Stock Dividend</english>
+    <definition>주주에게 무상으로 신주 배정</definition>
+    <source>자본잉여금, 이익잉여금</source>
+  </term>
+  
+</subcategory>
+
+<!-- 회계기준 원칙 -->
+<subcategory name="accounting_standards">
+  
+  <term id="FA046">
+    <korean>K-IFRS</korean>
+    <full_name>한국채택국제회계기준</full_name>
+    <english>Korean IFRS</english>
+    <application>상장사 의무</application>
+  </term>
+  
+  <term id="FA047">
+    <korean>K-GAAP</korean>
+    <full_name>한국회계기준</full_name>
+    <english>Korean GAAP</english>
+    <application>비상장사</application>
+  </term>
+  
+  <term id="FA048">
+    <korean>연결재무제표</korean>
+    <english>Consolidated Financial Statement</english>
+    <definition>모회사와 자회사 합산</definition>
+    <requirement>지분율 50% 초과</requirement>
+  </term>
+  
+  <term id="FA049">
+    <korean>별도재무제표</korean>
+    <english>Separate Financial Statement</english>
+    <definition>개별 회사만의 재무제표</definition>
+  </term>
+  
+  <term id="FA050">
+    <korean>공정가치</korean>
+    <english>Fair Value</english>
+    <definition>시장에서 거래되는 가격</definition>
+    <application>금융상품 평가</application>
+  </term>
+  
+</subcategory>
+
+<!-- 추가 재무회계 용어 FA051-FA100 -->
+<subcategory name="additional_financial">
+  
+  <term id="FA051">
+    <korean>손상차손</korean>
+    <english>Impairment Loss</english>
+    <definition>자산가치 하락을 손실 처리</definition>
+    <test>회수가능액과 장부가액 비교</test>
+  </term>
+  
+  <term id="FA052">
+    <korean>회계추정의 변경</korean>
+    <english>Change in Accounting Estimate</english>
+    <definition>감가상각 방법 등 변경</definition>
+    <treatment>전진적 적용</treatment>
+  </term>
+  
+  <term id="FA053">
+    <korean>전기오류수정</korean>
+    <english>Prior Period Error Correction</english>
+    <definition>과거 회계처리 오류 수정</definition>
+    <treatment>소급 적용</treatment>
+  </term>
+  
+  <term id="FA054">
+    <korean>계속기업</korean>
+    <english>Going Concern</english>
+    <definition>기업 존속 가정</definition>
+    <risk>감사의견 한정 가능</risk>
+  </term>
+  
+  <term id="FA055">
+    <korean>중요성</korean>
+    <english>Materiality</english>
+    <definition>의사결정에 영향 미치는 정도</definition>
+    <threshold>총자산의 5% 등</threshold>
+  </term>
+  
+  <!-- FA056-FA100: 나머지 재무회계 용어들 -->
+  <term id="FA056">
+    <korean>리스회계</korean>
+    <english>Lease Accounting</english>
+    <types>금융리스, 운용리스</types>
+    <ifrs16>사용권자산으로 계상</ifrs16>
+  </term>
+  
+  <term id="FA057">
+    <korean>파생상품</korean>
+    <english>Derivatives</english>
+    <types>선물, 옵션, 스왑</types>
+    <accounting>공정가치 평가</accounting>
+  </term>
+  
+  <term id="FA058">
+    <korean>헤지회계</korean>
+    <english>Hedge Accounting</english>
+    <definition>위험회피 회계처리</definition>
+    <types>공정가치헤지, 현금흐름헤지</types>
+  </term>
+  
+  <term id="FA059">
+    <korean>수익인식</korean>
+    <english>Revenue Recognition</english>
+    <principle>5단계 모델</principle>
+    <timing>통제 이전 시점</timing>
+  </term>
+  
+  <term id="FA060">
+    <korean>재고자산평가</korean>
+    <english>Inventory Valuation</english>
+    <methods>선입선출, 평균법</methods>
+    <lcm>저가법 적용</lcm>
+  </term>
+  
+  <!-- 이하 FA061-FA100 생략 (패턴은 동일) -->
+  
+</subcategory>
+
+</category>
+  <!-- ==================== 2. M&A 관련 용어 (50개) ==================== -->
+  <category name="mergers_acquisitions" code="MA" priority="high">
+
+<term id="MA001" importance="critical">
+  <korean>인수합병</korean>
+  <english>Mergers and Acquisitions (M&amp;A)</english>
+  <definition>기업 인수 및 합병 거래</definition>
+  <first_mention>인수합병(M&amp;A)</first_mention>
+</term>
+
+<term id="MA002">
+  <korean>적대적 인수</korean>
+  <english>Hostile Takeover</english>
+  <definition>경영진 반대에도 강행하는 인수</definition>
+  <defense>포이즌 필, 백기사</defense>
+</term>
+
+<term id="MA003">
+  <korean>우호적 인수</korean>
+  <english>Friendly Takeover</english>
+  <definition>양사 합의 하의 인수</definition>
+</term>
+
+<term id="MA004" importance="high">
+  <korean>실사</korean>
+  <english>Due Diligence</english>
+  <definition>인수 대상 기업 정밀 조사</definition>
+  <types>재무실사, 법률실사, 사업실사</types>
+</term>
+
+<term id="MA005">
+  <korean>기업가치평가</korean>
+  <english>Valuation</english>
+  <methods>DCF, 시장배수, 자산가치</methods>
+</term>
+
+<term id="MA006">
+  <korean>시너지</korean>
+  <english>Synergy</english>
+  <definition>인수합병으로 인한 가치 창출</definition>
+  <types>매출 시너지, 비용 시너지</types>
+</term>
+
+<term id="MA007">
+  <korean>인수프리미엄</korean>
+  <english>Acquisition Premium</english>
+  <definition>시장가격 대비 추가 지불액</definition>
+  <average>20-30%</average>
+</term>
+
+<term id="MA008">
+  <korean>LOI</korean>
+  <full_name>Letter of Intent</full_name>
+  <korean_full>인수의향서</korean_full>
+  <binding>법적 구속력 제한적</binding>
+</term>
+
+<term id="MA009">
+  <korean>MOU</korean>
+  <full_name>Memorandum of Understanding</full_name>
+  <korean_full>양해각서</korean_full>
+  <nature>협력 의향 표명</nature>
+</term>
+
+<term id="MA010">
+  <korean>SPA</korean>
+  <full_name>Stock Purchase Agreement</full_name>
+  <korean_full>주식매매계약</korean_full>
+  <binding>법적 구속력 있음</binding>
+</term>
+
+<!-- MA011-MA050: 나머지 M&A 용어들 -->
+<term id="MA011">
+  <korean>에스크로</korean>
+  <english>Escrow</english>
+  <definition>제3자 예치 거래</definition>
+  <purpose>거래 안전성 확보</purpose>
+</term>
+
+<term id="MA012">
+  <korean>언백</korean>
+  <english>Earn-out</english>
+  <definition>성과 연동 추가 대금</definition>
+  <period>통상 1-3년</period>
+</term>
+
+<!-- 이하 생략 (패턴 동일) -->
+
+</category>
+  <!-- ==================== 3. 투자/펀딩 용어 (50개) ==================== -->
+  <category name="investment_funding" code="IF" priority="high">
+
+<term id="IF001">
+  <korean>벤처캐피털</korean>
+  <english>Venture Capital (VC)</english>
+  <definition>스타트업 전문 투자사</definition>
+</term>
+
+<term id="IF002">
+  <korean>사모펀드</korean>
+  <english>Private Equity (PE)</english>
+  <definition>소수 투자자 비공개 펀드</definition>
+</term>
+
+<term id="IF003">
+  <korean>시드투자</korean>
+  <english>Seed Investment</english>
+  <definition>초기 단계 투자</definition>
+  <amount>수천만원~수억원</amount>
+</term>
+
+<term id="IF004">
+  <korean>시리즈 A</korean>
+  <english>Series A</english>
+  <definition>첫 기관투자 라운드</definition>
+  <amount>10-50억원</amount>
+</term>
+
+<term id="IF005">
+  <korean>시리즈 B</korean>
+  <english>Series B</english>
+  <definition>성장 단계 투자</definition>
+  <amount>50-200억원</amount>
+</term>
+
+<term id="IF006">
+  <korean>시리즈 C</korean>
+  <english>Series C</english>
+  <definition>확장 단계 투자</definition>
+  <amount>200억원 이상</amount>
+</term>
+
+<term id="IF007">
+  <korean>프리 IPO</korean>
+  <english>Pre-IPO</english>
+  <definition>상장 직전 투자</definition>
+</term>
+
+<term id="IF008" importance="high">
+  <korean>유니콘</korean>
+  <english>Unicorn</english>
+  <definition>기업가치 1조원 이상 스타트업</definition>
+  <benchmark>1조원 (10억 달러)</benchmark>
+</term>
+
+<term id="IF009">
+  <korean>데카콘</korean>
+  <english>Decacorn</english>
+  <definition>기업가치 10조원 이상</definition>
+</term>
+
+<term id="IF010">
+  <korean>밸류에이션</korean>
+  <english>Valuation</english>
+  <definition>기업가치 평가</definition>
+  <types>Pre-money, Post-money</types>
+</term>
+
+<!-- IF011-IF050: 나머지 투자 용어들 -->
+
+</category>
+  <!-- ==================== 4. 산업별 특수용어 (30개) ==================== -->
+  <category name="industry_specific" code="IS" priority="medium">
+
+
+<!-- 반도체 -->
+<subcategory name="semiconductor">
+  
+  <term id="SC001">
+    <korean>파운드리</korean>
+    <english>Foundry</english>
+    <definition>반도체 위탁생산</definition>
+  </term>
+  
+  <term id="SC002">
+    <korean>팹리스</korean>
+    <english>Fabless</english>
+    <definition>설계 전문 기업</definition>
+  </term>
+  
+  <term id="SC003">
+    <korean>시스템반도체</korean>
+    <english>System Semiconductor</english>
+    <definition>비메모리 반도체</definition>
+  </term>
+  
+  <term id="SC004">
+    <korean>D램</korean>
+    <english>DRAM</english>
+    <definition>휘발성 메모리</definition>
+  </term>
+  
+  <term id="SC005">
+    <korean>낸드플래시</korean>
+    <english>NAND Flash</english>
+    <definition>비휘발성 메모리</definition>
+  </term>
+  
+  <term id="SC006">
+    <korean>웨이퍼</korean>
+    <english>Wafer</english>
+    <definition>반도체 기판</definition>
+  </term>
+  
+  <term id="SC007">
+    <korean>공정</korean>
+    <english>Process Node</english>
+    <definition>제조 공정 미세도</definition>
+    <unit>나노미터(nm)</unit>
+  </term>
+  
+  <term id="SC008">
+    <korean>수율</korean>
+    <english>Yield</english>
+    <definition>양품 비율</definition>
+  </term>
+  
+  <term id="SC009">
+    <korean>EUV</korean>
+    <full_name>Extreme Ultraviolet</full_name>
+    <definition>극자외선 노광 장비</definition>
+  </term>
+  
+  <term id="SC010">
+    <korean>HBM</korean>
+    <full_name>High Bandwidth Memory</full_name>
+    <definition>고대역폭 메모리</definition>
+  </term>
+  
+</subcategory>
+
+<!-- 바이오 -->
+<subcategory name="bio">
+  
+  <term id="BIO001">
+    <korean>임상시험</korean>
+    <english>Clinical Trial</english>
+    <phases>1상, 2상, 3상</phases>
+  </term>
+  
+  <term id="BIO002">
+    <korean>FDA</korean>
+    <full_name>Food and Drug Administration</full_name>
+    <definition>미국 식품의약국</definition>
+  </term>
+  
+  <term id="BIO003">
+    <korean>신약</korean>
+    <english>New Drug</english>
+    <timeline>개발 10-15년</timeline>
+  </term>
+  
+  <term id="BIO004">
+    <korean>바이오시밀러</korean>
+    <english>Biosimilar</english>
+    <definition>바이오의약품 복제약</definition>
+  </term>
+  
+  <term id="BIO005">
+    <korean>CMO</korean>
+    <full_name>Contract Manufacturing Organization</full_name>
+    <definition>위탁생산</definition>
+  </term>
+  
+  <term id="BIO006">
+    <korean>CRO</korean>
+    <full_name>Contract Research Organization</full_name>
+    <definition>위탁연구</definition>
+  </term>
+  
+  <term id="BIO007">
+    <korean>파이프라인</korean>
+    <english>Pipeline</english>
+    <definition>개발 중인 신약 후보</definition>
+  </term>
+  
+  <term id="BIO008">
+    <korean>기술이전</korean>
+    <english>Technology Transfer</english>
+    <alias>라이선스 아웃</alias>
+  </term>
+  
+  <term id="BIO009">
+    <korean>마일스톤</korean>
+    <english>Milestone</english>
+    <definition>단계별 기술료</definition>
+  </term>
+  
+  <term id="BIO010">
+    <korean>로열티</korean>
+    <english>Royalty</english>
+    <definition>매출 연동 기술료</definition>
+  </term>
+  
+</subcategory>
+
+<!-- IT -->
+<subcategory name="it">
+  
+  <term id="IT001">
+    <korean>SaaS</korean>
+    <full_name>Software as a Service</full_name>
+    <definition>구독형 소프트웨어</definition>
+  </term>
+  
+  <term id="IT002">
+    <korean>클라우드</korean>
+    <english>Cloud</english>
+    <types>IaaS, PaaS, SaaS</types>
+  </term>
+  
+  <term id="IT003">
+    <korean>AI</korean>
+    <full_name>Artificial Intelligence</full_name>
+    <korean_full>인공지능</korean_full>
+  </term>
+  
+  <term id="IT004">
+    <korean>빅데이터</korean>
+    <english>Big Data</english>
+    <definition>대용량 데이터</definition>
+  </term>
+  
+  <term id="IT005">
+    <korean>IoT</korean>
+    <full_name>Internet of Things</full_name>
+    <korean_full>사물인터넷</korean_full>
+  </term>
+  
+  <term id="IT006">
+    <korean>블록체인</korean>
+    <english>Blockchain</english>
+    <definition>분산원장</definition>
+  </term>
+  
+  <term id="IT007">
+    <korean>메타버스</korean>
+    <english>Metaverse</english>
+    <definition>가상 세계</definition>
+  </term>
+  
+  <term id="IT008">
+    <korean>NFT</korean>
+    <full_name>Non-Fungible Token</full_name>
+    <korean_full>대체불가토큰</korean_full>
+  </term>
+  
+  <term id="IT009">
+    <korean>API</korean>
+    <full_name>Application Programming Interface</full_name>
+    <definition>프로그램 연결 인터페이스</definition>
+  </term>
+  
+  <term id="IT010">
+    <korean>오픈소스</korean>
+    <english>Open Source</english>
+    <definition>공개 소스 코드</definition>
+  </term>
+  
+</subcategory>
+
+</category>
+  <!-- ==================== 5. 자주 틀리는 경제용어 (30개) ==================== -->
+  <category name="common_mistakes" code="CM" priority="critical">
+
+<mistake id="CM001" frequency="very_high">
+  <topic>매출 표현</topic>
+  <wrong>매출이 증가했다</wrong>
+  <correct>
+    <option>매출을 기록했다</option>
+    <option>매출이 늘었다</option>
+  </correct>
+  <reason>매출은 '기록'하는 것</reason>
+</mistake>
+
+<mistake id="CM002" frequency="high">
+  <topic>GDP 표현</topic>
+  <wrong>GDP가 증가했다</wrong>
+  <correct>GDP가 성장했다</correct>
+  <reason>GDP는 '성장'</reason>
+</mistake>
+
+<mistake id="CM003" frequency="high">
+  <topic>금리 표현</topic>
+  <wrong>금리를 올렸다</wrong>
+  <correct>금리를 인상했다</correct>
+  <reason>공식 용어는 '인상'</reason>
+</mistake>
+
+<mistake id="CM004" frequency="medium">
+  <topic>실업률 표현</topic>
+  <wrong>실업률이 증가했다</wrong>
+  <correct>실업률이 상승했다</correct>
+  <reason>실업률은 '상승/하락'</reason>
+</mistake>
+
+<mistake id="CM005" frequency="high">
+  <topic>적자 표현</topic>
+  <wrong>적자를 냈다</wrong>
+  <correct>적자를 기록했다</correct>
+  <reason>'기록'이 표준</reason>
+</mistake>
+
+<mistake id="CM006" frequency="medium">
+  <topic>흑자 전환</topic>
+  <wrong>흑자 전환했다</wrong>
+  <correct>흑자로 전환했다</correct>
+  <reason>조사 필요</reason>
+</mistake>
+
+<mistake id="CM007" frequency="high">
+  <topic>투자 발표</topic>
+  <wrong>투자를 결정했다고 발표했다</wrong>
+  <correct>투자하기로 했다고 발표했다</correct>
+  <reason>시제 불일치</reason>
+</mistake>
+
+<mistake id="CM008" frequency="very_high">
+  <topic>기업명 정확성</topic>
+  <wrong>삼성이 발표했다</wrong>
+  <correct>삼성전자가 발표했다</correct>
+  <reason>계열사 구분 필요</reason>
+</mistake>
+
+<mistake id="CM009" frequency="high">
+  <topic>시가총액 표현</topic>
+  <wrong>시총이 100조원이 됐다</wrong>
+  <correct>시총이 100조 원에 달했다</correct>
+  <reason>'달하다' 사용</reason>
+</mistake>
+
+<mistake id="CM010" frequency="high">
+  <topic>영업이익 표현</topic>
+  <wrong>영업이익을 벌었다</wrong>
+  <correct>영업이익을 달성했다</correct>
+  <reason>'달성/기록' 사용</reason>
+</mistake>
+
+<mistake id="CM011" frequency="medium">
+  <topic>배수 표현</topic>
+  <wrong>2배 더 높다</wrong>
+  <correct>2배 높다</correct>
+  <reason>'더' 중복</reason>
+</mistake>
+
+<mistake id="CM012" frequency="very_high">
+  <topic>IPO 첫 언급</topic>
+  <wrong>IPO</wrong>
+  <correct>기업공개(IPO)</correct>
+  <reason>첫 언급 시 설명 필요</reason>
+</mistake>
+
+<mistake id="CM013" frequency="very_high">
+  <topic>M&amp;A 첫 언급</topic>
+  <wrong>M&amp;A를 진행한다</wrong>
+  <correct>인수합병(M&amp;A)을 진행한다</correct>
+  <reason>첫 언급 시 풀어쓰기</reason>
+</mistake>
+
+<mistake id="CM014" frequency="high">
+  <topic>CB 표기</topic>
+  <wrong>CB를 발행했다</wrong>
+  <correct>전환사채(CB)를 발행했다</correct>
+  <reason>전문용어 설명 필요</reason>
+</mistake>
+
+<mistake id="CM015" frequency="medium">
+  <topic>실적 표현</topic>
+  <wrong>실적이 나왔다</wrong>
+  <correct>실적을 발표했다</correct>
+  <reason>'발표/기록' 사용</reason>
+</mistake>
+
+<mistake id="CM016" frequency="very_high">
+  <topic>전년 대비</topic>
+  <wrong>전년동기대비</wrong>
+  <correct>전년 동기 대비</correct>
+  <reason>띄어쓰기</reason>
+</mistake>
+
+<mistake id="CM017" frequency="medium">
+  <topic>YoY 표현</topic>
+  <wrong>YoY 10% 증가</wrong>
+  <correct>전년 동기 대비 10% 증가</correct>
+  <reason>한글 우선</reason>
+</mistake>
+
+<mistake id="CM018" frequency="medium">
+  <topic>컨센서스</topic>
+  <wrong>컨센서스를 상회</wrong>
+  <correct>시장 전망치(컨센서스)를 상회</correct>
+  <reason>설명 필요</reason>
+</mistake>
+
+<mistake id="CM019" frequency="high">
+  <topic>EBITDA</topic>
+  <wrong>EBITDA 100억원</wrong>
+  <correct>세전영업이익(EBITDA) 100억 원</correct>
+  <reason>용어 설명</reason>
+</mistake>
+
+<mistake id="CM020" frequency="high">
+  <topic>PER</topic>
+  <wrong>PER이 10배</wrong>
+  <correct>주가수익비율(PER)이 10배</correct>
+  <reason>한글 병기</reason>
+</mistake>
+
+<!-- CM021-CM030: 나머지 빈발 오류들 -->
+
+</category>
+  <!-- ==================== 인덱스 및 빠른 검색 ==================== -->
+  <index>
+
+<by_priority>
+  <critical>
+    FA001, FA004, FA005, FA037, FA042, MA001, 
+    CM001, CM002, CM003, CM008, CM009, CM012, CM013, CM016
+  </critical>
+  <high>
+    FA002, FA003, FA006, FA021, FA031, FA036,
+    MA004, IF001, IF008, CM005, CM007, CM010, CM014, CM019, CM020
+  </high>
+  <medium>
+    FA022-FA030, MA002, IF009, SC001-SC010, BIO001-BIO010, IT001-IT010,
+    CM004, CM006, CM011, CM015, CM017, CM018
+  </medium>
+</by_priority>
+
+<by_frequency>
+  <most_used>
+    매출, 영업이익, 당기순이익, 시가총액, M&amp;A, IPO,
+    전년 동기 대비, EBITDA, PER, PBR, ROE
+  </most_used>
+  <commonly_used>
+    실사, 유니콘, 시리즈A, 파운드리, 임상시험,
+    SaaS, AI, 블록체인, 벤처캐피털, 사모펀드
+  </commonly_used>
+</by_frequency>
+
+<by_category_quick_access>
+  <financial>FA001-FA100</financial>
+  <ma>MA001-MA050</ma>
+  <investment>IF001-IF050</investment>
+  <industry>SC001-SC010, BIO001-BIO010, IT001-IT010</industry>
+  <mistakes>CM001-CM030</mistakes>
+</by_category_quick_access>
+
+</index>
+  <!-- ==================== 사용 가이드 ==================== -->
+<usage_guide>
+<search_tips>
+- ID로 직접 검색: FA001, MA001 등
+- 한글 용어로 검색: 매출, 영업이익
+- 영문 약어로 검색: EBITDA, PER
+- 중요도로 필터링: importance="critical"
+- 카테고리별 조회: category="financial_accounting"
+</search_tips>
+
+<application_rules>
+  1. 첫 언급 시 항상 한글(영문) 형식 사용
+  2. 금액 표기는 띄어쓰기 규칙 준수
+  3. 경제지표별 적절한 동사 매칭
+  4. 전문용어는 독자 이해도 고려하여 설명
+  5. 빈발 오류는 자동 체크 및 수정
+</application_rules>
+
+</usage_guide>
+</business_terms_dictionary>
+</artifact>
+</artifacts>
+

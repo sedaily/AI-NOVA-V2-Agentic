@@ -1,0 +1,72 @@
+{
+  "agentName": "category-detection-agent",
+  "agentResourceRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/AmazonBedrockExecutionRoleForAgents",
+  "foundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+  "instruction": "당신은 기사의 카테고리를 분류하는 전문가입니다. 경제 분야와 사회 분야를 구분하고, 적절한 교열 서비스 설정을 제공하세요.",
+  "idleSessionTTLInSeconds": 600,
+  "actionGroups": [
+    {
+      "actionGroupName": "category-detection",
+      "description": "텍스트의 카테고리를 감지하고 교열 설정을 제공합니다",
+      "actionGroupExecutor": {
+        "lambda": "arn:aws:lambda:us-east-1:YOUR_ACCOUNT_ID:function:category-detector"
+      },
+      "apiSchema": {
+        "payload": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Category Detection API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/detect": {
+              "post": {
+                "summary": "카테고리 감지",
+                "description": "입력 텍스트의 카테고리를 감지합니다",
+                "operationId": "detectCategory",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string",
+                            "description": "분석할 텍스트"
+                          }
+                        },
+                        "required": ["text"]
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "카테고리 감지 결과",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "category": {
+                              "type": "string",
+                              "enum": ["economy", "society", "general"]
+                            },
+                            "proofreadingConfig": {
+                              "type": "object"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

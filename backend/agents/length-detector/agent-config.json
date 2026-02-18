@@ -1,0 +1,74 @@
+{
+  "agentName": "length-detection-agent",
+  "agentResourceRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/AmazonBedrockExecutionRoleForAgents",
+  "foundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+  "instruction": "당신은 텍스트의 길이를 분석하는 전문가입니다. 글자수를 측정하고 단문/장문을 구분하여 적절한 퇴고 서비스 설정을 제공하세요.",
+  "idleSessionTTLInSeconds": 600,
+  "actionGroups": [
+    {
+      "actionGroupName": "length-detection",
+      "description": "텍스트의 길이를 측정하고 퇴고 설정을 제공합니다",
+      "actionGroupExecutor": {
+        "lambda": "arn:aws:lambda:us-east-1:YOUR_ACCOUNT_ID:function:length-detector"
+      },
+      "apiSchema": {
+        "payload": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Length Detection API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/detect": {
+              "post": {
+                "summary": "길이 감지",
+                "description": "입력 텍스트의 길이를 측정합니다",
+                "operationId": "detectLength",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string",
+                            "description": "분석할 텍스트"
+                          }
+                        },
+                        "required": ["text"]
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "길이 감지 결과",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "charCount": {
+                              "type": "integer"
+                            },
+                            "isLongForm": {
+                              "type": "boolean"
+                            },
+                            "revisionConfig": {
+                              "type": "object"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
